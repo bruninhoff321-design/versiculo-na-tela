@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Metadados do widget (seções 3 e 29 do briefing). minWidth/minHeight em modo
+  pequeno; o Glance (ver VersiculoWidget.kt) escolhe entre pequeno/médio/
+  grande via SizeMode.Responsive conforme o usuário redimensiona
+  (resizeMode abaixo). updatePeriodMillis fica como um fallback de baixa
+  frequência — o controle real de "a cada 30/60 min" é feito pelo
+  WorkManager (WidgetUpdateWorker), que respeita a preferência do usuário
+  dentro dos limites do Android.
+
+  widgetCategory = apenas "home_screen": NÃO declaramos "keyguard" aqui.
+  O Android removeu o suporte a widgets de tela de bloqueio para a maioria
+  dos aparelhos a partir da versão 5.0 (Lollipop) — declarar essa categoria
+  hoje não faz o widget aparecer na tela de bloqueio em versões modernas, e
+  prometer isso violaria a seção 4 do briefing ("não prometer funcionamento
+  de uma função quando o sistema operacional não permitir"). A alternativa
+  oficial usada aqui é a notificação diária (NotificationService) e o
+  próprio widget de tela inicial.
+-->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="110dp"
+    android:minHeight="110dp"
+    android:targetCellWidth="2"
+    android:targetCellHeight="1"
+    android:maxResizeWidth="250dp"
+    android:maxResizeHeight="250dp"
+    android:resizeMode="horizontal|vertical"
+    android:widgetCategory="home_screen"
+    android:updatePeriodMillis="1800000"
+    android:previewImage="@mipmap/ic_launcher"
+    android:description="@string/widget_description" />

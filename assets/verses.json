@@ -1,0 +1,616 @@
+[
+ {
+  "id": "sal.23.1",
+  "book": "Salmos",
+  "bookAbbr": "sal",
+  "chapter": 23,
+  "verse": 1,
+  "text": "O Senhor é o meu pastor; nada me faltará.",
+  "themes": [
+   "paz",
+   "fe"
+  ],
+  "keywords": [
+   "medo",
+   "protecao",
+   "paz",
+   "confianca"
+  ],
+  "translationId": "placeholder-amostra"
+ },
+ {
+  "id": "mat.11.28",
+  "book": "Mateus",
+  "bookAbbr": "mat",
+  "chapter": 11,
+  "verse": 28,
+  "text": "Vinde a mim, todos os que estais cansados e sobrecarregados, e eu vos aliviarei.",
+  "themes": [
+   "cansaco",
+   "paz"
+  ],
+  "keywords": [
+   "cansado",
+   "cansaco",
+   "sobrecarregado",
+   "descanso"
+  ],
+  "translationId": "placeholder-amostra"
+ },
+ {
+  "id": "fil.4.13",
+  "book": "Filipenses",
+  "bookAbbr": "fil",
+  "chapter": 4,
+  "verse": 13,
+  "text": "Posso todas as coisas naquele que me fortalece.",
+  "themes": [
+   "forca",
+   "proposito"
+  ],
+  "keywords": [
+   "forca",
+   "dificuldade",
+   "desafio"
+  ],
+  "translationId": "placeholder-amostra"
+ },
+ {
+  "id": "isa.41.10",
+  "book": "Isaías",
+  "bookAbbr": "isa",
+  "chapter": 41,
+  "verse": 10,
+  "text": "Não temas, porque eu sou contigo; não te assombres, porque eu sou o teu Deus; eu te fortaleço, e te ajudo.",
+  "themes": [
+   "medo",
+   "forca"
+  ],
+  "keywords": [
+   "medo",
+   "ansiedade",
+   "sozinho"
+  ],
+  "translationId": "placeholder-amostra"
+ },
+ {
+  "id": "pro.3.5",
+  "book": "Provérbios",
+  "bookAbbr": "pro",
+  "chapter": 3,
+  "verse": 5,
+  "text": "Confia no Senhor de todo o teu coração e não te estribes no teu próprio entendimento.",
+  "themes": [
+   "decisao",
+   "fe"
+  ],
+  "keywords": [
+   "decisao",
+   "duvida",
+   "escolha"
+  ],
+  "translationId": "placeholder-amostra"
+ },
+ {
+  "id": "sal.34.18",
+  "book": "Salmos",
+  "bookAbbr": "sal",
+  "chapter": 34,
+  "verse": 18,
+  "text": "Perto está o Senhor dos que têm o coração quebrantado, e salva os contritos de espírito.",
+  "themes": [
+   "tristeza",
+   "luto"
+  ],
+  "keywords": [
+   "triste",
+   "tristeza",
+   "dor",
+   "perda"
+  ],
+  "translationId": "placeholder-amostra"
+ },
+ {
+  "id": "jos.1.9",
+  "book": "Josué",
+  "bookAbbr": "jos",
+  "chapter": 1,
+  "verse": 9,
+  "text": "Esforça-te e tem bom ânimo; não temas, nem te espantes; porque o Senhor teu Deus é contigo, por onde quer que andares.",
+  "themes": [
+   "medo",
+   "forca",
+   "decisao"
+  ],
+  "keywords": [
+   "medo",
+   "coragem",
+   "mudanca"
+  ],
+  "translationId": "placeholder-amostra"
+ },
+ {
+  "id": "sal.55.22",
+  "book": "Salmos",
+  "bookAbbr": "sal",
+  "chapter": 55,
+  "verse": 22,
+  "text": "Lança a tua carga sobre o Senhor, e ele te sustentará; nunca permitirá que o justo seja abalado.",
+  "themes": [
+   "ansiedade",
+   "trabalho",
+   "dinheiro"
+  ],
+  "keywords": [
+   "ansiedade",
+   "carga",
+   "peso",
+   "dinheiro",
+   "contas"
+  ],
+  "translationId": "placeholder-amostra"
+ },
+ {
+  "id": "sal.37.5",
+  "book": "Salmos",
+  "bookAbbr": "sal",
+  "chapter": 37,
+  "verse": 5,
+  "text": "Entrega o teu caminho ao Senhor; confia nele, e ele tudo fará.",
+  "themes": [
+   "decisao",
+   "fe",
+   "esperanca"
+  ],
+  "keywords": [
+   "futuro",
+   "incerteza",
+   "planos"
+  ],
+  "translationId": "placeholder-amostra"
+ },
+ {
+  "id": "rom.8.28",
+  "book": "Romanos",
+  "bookAbbr": "rom",
+  "chapter": 8,
+  "verse": 28,
+  "text": "Sabemos que todas as coisas contribuem juntamente para o bem daqueles que amam a Deus.",
+  "themes": [
+   "esperanca",
+   "fe"
+  ],
+  "keywords": [
+   "esperanca",
+   "sentido",
+   "proposito"
+  ],
+  "translationId": "placeholder-amostra"
+ },
+ {
+  "id": "mat.6.34",
+  "book": "Mateus",
+  "bookAbbr": "mat",
+  "chapter": 6,
+  "verse": 34,
+  "text": "Não vos inquieteis, pois, pelo dia de amanhã, porque o dia de amanhã cuidará de si mesmo. Basta a cada dia o seu mal.",
+  "themes": [
+   "ansiedade"
+  ],
+  "keywords": [
+   "ansiedade",
+   "preocupacao",
+   "amanha"
+  ],
+  "translationId": "placeholder-amostra"
+ },
+ {
+  "id": "fil.4.6",
+  "book": "Filipenses",
+  "bookAbbr": "fil",
+  "chapter": 4,
+  "verse": 6,
+  "text": "Não estejais inquietos por coisa alguma; antes as vossas petições sejam em tudo conhecidas diante de Deus.",
+  "themes": [
+   "ansiedade",
+   "paz"
+  ],
+  "keywords": [
+   "ansiedade",
+   "preocupacao",
+   "oracao"
+  ],
+  "translationId": "placeholder-amostra"
+ },
+ {
+  "id": "1pe.5.7",
+  "book": "1 Pedro",
+  "bookAbbr": "1pe",
+  "chapter": 5,
+  "verse": 7,
+  "text": "Lançando sobre ele toda a vossa ansiedade, porque ele tem cuidado de vós.",
+  "themes": [
+   "ansiedade"
+  ],
+  "keywords": [
+   "ansiedade",
+   "preocupacao",
+   "cuidado"
+  ],
+  "translationId": "placeholder-amostra"
+ },
+ {
+  "id": "sal.121.1",
+  "book": "Salmos",
+  "bookAbbr": "sal",
+  "chapter": 121,
+  "verse": 1,
+  "text": "Elevo os meus olhos para os montes; de onde vem o meu socorro? O meu socorro vem do Senhor.",
+  "themes": [
+   "solidao"
+  ],
+  "keywords": [
+   "ajuda",
+   "sozinho",
+   "socorro"
+  ],
+  "translationId": "placeholder-amostra"
+ },
+ {
+  "id": "jer.29.11",
+  "book": "Jeremias",
+  "bookAbbr": "jer",
+  "chapter": 29,
+  "verse": 11,
+  "text": "Bem sei eu os pensamentos que tenho a vosso respeito, diz o Senhor; pensamentos de paz, e não de mal, para vos dar o fim que esperais.",
+  "themes": [
+   "esperanca",
+   "proposito"
+  ],
+  "keywords": [
+   "futuro",
+   "esperanca",
+   "planos",
+   "proposito"
+  ],
+  "translationId": "placeholder-amostra"
+ },
+ {
+  "id": "sal.46.1",
+  "book": "Salmos",
+  "bookAbbr": "sal",
+  "chapter": 46,
+  "verse": 1,
+  "text": "Deus é o nosso refúgio e fortaleza, socorro bem presente na angústia.",
+  "themes": [
+   "medo",
+   "fase_dificil"
+  ],
+  "keywords": [
+   "angustia",
+   "medo",
+   "refugio"
+  ],
+  "translationId": "placeholder-amostra"
+ },
+ {
+  "id": "joa.14.27",
+  "book": "João",
+  "bookAbbr": "joa",
+  "chapter": 14,
+  "verse": 27,
+  "text": "Deixo-vos a paz, a minha paz vos dou. Não se turbe o vosso coração, nem se atemorize.",
+  "themes": [
+   "paz"
+  ],
+  "keywords": [
+   "paz",
+   "turbacao",
+   "calma"
+  ],
+  "translationId": "placeholder-amostra"
+ },
+ {
+  "id": "pro.17.22",
+  "book": "Provérbios",
+  "bookAbbr": "pro",
+  "chapter": 17,
+  "verse": 22,
+  "text": "O coração alegre serve de bom remédio, mas o espírito abatido seca os ossos.",
+  "themes": [
+   "tristeza"
+  ],
+  "keywords": [
+   "triste",
+   "tristeza",
+   "alegria"
+  ],
+  "translationId": "placeholder-amostra"
+ },
+ {
+  "id": "sal.30.5",
+  "book": "Salmos",
+  "bookAbbr": "sal",
+  "chapter": 30,
+  "verse": 5,
+  "text": "O choro pode durar uma noite, mas a alegria vem pela manhã.",
+  "themes": [
+   "tristeza",
+   "esperanca",
+   "luto"
+  ],
+  "keywords": [
+   "choro",
+   "tristeza",
+   "luto",
+   "noite"
+  ],
+  "translationId": "placeholder-amostra"
+ },
+ {
+  "id": "lam.3.22",
+  "book": "Lamentações",
+  "bookAbbr": "lam",
+  "chapter": 3,
+  "verse": 22,
+  "text": "As misericórdias do Senhor não têm fim; renovam-se cada manhã.",
+  "themes": [
+   "esperanca",
+   "recomeco"
+  ],
+  "keywords": [
+   "recomeco",
+   "novo",
+   "esperanca"
+  ],
+  "translationId": "placeholder-amostra"
+ },
+ {
+  "id": "mat.6.33",
+  "book": "Mateus",
+  "bookAbbr": "mat",
+  "chapter": 6,
+  "verse": 33,
+  "text": "Buscai primeiro o reino de Deus, e a sua justiça, e todas essas coisas vos serão acrescentadas.",
+  "themes": [
+   "proposito",
+   "fe"
+  ],
+  "keywords": [
+   "proposito",
+   "prioridade",
+   "dinheiro"
+  ],
+  "translationId": "placeholder-amostra"
+ },
+ {
+  "id": "gal.6.9",
+  "book": "Gálatas",
+  "bookAbbr": "gal",
+  "chapter": 6,
+  "verse": 9,
+  "text": "Não nos cansemos de fazer o bem, porque a seu tempo ceifaremos, se não houvermos desfalecido.",
+  "themes": [
+   "trabalho",
+   "forca"
+  ],
+  "keywords": [
+   "trabalho",
+   "cansaco",
+   "perseveranca"
+  ],
+  "translationId": "placeholder-amostra"
+ },
+ {
+  "id": "heb.13.5",
+  "book": "Hebreus",
+  "bookAbbr": "heb",
+  "chapter": 13,
+  "verse": 5,
+  "text": "Contentai-vos com o que tendes; porque ele disse: Não te deixarei, nem te desampararei.",
+  "themes": [
+   "dinheiro",
+   "solidao"
+  ],
+  "keywords": [
+   "dinheiro",
+   "contas",
+   "sozinho",
+   "abandono"
+  ],
+  "translationId": "placeholder-amostra"
+ },
+ {
+  "id": "isa.40.31",
+  "book": "Isaías",
+  "bookAbbr": "isa",
+  "chapter": 40,
+  "verse": 31,
+  "text": "Os que esperam no Senhor renovarão as forças, subirão com asas como águias.",
+  "themes": [
+   "forca",
+   "cansaco"
+  ],
+  "keywords": [
+   "forca",
+   "cansaco",
+   "exaustao"
+  ],
+  "translationId": "placeholder-amostra"
+ },
+ {
+  "id": "sal.27.1",
+  "book": "Salmos",
+  "bookAbbr": "sal",
+  "chapter": 27,
+  "verse": 1,
+  "text": "O Senhor é a minha luz e a minha salvação; a quem temerei?",
+  "themes": [
+   "medo"
+  ],
+  "keywords": [
+   "medo",
+   "escuridao"
+  ],
+  "translationId": "placeholder-amostra"
+ },
+ {
+  "id": "efe.4.32",
+  "book": "Efésios",
+  "bookAbbr": "efe",
+  "chapter": 4,
+  "verse": 32,
+  "text": "Sede uns para com os outros benignos, misericordiosos, perdoando-vos uns aos outros, como também Deus vos perdoou.",
+  "themes": [
+   "perdao",
+   "familia",
+   "relacionamento"
+  ],
+  "keywords": [
+   "perdao",
+   "magoa",
+   "familia",
+   "relacionamento"
+  ],
+  "translationId": "placeholder-amostra"
+ },
+ {
+  "id": "col.3.13",
+  "book": "Colossenses",
+  "bookAbbr": "col",
+  "chapter": 3,
+  "verse": 13,
+  "text": "Perdoando-vos uns aos outros, se algum tiver queixa contra outro; assim como Cristo vos perdoou, assim fazei vós também.",
+  "themes": [
+   "perdao",
+   "relacionamento"
+  ],
+  "keywords": [
+   "perdao",
+   "queixa",
+   "magoa"
+  ],
+  "translationId": "placeholder-amostra"
+ },
+ {
+  "id": "2co.5.17",
+  "book": "2 Coríntios",
+  "bookAbbr": "2co",
+  "chapter": 5,
+  "verse": 17,
+  "text": "Se alguém está em Cristo, nova criatura é; as coisas velhas já passaram; eis que tudo se fez novo.",
+  "themes": [
+   "recomeco"
+  ],
+  "keywords": [
+   "recomecar",
+   "novo",
+   "mudanca"
+  ],
+  "translationId": "placeholder-amostra"
+ },
+ {
+  "id": "apo.21.5",
+  "book": "Apocalipse",
+  "bookAbbr": "apo",
+  "chapter": 21,
+  "verse": 5,
+  "text": "Eis que faço novas todas as coisas.",
+  "themes": [
+   "recomeco",
+   "esperanca"
+  ],
+  "keywords": [
+   "recomecar",
+   "novo"
+  ],
+  "translationId": "placeholder-amostra"
+ },
+ {
+  "id": "1te.5.18",
+  "book": "1 Tessalonicenses",
+  "bookAbbr": "1te",
+  "chapter": 5,
+  "verse": 18,
+  "text": "Em tudo dai graças, porque esta é a vontade de Deus em Cristo Jesus para convosco.",
+  "themes": [
+   "gratidao"
+  ],
+  "keywords": [
+   "gratidao",
+   "agradecer"
+  ],
+  "translationId": "placeholder-amostra"
+ },
+ {
+  "id": "sal.118.24",
+  "book": "Salmos",
+  "bookAbbr": "sal",
+  "chapter": 118,
+  "verse": 24,
+  "text": "Este é o dia que fez o Senhor; regozijemo-nos, e alegremo-nos nele.",
+  "themes": [
+   "gratidao",
+   "esperanca"
+  ],
+  "keywords": [
+   "gratidao",
+   "dia",
+   "alegria"
+  ],
+  "translationId": "placeholder-amostra"
+ },
+ {
+  "id": "pro.16.9",
+  "book": "Provérbios",
+  "bookAbbr": "pro",
+  "chapter": 16,
+  "verse": 9,
+  "text": "O coração do homem considera o seu caminho, mas o Senhor lhe dirige os passos.",
+  "themes": [
+   "decisao",
+   "proposito"
+  ],
+  "keywords": [
+   "decisao",
+   "caminho",
+   "direcao"
+  ],
+  "translationId": "placeholder-amostra"
+ },
+ {
+  "id": "tia.1.5",
+  "book": "Tiago",
+  "bookAbbr": "tia",
+  "chapter": 1,
+  "verse": 5,
+  "text": "Se algum de vós tem falta de sabedoria, peça-a a Deus, que a todos dá liberalmente.",
+  "themes": [
+   "decisao"
+  ],
+  "keywords": [
+   "sabedoria",
+   "decisao",
+   "duvida"
+  ],
+  "translationId": "placeholder-amostra"
+ },
+ {
+  "id": "sal.139.14",
+  "book": "Salmos",
+  "bookAbbr": "sal",
+  "chapter": 139,
+  "verse": 14,
+  "text": "Eu te louvarei, porque de um modo terrível, e tão maravilhoso fui feito.",
+  "themes": [
+   "proposito",
+   "gratidao"
+  ],
+  "keywords": [
+   "proposito",
+   "identidade",
+   "valor"
+  ],
+  "translationId": "placeholder-amostra"
+ }
+]

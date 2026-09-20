@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Notificação do "versículo diário" (seção 18) em Android 13+ -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Reagendar o WorkManager do widget depois que o aparelho reinicia -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- Google Play Billing (compra vitalícia, seção 23) já declara isso
+         internamente na sua própria library, mas fica explícito aqui -->
+    <uses-permission android:name="com.android.vending.BILLING" />
+
+    <application
+        android:label="Versículo na Tela"
+        android:name="${applicationName}"
+        android:icon="@mipmap/ic_launcher">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:theme="@style/LaunchTheme"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:hardwareAccelerated="true"
+            android:windowSoftInputMode="adjustResize">
+            <meta-data
+              android:name="io.flutter.embedding.android.NormalTheme"
+              android:resource="@style/NormalTheme" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
+
+        <!-- Widget de tela inicial (seções 3 e 27) -->
+        <receiver
+            android:name=".widget.VersiculoWidgetReceiver"
+            android:exported="true"
+            android:label="Versículo na Tela">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/versiculo_widget_info" />
+        </receiver>
+
+    </application>
+
+    <!-- Necessário a partir do Android 11 para o plugin in_app_purchase
+         conseguir verificar a disponibilidade da Play Store -->
+    <queries>
+        <package android:name="com.android.vending" />
+    </queries>
+
+</manifest>

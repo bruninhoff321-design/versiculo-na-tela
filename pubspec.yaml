@@ -1,0 +1,55 @@
+name: versiculo_na_tela
+description: "Um versículo bíblico sempre visível na tela do celular."
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+
+  # Estado
+  provider: ^6.1.2
+
+  # Armazenamento local (favoritos, histórico, configurações) — funciona 100% offline
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  path_provider: ^2.1.4
+
+  # Ponte Flutter -> widget nativo (grava em SharedPreferences no Android e
+  # em UserDefaults de App Group no iOS, que são lidos pelo widget nativo
+  # sem precisar do motor Flutter rodando)
+  home_widget: ^0.7.0
+
+  # Notificação local do "versículo diário" (usa APIs oficiais de notificação
+  # de cada plataforma por baixo)
+  flutter_local_notifications: ^17.2.3
+  timezone: ^0.9.4
+
+  # Compra única vitalícia — usa StoreKit (iOS) e Google Play Billing (Android)
+  # por baixo; é o plugin oficial mantido pelo time do Flutter para IAP.
+  in_app_purchase: ^3.2.0
+
+  # Compartilhar a imagem gerada do versículo pelos recursos nativos do SO
+  share_plus: ^10.0.2
+
+  intl: ^0.19.0
+
+  # Mesma identidade visual do protótipo web (Fraunces + Manrope)
+  google_fonts: ^6.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  hive_generator: ^2.0.1
+  build_runner: ^2.4.11
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/verses.json
+    - assets/taxonomia_temas.json

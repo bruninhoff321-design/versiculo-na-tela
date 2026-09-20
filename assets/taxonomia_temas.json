@@ -1,0 +1,27 @@
+{
+  "_descricao": "Taxonomia de temas usada para (1) tagging do banco de versículos e (2) o matcher da função 'O que você precisa ouvir?'. Cada tema tem um id estável (usado no JSON dos versículos), o rótulo exibido ao usuário, o emoji do cartão de situação (quando aplicável) e uma lista de palavras-chave em português (sem acento, minúsculas) usadas na correspondência por substring contra o texto livre digitado pelo usuário.",
+  "temas": [
+    {"id": "paz", "label": "Preciso de paz", "emoji": "🕊️", "keywords": ["paz", "calma", "tranquilidade", "sossego", "turbacao"]},
+    {"id": "ansiedade", "label": "Estou preocupado(a)", "emoji": "😰", "keywords": ["ansiedade", "ansioso", "ansiosa", "preocupado", "preocupacao", "nervoso", "aflicao", "angustia"]},
+    {"id": "medo", "label": "Estou com medo", "emoji": "😨", "keywords": ["medo", "temo", "assustado", "assustada", "pavor", "receio"]},
+    {"id": "cansaco", "label": "Estou cansado(a)", "emoji": "😴", "keywords": ["cansado", "cansada", "cansaco", "exausto", "exausta", "exaustao", "sobrecarregado", "sobrecarregada"]},
+    {"id": "tristeza", "label": "Estou triste", "emoji": "😔", "keywords": ["triste", "tristeza", "choro", "chorar", "deprimido", "deprimida", "desanimado", "desanimada"]},
+    {"id": "fe", "label": "Preciso fortalecer minha fé", "emoji": "🙏", "keywords": ["fe", "deus", "oracao", "orar", "espiritual", "crer", "acreditar"]},
+    {"id": "forca", "label": "Preciso de força", "emoji": "💪", "keywords": ["forca", "dificuldade", "desafio", "superar", "perseveranca", "resistir"]},
+    {"id": "amor_sofrimento", "label": "Estou sofrendo por amor", "emoji": "❤️", "keywords": ["amor", "paixao", "coracao partido", "terminei", "termino", "rompimento"]},
+    {"id": "dinheiro", "label": "Estou preocupado com dinheiro", "emoji": "💰", "keywords": ["dinheiro", "contas", "financeiro", "divida", "dividas", "pagar", "salario", "desemprego", "desempregado"]},
+    {"id": "familia", "label": "Minha família", "emoji": "🏠", "keywords": ["familia", "filhos", "filho", "filha", "pais", "mae", "pai", "casa"]},
+    {"id": "trabalho", "label": "Meu trabalho", "emoji": "💼", "keywords": ["trabalho", "emprego", "chefe", "carreira", "profissional", "empresa"]},
+    {"id": "relacionamento", "label": "Meu relacionamento", "emoji": "❤️", "keywords": ["namoro", "namorado", "namorada", "casamento", "casado", "casada", "relacionamento", "parceiro", "parceira", "marido", "esposa"]},
+    {"id": "perdao", "label": "Preciso perdoar", "emoji": "🤲", "keywords": ["perdoar", "perdao", "magoa", "magoado", "magoada", "raiva", "ressentimento", "queixa"]},
+    {"id": "recomeco", "label": "Quero recomeçar", "emoji": "✨", "keywords": ["recomecar", "recomeco", "mudar", "mudanca", "novo comeco", "virar a pagina"]},
+    {"id": "esperanca", "label": "Preciso de esperança", "emoji": "🌅", "keywords": ["esperanca", "futuro", "desanimado", "sem esperanca", "desistir"]},
+    {"id": "decisao", "label": "Preciso tomar uma decisão", "emoji": "🧭", "keywords": ["decisao", "escolha", "duvida", "incerto", "incerteza", "nao sei o que fazer"]},
+    {"id": "proposito", "label": "Tenho sonhos e objetivos", "emoji": "🎯", "keywords": ["proposito", "sentido", "sonho", "sonhos", "objetivo", "objetivos", "vocacao", "identidade"]},
+    {"id": "solidao", "label": "Estou me sentindo sozinho(a)", "emoji": "🫂", "keywords": ["sozinho", "sozinha", "solidao", "abandonado", "abandonada", "isolado", "isolada", "ninguem"]},
+    {"id": "fase_dificil", "label": "Estou passando por uma fase difícil", "emoji": "🌧️", "keywords": ["fase dificil", "momento dificil", "crise", "dificuldade", "sofrimento"]},
+    {"id": "luto", "label": "Estou passando por uma perda", "emoji": "🕯️", "keywords": ["perda", "morte", "morreu", "luto", "falecimento", "falecido", "falecida"]},
+    {"id": "gratidao", "label": "Quero agradecer", "emoji": "❤️", "keywords": ["gratidao", "agradecer", "grato", "grata", "obrigado a deus"]},
+    {"id": "aproximar_de_deus", "label": "Quero me aproximar de Deus", "emoji": "🙏", "keywords": ["me aproximar de deus", "conhecer deus", "buscar a deus", "vida espiritual"]}
+  ]
+}
