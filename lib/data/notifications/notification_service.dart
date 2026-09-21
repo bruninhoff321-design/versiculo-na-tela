@@ -27,9 +27,9 @@ class NotificationService {
   }
 
   Future<bool> requestPermission() async {
-    final androidImpl = _plugin.resolvePlatformSpecificImplementation<
+    final androidImpl = _plugin.resolvePlatformSpecificImplementation
         AndroidFlutterLocalNotificationsPlugin>();
-    final iosImpl = _plugin.resolvePlatformSpecificImplementation<
+    final iosImpl = _plugin.resolvePlatformSpecificImplementation
         IOSFlutterLocalNotificationsPlugin>();
 
     final androidGranted =
@@ -74,6 +74,8 @@ class NotificationService {
         iOS: DarwinNotificationDetails(),
       ),
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time, // repete todo dia
     );
   }
