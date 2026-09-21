@@ -46,7 +46,7 @@ class WidgetUpdateWorker(context: Context, params: WorkerParameters) :
     companion object {
         private const val WORK_NAME = "versiculo_widget_refresh"
 
-        /** [minutes] deve ser >= 15 (mínimo do WorkManager); use null para cancelar (modo manual). */
+        // [minutes] deve ser >= 15 (mínimo do WorkManager); use null para cancelar (modo manual).
         fun schedule(context: Context, minutes: Int?) {
             val workManager = WorkManager.getInstance(context)
             if (minutes == null) {
