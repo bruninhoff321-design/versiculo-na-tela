@@ -10,7 +10,7 @@ import '../../domain/usecases/match_verse_for_input.dart';
 /// contra o texto livre digitado pelo usuário.
 class AssetThemeTaxonomyRepository implements ThemeTaxonomyRepository {
   final String assetPath;
-  const AssetThemeTaxonomyRepository(
+  AssetThemeTaxonomyRepository(
       {this.assetPath = 'assets/taxonomia_temas.json'});
 
   Map<String, List<String>>? _cache;
