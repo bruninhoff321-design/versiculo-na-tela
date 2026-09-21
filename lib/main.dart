@@ -19,8 +19,8 @@ Future<void> main() async {
   await localStore.init();
 
   final appState = AppState(
-    verseRepository: const AssetVerseRepository(),
-    taxonomyRepository: const AssetThemeTaxonomyRepository(),
+    verseRepository: AssetVerseRepository(),
+    taxonomyRepository: AssetThemeTaxonomyRepository(),
     localStore: localStore,
     widgetSync: WidgetSyncService(),
     notifications: NotificationService(),
