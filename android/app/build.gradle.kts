@@ -21,22 +21,10 @@ android {
 
     defaultConfig {
         applicationId = "com.versiculonatela.app"
-        // Jetpack Glance (widget) exige minSdk 21+; 26 dá uma base mais
-        // moderna e tranquila para Play Billing/notificações também.
-        minSdk = 26
+        minSdk = 24
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-    }
-
-    buildFeatures {
-        compose = true
-    }
-    composeOptions {
-        // Se o Gradle reclamar de incompatibilidade de versão aqui, troque
-        // por a versão do compilador Compose recomendada para a versão do
-        // Kotlin que o `flutter create` instalou neste projeto.
-        kotlinCompilerExtensionVersion = "1.5.14"
     }
 
     buildTypes {
@@ -58,10 +46,6 @@ flutter {
 }
 
 dependencies {
-    // Widget nativo (Jetpack Glance) — seções 3, 4, 27 do briefing
-    implementation("androidx.glance:glance-appwidget:1.1.1")
-    implementation("androidx.glance:glance-material3:1.1.1")
-
     // Agendamento da preferência de atualização do widget — seção 5
     implementation("androidx.work:work-runtime-ktx:2.9.1")
 }
