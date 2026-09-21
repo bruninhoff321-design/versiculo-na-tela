@@ -32,6 +32,28 @@ jobs:
 
       - run: flutter pub get
 
+      - name: Escrever o teste padrão (evita o widget_test.dart genérico do flutter create)
+        run: |
+          cat > test/widget_test.dart << 'DARTEOF'
+          import 'package:flutter_test/flutter_test.dart';
+          import 'package:versiculo_na_tela/core/theme/app_theme.dart';
+          import 'package:versiculo_na_tela/domain/models/app_settings.dart';
+
+          void main() {
+            test('AppTheme.light() e AppTheme.dark() constroem temas válidos', () {
+              expect(AppTheme.light(), isNotNull);
+              expect(AppTheme.dark(), isNotNull);
+            });
+
+            test('AppSettings tem valores padrão sensatos', () {
+              const settings = AppSettings();
+              expect(settings.frequency, UpdateFrequency.min60);
+              expect(settings.noRepeat, NoRepeatOption.next20);
+              expect(settings.onboarded, isFalse);
+            });
+          }
+          DARTEOF
+
       - name: Rodar os testes de domínio
         run: flutter test
 
@@ -66,6 +88,28 @@ jobs:
         run: flutter create --platforms=android,ios --org com.versiculonatela --project-name versiculo_na_tela .
 
       - run: flutter pub get
+
+      - name: Escrever o teste padrão (evita o widget_test.dart genérico do flutter create)
+        run: |
+          cat > test/widget_test.dart << 'DARTEOF'
+          import 'package:flutter_test/flutter_test.dart';
+          import 'package:versiculo_na_tela/core/theme/app_theme.dart';
+          import 'package:versiculo_na_tela/domain/models/app_settings.dart';
+
+          void main() {
+            test('AppTheme.light() e AppTheme.dark() constroem temas válidos', () {
+              expect(AppTheme.light(), isNotNull);
+              expect(AppTheme.dark(), isNotNull);
+            });
+
+            test('AppSettings tem valores padrão sensatos', () {
+              const settings = AppSettings();
+              expect(settings.frequency, UpdateFrequency.min60);
+              expect(settings.noRepeat, NoRepeatOption.next20);
+              expect(settings.onboarded, isFalse);
+            });
+          }
+          DARTEOF
 
       - name: Rodar os testes de domínio
         run: flutter test
