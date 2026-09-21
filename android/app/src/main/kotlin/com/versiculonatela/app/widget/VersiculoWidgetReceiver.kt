@@ -46,4 +46,14 @@ class VersiculoWidgetReceiver : AppWidgetProvider() {
             return views
         }
 
-        /** Paleta por tema visual — precisa espelhar
+        // Paleta por tema visual — precisa espelhar AppTheme.widgetThemeColors (Dart) e o Swift.
+        fun widgetThemeColors(theme: String): Pair<Int, Int> = when (theme) {
+            "escuro" -> Color.parseColor("#1B1D22") to Color.parseColor("#F3EFE4")
+            "papel" -> Color.parseColor("#EDE3CC") to Color.parseColor("#3A3120")
+            "gradiente" -> Color.parseColor("#3A2E55") to Color.parseColor("#FBF3E7")
+            "elegante" -> Color.parseColor("#12141A") to Color.parseColor("#D9A857")
+            "ceu" -> Color.parseColor("#2B3A55") to Color.parseColor("#FBFAF6")
+            else -> Color.parseColor("#F7F4EC") to Color.parseColor("#20242B") // "claro"
+        }
+    }
+}
