@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../../domain/models/history_entry.dart';
 import '../state/app_state.dart';
 
 class HistoricoScreen extends StatelessWidget {
