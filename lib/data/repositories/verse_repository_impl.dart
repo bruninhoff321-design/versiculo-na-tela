@@ -15,7 +15,7 @@ import '../../domain/repositories/verse_repository.dart';
 /// desta classe.
 class AssetVerseRepository implements VerseRepository {
   final String assetPath;
-  const AssetVerseRepository({this.assetPath = 'assets/verses.json'});
+  AssetVerseRepository({this.assetPath = 'assets/verses.json'});
 
   List<Verse>? _cache;
 
