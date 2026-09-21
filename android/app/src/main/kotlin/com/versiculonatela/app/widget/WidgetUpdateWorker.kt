@@ -1,12 +1,13 @@
 package com.versiculonatela.app.widget
 
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.WorkManager
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.glance.appwidget.updateAll
 import java.util.concurrent.TimeUnit
 
 /**
@@ -26,7 +27,16 @@ class WidgetUpdateWorker(context: Context, params: WorkerParameters) :
 
     override suspend fun doWork(): Result {
         return try {
-            VersiculoWidget().updateAll(applicationContext)
+            val manager = AppWidgetManager.getInstance(applicationContext)
+            val component = ComponentName(applicationContext, VersiculoWidgetReceiver::class.java)
+            val ids = manager.getAppWidgetIds(component)
+            if (ids.isNotEmpty()) {
+                val data = WidgetPreferences.read(applicationContext)
+                for (id in ids) {
+                    val views = VersiculoWidgetReceiver.buildRemoteViews(applicationContext, data)
+                    manager.updateAppWidget(id, views)
+                }
+            }
             Result.success()
         } catch (e: Exception) {
             Result.retry()
