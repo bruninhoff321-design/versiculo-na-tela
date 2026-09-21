@@ -1,0 +1,74 @@
+name: Compilar Versículo na Tela
+
+# Roda automaticamente a cada push na branch principal, e também pode ser
+# disparado manualmente pela aba "Actions" do GitHub (botão "Run workflow").
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch: {}
+
+jobs:
+  # ------------------------------------------------------------------
+  # ANDROID: gera um .apk instalável de verdade — pode ser baixado na aba
+  # "Actions" > (execução) > "Artifacts" ao final da build, e instalado
+  # direto no celular Android (ativando "instalar de fontes desconhecidas").
+  # ------------------------------------------------------------------
+  build-android:
+    name: Build Android (.apk)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+
+      # Preenche só o que falta (gradlew, gradle wrapper, etc.) — os
+      # arquivos que já existem no projeto (AndroidManifest.xml,
+      # build.gradle.kts, o código do widget) NÃO são sobrescritos.
+      - name: Gerar a casca nativa que falta
+        run: flutter create --platforms=android,ios --org com.versiculonatela --project-name versiculo_na_tela .
+
+      - run: flutter pub get
+
+      - name: Rodar os testes de domínio
+        run: flutter test
+
+      - name: Compilar o APK de release
+        run: flutter build apk --release
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: versiculo-na-tela-android
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+  # ------------------------------------------------------------------
+  # iOS: valida que o app e o widget COMPILAM no Xcode (roda num runner
+  # macOS de verdade, com Xcode de verdade). IMPORTANTE: isto NÃO produz um
+  # .ipa instalável — a Apple exige que todo app instalado num iPhone real
+  # esteja assinado com um certificado de uma conta Apple Developer. Sem
+  # isso, não existe nenhum jeito (nem por aqui, nem por nenhuma outra
+  # ferramenta) de instalar o app num iPhone. Ver GUIA-PARA-GERAR-O-APP.md.
+  # ------------------------------------------------------------------
+  build-ios:
+    name: Build iOS (valida compilação, sem assinatura)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+
+      - name: Gerar a casca nativa que falta
+        run: flutter create --platforms=android,ios --org com.versiculonatela --project-name versiculo_na_tela .
+
+      - run: flutter pub get
+
+      - name: Rodar os testes de domínio
+        run: flutter test
+
+      - name: Compilar o app iOS sem assinar (só verificação)
+        run: flutter build ios --release --no-codesign
