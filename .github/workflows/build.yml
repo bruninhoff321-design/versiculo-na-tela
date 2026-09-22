@@ -30,9 +30,21 @@ jobs:
       - name: Gerar a casca nativa que falta
         run: flutter create --platforms=android,ios --org com.versiculonatela --project-name versiculo_na_tela .
 
-      # O flutter create gera uma versão antiga do plugin Kotlin (1.7.x),
-      # incompatível com o Jetpack Compose usado pelo widget (que exige
-      # Kotlin 1.9.24). Corrige a versão diretamente no arquivo gerado.
+      - name: Diagnóstico + remover build.gradle duplicado (Groovy) se existir
+        run: |
+          echo "----- conteúdo de android/app -----"
+          ls -la android/app/
+          if [ -f android/app/build.gradle ]; then
+            echo "!!! Encontrado android/app/build.gradle (Groovy) DUPLICADO — removendo, ficamos só com build.gradle.kts"
+            echo "----- conteúdo do build.gradle (Groovy) antes de remover -----"
+            cat android/app/build.gradle
+            rm -f android/app/build.gradle
+          else
+            echo "Nenhum build.gradle (Groovy) duplicado encontrado — ok"
+          fi
+          echo "----- conteúdo de android/app/build.gradle.kts -----"
+          cat android/app/build.gradle.kts
+
       - name: Atualizar Kotlin, Android Gradle Plugin e Gradle
         run: |
           sed -i 's/id "org.jetbrains.kotlin.android" version "[^"]*"/id "org.jetbrains.kotlin.android" version "1.9.24"/' android/settings.gradle
