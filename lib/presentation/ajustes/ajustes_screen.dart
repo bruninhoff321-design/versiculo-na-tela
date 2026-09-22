@@ -35,7 +35,6 @@ class AjustesScreen extends StatelessWidget {
           }).toList(),
         ),
         const SizedBox(height: 28),
-
         _SectionTitle('Não repetir versículos'),
         const _Hint(
           'Evite que um versículo apareça novamente até que você tenha '
@@ -55,63 +54,43 @@ class AjustesScreen extends StatelessWidget {
           }).toList(),
         ),
         const SizedBox(height: 28),
-
         _SectionTitle('Tema do widget'),
-        _Hint(
-          'Temas Premium ficam disponíveis após o desbloqueio vitalício.',
-        ),
+        const _Hint('Todos os temas estão disponíveis.'),
         const SizedBox(height: 12),
         Wrap(
           spacing: 14,
           runSpacing: 14,
           children: WidgetVisualTheme.values.map((t) {
-            final locked = t.isPremium && !settings.premium;
-            final (bg, fg) = AppTheme.widgetThemeColors(t.name);
+            final (bg, _) = AppTheme.widgetThemeColors(t.name);
             return GestureDetector(
-              onTap: () {
-                if (locked) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text(
-                            'Tema Premium — desbloqueie a versão vitalícia')),
-                  );
-                  return;
-                }
-                app.updateSettings((s) => s.copyWith(widgetTheme: t));
-              },
-              child: Opacity(
-                opacity: locked ? 0.5 : 1,
-                child: SizedBox(
-                  width: 76,
-                  child: Column(
-                    children: [
-                      Container(
-                        height: 52,
-                        decoration: BoxDecoration(
-                          color: bg,
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(
-                            color: settings.widgetTheme == t
-                                ? Theme.of(context).colorScheme.primary
-                                : Colors.transparent,
-                            width: 2,
-                          ),
+              onTap: () =>
+                  app.updateSettings((s) => s.copyWith(widgetTheme: t)),
+              child: SizedBox(
+                width: 76,
+                child: Column(
+                  children: [
+                    Container(
+                      height: 52,
+                      decoration: BoxDecoration(
+                        color: bg,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                          color: settings.widgetTheme == t
+                              ? Theme.of(context).colorScheme.primary
+                              : Colors.transparent,
+                          width: 2,
                         ),
-                        child: locked
-                            ? Icon(Icons.lock, size: 16, color: fg)
-                            : null,
                       ),
-                      const SizedBox(height: 6),
-                      Text(t.label, style: const TextStyle(fontSize: 11)),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(t.label, style: const TextStyle(fontSize: 11)),
+                  ],
                 ),
               ),
             );
           }).toList(),
         ),
         const SizedBox(height: 28),
-
         _SectionTitle('Tamanho do widget'),
         const SizedBox(height: 10),
         SegmentedButton<WidgetSize>(
@@ -125,15 +104,14 @@ class AjustesScreen extends StatelessWidget {
               app.updateSettings((s) => s.copyWith(widgetSize: v.first)),
         ),
         const SizedBox(height: 28),
-
         _SectionTitle('Versículo diário'),
         const SizedBox(height: 10),
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           title: const Text('Notificação diária'),
           value: settings.dailyNotificationEnabled,
-          onChanged: (v) => app.updateSettings(
-              (s) => s.copyWith(dailyNotificationEnabled: v)),
+          onChanged: (v) => app
+              .updateSettings((s) => s.copyWith(dailyNotificationEnabled: v)),
         ),
         if (settings.dailyNotificationEnabled)
           ListTile(
@@ -151,8 +129,7 @@ class AjustesScreen extends StatelessWidget {
                   ),
                 );
                 if (picked != null) {
-                  final formatted =
-                      '${picked.hour.toString().padLeft(2, '0')}:'
+                  final formatted = '${picked.hour.toString().padLeft(2, '0')}:'
                       '${picked.minute.toString().padLeft(2, '0')}';
                   await app.updateSettings(
                       (s) => s.copyWith(dailyNotificationTime: formatted));
@@ -161,44 +138,6 @@ class AjustesScreen extends StatelessWidget {
             ),
           ),
         const SizedBox(height: 28),
-
-        _SectionTitle('Versículo na Tela Premium'),
-        const SizedBox(height: 6),
-        Text(
-          settings.premium
-              ? 'Compra vitalícia ativa neste dispositivo.'
-              : 'Pague uma vez. Use para sempre. Sem assinatura, sem '
-                  'renovação automática.',
-        ),
-        const SizedBox(height: 12),
-        Wrap(
-          spacing: 10,
-          runSpacing: 10,
-          children: [
-            if (!settings.premium)
-              FilledButton(
-                onPressed: app.purchases.buyPremium,
-                child: const Text('Comprar Premium'),
-              ),
-            OutlinedButton(
-              onPressed: app.purchases.restore,
-              child: const Text('Restaurar compra'),
-            ),
-          ],
-        ),
-        ValueListenableBuilder<String?>(
-          valueListenable: app.purchases.lastError,
-          builder: (context, error, _) {
-            if (error == null) return const SizedBox.shrink();
-            return Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: Text(error,
-                  style: TextStyle(color: Theme.of(context).colorScheme.error)),
-            );
-          },
-        ),
-        const SizedBox(height: 28),
-
         ExpansionTile(
           tilePadding: EdgeInsets.zero,
           title: const Text('Sobre / licença do texto bíblico'),
