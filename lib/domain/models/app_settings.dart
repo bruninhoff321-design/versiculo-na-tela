@@ -88,7 +88,7 @@ extension NoRepeatOptionX on NoRepeatOption {
   }
 }
 
-/// Temas visuais do widget (seção 20). Os 3 primeiros são gratuitos.
+/// Todos os temas visuais estão disponíveis nesta versão.
 enum WidgetVisualTheme { claro, escuro, papel, gradiente, elegante, ceu }
 
 extension WidgetVisualThemeX on WidgetVisualTheme {
@@ -106,19 +106,6 @@ extension WidgetVisualThemeX on WidgetVisualTheme {
         return 'Elegante';
       case WidgetVisualTheme.ceu:
         return 'Céu';
-    }
-  }
-
-  bool get isPremium {
-    switch (this) {
-      case WidgetVisualTheme.claro:
-      case WidgetVisualTheme.escuro:
-      case WidgetVisualTheme.papel:
-        return false;
-      case WidgetVisualTheme.gradiente:
-      case WidgetVisualTheme.elegante:
-      case WidgetVisualTheme.ceu:
-        return true;
     }
   }
 
@@ -151,7 +138,6 @@ class AppSettings {
   final WidgetSize widgetSize;
   final bool dailyNotificationEnabled;
   final String dailyNotificationTime; // "HH:mm"
-  final bool premium;
   final bool onboarded;
 
   const AppSettings({
@@ -161,7 +147,6 @@ class AppSettings {
     this.widgetSize = WidgetSize.medium,
     this.dailyNotificationEnabled = true,
     this.dailyNotificationTime = '07:00',
-    this.premium = false,
     this.onboarded = false,
   });
 
@@ -172,7 +157,6 @@ class AppSettings {
     WidgetSize? widgetSize,
     bool? dailyNotificationEnabled,
     String? dailyNotificationTime,
-    bool? premium,
     bool? onboarded,
   }) {
     return AppSettings(
@@ -184,7 +168,6 @@ class AppSettings {
           dailyNotificationEnabled ?? this.dailyNotificationEnabled,
       dailyNotificationTime:
           dailyNotificationTime ?? this.dailyNotificationTime,
-      premium: premium ?? this.premium,
       onboarded: onboarded ?? this.onboarded,
     );
   }

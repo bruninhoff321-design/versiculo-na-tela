@@ -33,8 +33,8 @@ class AppLocalStore {
 
   AppSettings readSettings() {
     return AppSettings(
-      frequency: UpdateFrequencyX.fromName(
-          _settingsBox.get('frequency') as String?),
+      frequency:
+          UpdateFrequencyX.fromName(_settingsBox.get('frequency') as String?),
       noRepeat: NoRepeatOptionX.fromCount(
           (_settingsBox.get('noRepeat') as int?) ?? 20),
       widgetTheme: WidgetVisualThemeX.fromName(
@@ -45,7 +45,6 @@ class AppLocalStore {
           (_settingsBox.get('dailyNotificationEnabled') as bool?) ?? true,
       dailyNotificationTime:
           (_settingsBox.get('dailyNotificationTime') as String?) ?? '07:00',
-      premium: (_settingsBox.get('premium') as bool?) ?? false,
       onboarded: (_settingsBox.get('onboarded') as bool?) ?? false,
     );
   }
@@ -58,7 +57,6 @@ class AppLocalStore {
       'widgetSize': settings.widgetSize.name,
       'dailyNotificationEnabled': settings.dailyNotificationEnabled,
       'dailyNotificationTime': settings.dailyNotificationTime,
-      'premium': settings.premium,
       'onboarded': settings.onboarded,
     });
   }
@@ -88,7 +86,8 @@ class AppLocalStore {
   /// Em ordem cronológica (mais antigo primeiro).
   List<HistoryEntry> readHistory() {
     return _historyBox.values
-        .map((raw) => HistoryEntry.fromMap(Map<dynamic, dynamic>.from(raw as Map)))
+        .map((raw) =>
+            HistoryEntry.fromMap(Map<dynamic, dynamic>.from(raw as Map)))
         .toList();
   }
 

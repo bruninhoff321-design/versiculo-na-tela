@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 
 import '../../data/local/app_local_store.dart';
 import '../../data/notifications/notification_service.dart';
-import '../../data/purchases/purchase_service.dart';
 import '../../data/widget_bridge/native_scheduler.dart';
 import '../../data/widget_bridge/widget_sync_service.dart';
 import '../../domain/models/app_settings.dart';
@@ -16,7 +15,7 @@ import '../../domain/usecases/pick_next_verse.dart';
 
 /// Orquestrador central do app — é o único lugar que conhece todas as
 /// camadas (dados locais, banco de versículos, widget nativo, notificações,
-/// compras). As telas em presentation/ só leem daqui e chamam métodos daqui;
+/// agendamento). As telas em presentation/ só leem daqui e chamam métodos daqui;
 /// nenhuma tela acessa Hive, o widget nativo ou a loja diretamente.
 class AppState extends ChangeNotifier {
   final VerseRepository verseRepository;
@@ -24,7 +23,6 @@ class AppState extends ChangeNotifier {
   final AppLocalStore localStore;
   final WidgetSyncService widgetSync;
   final NotificationService notifications;
-  final PurchaseService purchases;
   final PickNextVerseUseCase pickNextVerse;
   final MatchVerseForInputUseCase matchVerseForInput;
   final NativeWidgetScheduler scheduler;
@@ -35,7 +33,6 @@ class AppState extends ChangeNotifier {
     required this.localStore,
     required this.widgetSync,
     required this.notifications,
-    required this.purchases,
     NativeWidgetScheduler? scheduler,
     PickNextVerseUseCase? pickNextVerseUseCase,
     MatchVerseForInputUseCase? matchVerseForInputUseCase,
@@ -69,38 +66,66 @@ class AppState extends ChangeNotifier {
     currentVerse = (savedId != null ? _byId[savedId] : null) ??
         (_allVerses.isNotEmpty ? _allVerses.first : null);
 
-    await widgetSync.init();
-    await notifications.init();
-    await purchases.init(initiallyPremium: settings.premium);
-    purchases.isPremium.addListener(_onPremiumChanged);
-    await scheduler.apply(settings.frequency);
-
-    if (currentVerse != null) {
-      await _persistCurrentVerse(currentVerse!, HistorySource.widget,
-          alreadyHappened: history.isNotEmpty);
-    }
-    if (settings.dailyNotificationEnabled) {
-      await notifications.scheduleDaily(settings.dailyNotificationTime);
+    if (currentVerse != null && history.isEmpty) {
+      await _appendHistory(currentVerse!.id, HistorySource.widget);
     }
 
     _loading = false;
     notifyListeners();
+    // Serviços nativos nunca impedem a abertura ou o uso offline do app.
+    unawaited(_syncWidget());
+    unawaited(_syncNotifications());
+    unawaited(_runOptional(
+        'agendamento do widget', () => scheduler.apply(settings.frequency)));
   }
 
-  void _onPremiumChanged() {
-    settings = settings.copyWith(premium: purchases.isPremium.value);
-    unawaited(localStore.writeSettings(settings));
-    notifyListeners();
+  Future<bool>? _widgetReady;
+  Future<bool>? _notificationsReady;
+
+  Future<bool> _runOptional(
+      String service, Future<void> Function() action) async {
+    try {
+      await action().timeout(const Duration(seconds: 10));
+      return true;
+    } catch (error) {
+      debugPrint('Não foi possível atualizar $service: $error');
+      return false;
+    }
+  }
+
+  Future<void> _syncWidget() async {
+    final ready =
+        await (_widgetReady ??= _runOptional('widget', widgetSync.init));
+    if (!ready) {
+      _widgetReady = null;
+      return;
+    }
+    final verse = currentVerse;
+    if (verse != null) {
+      await _runOptional('widget',
+          () => widgetSync.syncCurrentVerse(verse: verse, settings: settings));
+    }
+  }
+
+  Future<void> _syncNotifications() async {
+    final ready = await (_notificationsReady ??=
+        _runOptional('notificações', notifications.init));
+    if (!ready) {
+      _notificationsReady = null;
+      return;
+    }
+    await _runOptional(
+        'notificações',
+        () => settings.dailyNotificationEnabled
+            ? notifications.scheduleDaily(settings.dailyNotificationTime)
+            : notifications.cancelDaily());
   }
 
   Verse? verseById(String id) => _byId[id];
 
   /// Favoritos como objetos Verse completos (seção 15 do briefing).
   List<Verse> favoritesAsVerses() {
-    return favoriteIds
-        .map((id) => _byId[id])
-        .whereType<Verse>()
-        .toList();
+    return favoriteIds.map((id) => _byId[id]).whereType<Verse>().toList();
   }
 
   /// Histórico como pares (versículo, registro), do mais recente para o
@@ -166,18 +191,13 @@ class AppState extends ChangeNotifier {
     settings = update(settings);
     await localStore.writeSettings(settings);
 
-    if (settings.frequency != previousFrequency) {
-      await scheduler.apply(settings.frequency);
-    }
-    if (settings.dailyNotificationEnabled) {
-      await notifications.scheduleDaily(settings.dailyNotificationTime);
-    } else {
-      await notifications.cancelDaily();
-    }
-    if (currentVerse != null) {
-      await widgetSync.syncCurrentVerse(verse: currentVerse!, settings: settings);
-    }
     notifyListeners();
+    if (settings.frequency != previousFrequency) {
+      unawaited(_runOptional(
+          'agendamento do widget', () => scheduler.apply(settings.frequency)));
+    }
+    unawaited(_syncNotifications());
+    unawaited(_syncWidget());
   }
 
   Future<void> markOnboarded() async {
@@ -196,19 +216,8 @@ class AppState extends ChangeNotifier {
     if (!alreadyInHistory) {
       await _appendHistory(verse.id, source);
     }
-    await widgetSync.syncCurrentVerse(verse: verse, settings: settings);
     notifyListeners();
-  }
-
-  Future<void> _persistCurrentVerse(
-    Verse verse,
-    HistorySource source, {
-    bool alreadyHappened = false,
-  }) async {
-    if (!alreadyHappened) {
-      await _appendHistory(verse.id, source);
-    }
-    await widgetSync.syncCurrentVerse(verse: verse, settings: settings);
+    unawaited(_syncWidget());
   }
 
   Future<void> _appendHistory(String verseId, HistorySource source) async {
@@ -220,12 +229,4 @@ class AppState extends ChangeNotifier {
     await localStore.appendHistory(entry);
     history = localStore.readHistory();
   }
-
-  @override
-  void dispose() {
-    purchases.isPremium.removeListener(_onPremiumChanged);
-    purchases.dispose();
-    super.dispose();
-  }
 }
-

@@ -1,7 +1,7 @@
 name: versiculo_na_tela
 description: "Um versículo bíblico sempre visível na tela do celular."
 publish_to: 'none'
-version: 0.1.0+1
+version: 0.1.1+2
 
 environment:
   sdk: '>=3.3.0 <4.0.0'
@@ -28,10 +28,6 @@ dependencies:
   # de cada plataforma por baixo)
   flutter_local_notifications: ^17.2.3
   timezone: ^0.9.4
-
-  # Compra única vitalícia — usa StoreKit (iOS) e Google Play Billing (Android)
-  # por baixo; é o plugin oficial mantido pelo time do Flutter para IAP.
-  in_app_purchase: ^3.2.0
 
   # Compartilhar a imagem gerada do versículo pelos recursos nativos do SO
   share_plus: ^10.0.2
