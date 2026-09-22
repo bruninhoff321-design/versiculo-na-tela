@@ -33,10 +33,15 @@ jobs:
       # O flutter create gera uma versão antiga do plugin Kotlin (1.7.x),
       # incompatível com o Jetpack Compose usado pelo widget (que exige
       # Kotlin 1.9.24). Corrige a versão diretamente no arquivo gerado.
-      - name: Atualizar a versão do Kotlin Gradle Plugin
+      - name: Atualizar Kotlin, Android Gradle Plugin e Gradle
         run: |
           sed -i 's/id "org.jetbrains.kotlin.android" version "[^"]*"/id "org.jetbrains.kotlin.android" version "1.9.24"/' android/settings.gradle
-          grep kotlin.android android/settings.gradle
+          sed -i 's/id "com.android.application" version "[^"]*"/id "com.android.application" version "8.1.4"/' android/settings.gradle
+          sed -i -E 's/gradle-[0-9.]+-all\.zip/gradle-8.4-all.zip/' android/gradle/wrapper/gradle-wrapper.properties
+          echo "----- android/settings.gradle -----"
+          cat android/settings.gradle
+          echo "----- android/gradle/wrapper/gradle-wrapper.properties -----"
+          cat android/gradle/wrapper/gradle-wrapper.properties
 
       - run: flutter pub get
 
