@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../domain/models/app_settings.dart';
-import '../shared/app_shell.dart';
 import '../state/app_state.dart';
 
 /// Onboarding de 5 telas — seção 21 do briefing, texto praticamente
@@ -20,14 +19,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Future<void> _finish() async {
     final app = context.read<AppState>();
+    // O widget raiz troca o onboarding pela Home ao observar `onboarded`.
+    // Empilhar outra rota aqui criava duas Homes e um botão Voltar confuso.
     await app.markOnboarded();
-    if (!mounted) return;
-    // A Home já mostra o cartão "O que você precisa ouvir?" em destaque
-    // (seção 2), então basta levar para a casca principal — sem precisar
-    // empilhar uma segunda navegação sobre o mesmo context.
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => const AppShell()),
-    );
   }
 
   @override
@@ -77,7 +71,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         setState(() => _step++);
                       }
                     },
-                    child: Text(_step == _totalSteps - 1 ? 'Começar' : 'Continuar'),
+                    child: Text(
+                        _step == _totalSteps - 1 ? 'Começar' : 'Continuar'),
                   ),
                 ],
               ),
