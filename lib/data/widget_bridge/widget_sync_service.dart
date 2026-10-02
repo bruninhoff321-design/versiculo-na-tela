@@ -1,5 +1,7 @@
 import 'package:home_widget/home_widget.dart';
 
+import 'lock_wallpaper_service.dart';
+
 import '../../domain/models/app_settings.dart';
 import '../../domain/models/verse.dart';
 
@@ -29,18 +31,31 @@ class WidgetSyncService {
     await HomeWidget.setAppGroupId(iosAppGroupId);
   }
 
+  Future<String?> readCurrentVerseId() =>
+      HomeWidget.getWidgetData<String>('verse_id');
+
   Future<void> syncCurrentVerse({
     required Verse verse,
     required AppSettings settings,
   }) async {
+    await HomeWidget.saveWidgetData<String>('verse_id', verse.id);
     await HomeWidget.saveWidgetData<String>('verse_text', verse.text);
     await HomeWidget.saveWidgetData<String>('verse_reference', verse.reference);
-    await HomeWidget.saveWidgetData<String>('widget_theme', settings.widgetTheme.name);
-    await HomeWidget.saveWidgetData<String>('widget_size', settings.widgetSize.name);
+    await HomeWidget.saveWidgetData<String>(
+        'widget_theme', settings.widgetTheme.name);
+    await HomeWidget.saveWidgetData<String>(
+        'widget_size', settings.widgetSize.name);
+    await HomeWidget.saveWidgetData<int>(
+        'no_repeat_count', settings.noRepeat.count);
     await HomeWidget.saveWidgetData<String>(
         'updated_at', DateTime.now().toIso8601String());
 
     await _requestNativeRefresh();
+    try {
+      await LockWallpaperService().refresh();
+    } catch (_) {
+      // O widget funciona também em sistemas sem papel de parede programável.
+    }
   }
 
   Future<void> _requestNativeRefresh() async {
