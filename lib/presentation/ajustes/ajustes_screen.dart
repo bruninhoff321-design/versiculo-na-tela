@@ -147,7 +147,8 @@ class AjustesScreen extends StatelessWidget {
               child: Text(
                 'Todas as Escrituras em português citadas são da Bíblia '
                 'Livre (BLIVRE), Copyright © Diego Santos, Mario Sérgio e '
-                'Marco Teles — sites.google.com/site/biblialivre. Licença '
+                'Marco Teles — edição de fevereiro de 2018, '
+                'https://sites.google.com/site/biblialivre/. Licença '
                 'Creative Commons Atribuição 3.0 Brasil (CC BY 3.0 BR). '
                 'Reprodução permitida desde que devidamente mencionados '
                 'fonte e autores.',
