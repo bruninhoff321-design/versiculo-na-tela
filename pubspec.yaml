@@ -1,7 +1,7 @@
 name: versiculo_na_tela
 description: "Um versículo bíblico sempre visível na tela do celular."
 publish_to: 'none'
-version: 0.1.2+3
+version: 0.1.3+4
 
 environment:
   sdk: '>=3.3.0 <4.0.0'
