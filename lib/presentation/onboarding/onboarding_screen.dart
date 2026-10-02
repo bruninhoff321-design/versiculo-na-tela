@@ -84,13 +84,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       case 0:
         return const _OnboardingText(
           title: 'Uma palavra de Deus para o seu dia.',
-          body: 'Abra o app, leia o versículo e toque para receber outra palavra quando quiser.',
+          body:
+              'Abra o app, leia o versículo e toque para receber outra palavra quando quiser.',
         );
       default:
         return const _OnboardingText(
           title: 'Leve o versículo com você.',
-          body: 'Na tela principal, toque em "Mostrar na tela de bloqueio". '
-              'Para ver o widget na tela inicial, segure um espaço vazio nela e escolha "Versículo na Tela".',
+          body: 'Em Ajustes, abra “Tela de bloqueio” para mostrar o '
+              'versículo ali. Para colocar o widget na tela inicial, '
+              'segure um espaço vazio nela e escolha “Versículo na Tela”.',
         );
     }
   }
