@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../domain/models/app_settings.dart';
 import '../state/app_state.dart';
 
-/// Onboarding de 5 telas — seção 21 do briefing, texto praticamente
-/// verbatim do documento original.
+/// Duas telas curtas; as opções avançadas ficam em Ajustes.
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
 
@@ -15,7 +13,7 @@ class OnboardingScreen extends StatefulWidget {
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
   int _step = 0;
-  static const _totalSteps = 5;
+  static const _totalSteps = 2;
 
   Future<void> _finish() async {
     final app = context.read<AppState>();
@@ -26,8 +24,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final app = context.watch<AppState>();
-
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -52,7 +48,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 }),
               ),
               const SizedBox(height: 24),
-              Expanded(child: Center(child: _buildStep(app))),
+              Expanded(child: Center(child: _buildStep())),
               const Spacer(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -83,31 +79,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  Widget _buildStep(AppState app) {
+  Widget _buildStep() {
     switch (_step) {
       case 0:
         return const _OnboardingText(
-          title: 'Que bom ter você aqui.',
-          body: 'Vamos preparar o Versículo na Tela em menos de um minuto.',
+          title: 'Uma palavra de Deus para o seu dia.',
+          body: 'Abra o app, leia o versículo e toque para receber outra palavra quando quiser.',
         );
-      case 1:
-        return const _OnboardingText(
-          title: 'Leve uma palavra da Bíblia com você todos os dias.',
-          body: 'Um versículo sempre visível, sem precisar abrir o app.',
-        );
-      case 2:
-        return const _OnboardingText(
-          title: 'Adicione o widget à sua tela inicial.',
-          body: 'Depois de instalar, segure a tela inicial do celular e '
-              'escolha "Versículo na Tela" entre os widgets disponíveis.',
-        );
-      case 3:
-        return _FrequencyStep(app: app);
       default:
         return const _OnboardingText(
-          title: 'Quer receber uma palavra quando precisar?',
-          body: 'A qualquer momento, toque em "O que você precisa ouvir?" '
-              'e conte o que você está vivendo.',
+          title: 'Leve o versículo com você.',
+          body: 'Na tela principal, toque em "Mostrar na tela de bloqueio". '
+              'Para ver o widget na tela inicial, segure um espaço vazio nela e escolha "Versículo na Tela".',
         );
     }
   }
@@ -123,6 +106,11 @@ class _OnboardingText extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Image.asset('assets/brand_icon.png', width: 112, height: 112),
+        ),
+        const SizedBox(height: 24),
         Text(title,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.headlineSmall),
@@ -130,37 +118,6 @@ class _OnboardingText extends StatelessWidget {
         Text(body,
             textAlign: TextAlign.center,
             style: TextStyle(color: Theme.of(context).hintColor)),
-      ],
-    );
-  }
-}
-
-class _FrequencyStep extends StatelessWidget {
-  final AppState app;
-  const _FrequencyStep({required this.app});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text('Quando o versículo deve mudar?',
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.headlineSmall),
-        const SizedBox(height: 16),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          alignment: WrapAlignment.center,
-          children: UpdateFrequency.values.map((f) {
-            return ChoiceChip(
-              label: Text(f.label),
-              selected: app.settings.frequency == f,
-              onSelected: (_) =>
-                  app.updateSettings((s) => s.copyWith(frequency: f)),
-            );
-          }).toList(),
-        ),
       ],
     );
   }
