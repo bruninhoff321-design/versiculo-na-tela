@@ -14,9 +14,20 @@ class DescubraScreen extends StatefulWidget {
 }
 
 class _DescubraScreenState extends State<DescubraScreen> {
+  static const _featured = <(int, String, IconData)>[
+    (4, 'Paz', Icons.spa_outlined),
+    (6, 'Força', Icons.bolt_outlined),
+    (2, 'Proteção', Icons.shield_outlined),
+    (9, 'Família', Icons.people_outline),
+    (8, 'Finanças', Icons.savings_outlined),
+    (15, 'Direção', Icons.explore_outlined),
+    (14, 'Esperança', Icons.wb_sunny_outlined),
+    (5, 'Fé', Icons.auto_stories_outlined),
+  ];
   final Set<int> _selected = {};
   final _textController = TextEditingController();
   ({Verse verse, List<String> matchedThemes})? _result;
+  bool _showMore = false;
 
   @override
   void dispose() {
@@ -35,119 +46,187 @@ class _DescubraScreenState extends State<DescubraScreen> {
       freeText: _textController.text,
     );
     if (result == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Escolha uma situação ou escreva algo primeiro')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Escolha um tema ou escreva o que você precisa.'),
+      ));
       return;
     }
     setState(() => _result = result);
+    FocusScope.of(context).unfocus();
   }
 
   @override
   Widget build(BuildContext context) {
     final app = context.watch<AppState>();
+    final gold = Theme.of(context).colorScheme.primary;
+    final featuredIds = _featured.map((item) => item.$1).toSet();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('O que você precisa ouvir?')),
+      appBar: AppBar(title: const Text('Encontrar uma palavra')),
       body: ListView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
         children: [
-          Text('Escolha uma ou mais situações',
-              style: Theme.of(context).textTheme.labelLarge),
-          const SizedBox(height: 10),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: List.generate(kSituations.length, (i) {
-              final s = kSituations[i];
-              final selected = _selected.contains(i);
-              return FilterChip(
-                label: Text('${s.emoji} ${s.label}'),
-                selected: selected,
-                onSelected: (v) => setState(() {
-                  v ? _selected.add(i) : _selected.remove(i);
-                }),
-              );
-            }),
-          ),
+          Text('O que você precisa hoje?',
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineSmall
+                  ?.copyWith(fontWeight: FontWeight.w800)),
+          const SizedBox(height: 6),
+          const Text('Escolha um tema ou conte com suas palavras.'),
           const SizedBox(height: 20),
-          Text('Ou escreva o que você está vivendo',
-              style: Theme.of(context).textTheme.labelLarge),
-          const SizedBox(height: 10),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: _featured.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 1.65,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+            ),
+            itemBuilder: (context, position) {
+              final (index, label, icon) = _featured[position];
+              final selected = _selected.contains(index);
+              return InkWell(
+                borderRadius: BorderRadius.circular(18),
+                onTap: () => setState(() =>
+                    selected ? _selected.remove(index) : _selected.add(index)),
+                child: Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(
+                        color: selected ? gold : gold.withOpacity(.25),
+                        width: selected ? 2 : 1),
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: selected
+                          ? [const Color(0xFF4C3920), const Color(0xFF263243)]
+                          : [const Color(0xFF253347), const Color(0xFF17212E)],
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Icon(icon, color: gold, size: 25),
+                      Text(label,
+                          style: const TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.w700)),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 12),
+          TextButton.icon(
+            onPressed: () => setState(() => _showMore = !_showMore),
+            icon: Icon(_showMore ? Icons.remove : Icons.add),
+            label: Text(_showMore ? 'Mostrar menos temas' : 'Ver mais temas'),
+          ),
+          if (_showMore) ...[
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (var i = 0; i < kSituations.length; i++)
+                  if (!featuredIds.contains(i))
+                    FilterChip(
+                      label: Text(kSituations[i].label),
+                      selected: _selected.contains(i),
+                      onSelected: (value) => setState(
+                          () => value ? _selected.add(i) : _selected.remove(i)),
+                    ),
+              ],
+            ),
+          ],
+          const SizedBox(height: 18),
           TextField(
             controller: _textController,
-            maxLines: 4,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              hintText:
-                  'Ex: Estou preocupado com meu futuro, estou cheio de contas e não sei o que fazer.',
+            minLines: 1,
+            maxLines: 3,
+            textInputAction: TextInputAction.done,
+            decoration: InputDecoration(
+              prefixIcon: const Icon(Icons.edit_outlined),
+              hintText: 'Ou escreva o que você está sentindo…',
+              filled: true,
+              fillColor: Theme.of(context).colorScheme.surface,
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
             ),
           ),
           const SizedBox(height: 16),
-          FilledButton(
-            onPressed: _find,
-            child: const Text('Encontrar um versículo'),
+          SizedBox(
+            height: 58,
+            child: FilledButton.icon(
+              onPressed: _find,
+              icon: const Icon(Icons.auto_awesome_outlined),
+              label: const Text('Encontrar versículo'),
+            ),
           ),
           if (_result != null) ...[
-            const SizedBox(height: 24),
+            const SizedBox(height: 26),
             Container(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(22),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(20),
+                color: Theme.of(context).colorScheme.surface,
+                border: Border.all(color: gold.withOpacity(.55)),
+                borderRadius: BorderRadius.circular(22),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Talvez você precise ouvir isso hoje.',
+                  Text('UMA REFLEXÃO PARA VOCÊ',
                       style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.primary)),
-                  const SizedBox(height: 12),
+                          color: gold,
+                          letterSpacing: 1.2,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 12)),
+                  const SizedBox(height: 16),
                   Text('“${_result!.verse.text}”',
                       style: Theme.of(context).textTheme.titleLarge),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 12),
                   Text(_result!.verse.reference,
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 14),
-                  Text(
-                    // Seção 13: linguagem acolhedora, nunca "Deus está te dizendo isso".
-                    _result!.matchedThemes.isEmpty
-                        ? 'Escolhi uma reflexão para este momento. Se quiser algo mais específico, selecione uma situação acima.'
-                        : 'Este versículo pode falar sobre '
-                            '${_result!.matchedThemes.take(3).join(", ")}. '
-                            'É uma reflexão para este momento.',
-                    style: TextStyle(color: Theme.of(context).hintColor),
-                  ),
-                  const SizedBox(height: 16),
+                      style:
+                          TextStyle(color: gold, fontWeight: FontWeight.w700)),
+                  const SizedBox(height: 18),
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
                     children: [
-                      OutlinedButton(
+                      OutlinedButton.icon(
                         onPressed: () => app.toggleFavorite(_result!.verse.id),
-                        child: const Text('Favoritar'),
+                        icon: Icon(app.favoriteIds.contains(_result!.verse.id)
+                            ? Icons.favorite
+                            : Icons.favorite_border),
+                        label: Text(app.favoriteIds.contains(_result!.verse.id)
+                            ? 'Salvo'
+                            : 'Favoritar'),
                       ),
-                      OutlinedButton(
+                      OutlinedButton.icon(
                         onPressed: () => shareVerseAsImage(
                           context: context,
                           text: _result!.verse.text,
                           reference: _result!.verse.reference,
                         ),
-                        child: const Text('Compartilhar'),
+                        icon: const Icon(Icons.ios_share),
+                        label: const Text('Compartilhar'),
                       ),
-                      FilledButton(
+                      OutlinedButton.icon(
                         onPressed: () async {
                           await app.putOnWidget(_result!.verse);
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                  content: Text('Colocado no widget')),
+                                  content: Text('Versículo colocado na tela')),
                             );
                           }
                         },
-                        child: const Text('Colocar no widget'),
+                        icon: const Icon(Icons.phone_android_outlined),
+                        label: const Text('Mostrar na tela'),
                       ),
                     ],
                   ),
