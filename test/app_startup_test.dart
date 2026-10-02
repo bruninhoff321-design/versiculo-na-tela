@@ -67,6 +67,8 @@ class _Widget extends WidgetSyncService {
   @override
   Future<void> init() => initialize();
   @override
+  Future<String?> readCurrentVerseId() async => null;
+  @override
   Future<void> syncCurrentVerse(
       {required Verse verse, required AppSettings settings}) async {
     syncs++;
