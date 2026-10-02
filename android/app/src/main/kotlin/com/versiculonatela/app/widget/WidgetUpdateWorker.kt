@@ -3,6 +3,7 @@ package com.versiculonatela.app.widget
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
+import android.util.JsonReader
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.WorkManager
@@ -10,7 +11,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.ExistingPeriodicWorkPolicy
 import java.util.concurrent.TimeUnit
 import es.antonborri.home_widget.HomeWidgetPlugin
-import org.json.JSONArray
+import java.io.InputStreamReader
 import kotlin.random.Random
 
 /**
@@ -54,29 +55,69 @@ class WidgetUpdateWorker(context: Context, params: WorkerParameters) :
 
     private fun rotateVerse() {
         val prefs = HomeWidgetPlugin.getData(applicationContext)
-        val json = applicationContext.assets.open("flutter_assets/assets/verses.json")
-            .bufferedReader().use { JSONArray(it.readText()) }
-        if (json.length() < 2) return
-
         val current = prefs.getString("verse_id", null)
         val recent = prefs.getString("recent_verse_ids", "")
             .orEmpty().split(',').filter { it.isNotBlank() }
         val noRepeat = prefs.getInt("no_repeat_count", 20).coerceAtLeast(0)
         val excluded = recent.takeLast(noRepeat).toSet() + current
-        val eligible = (0 until json.length()).filter {
-            json.getJSONObject(it).getString("id") !in excluded
-        }.ifEmpty {
-            (0 until json.length()).filter { json.getJSONObject(it).getString("id") != current }
-        }
-        val next = json.getJSONObject(eligible[Random.nextInt(eligible.size)])
-        val id = next.getString("id")
+        // Lê o arquivo em fluxo: a Bíblia completa não deve ocupar dezenas de
+        // megabytes de memória toda vez que o Android atualizar o widget.
+        val next = pickRandomVerse(excluded)
+            ?: pickRandomVerse(setOfNotNull(current))
+            ?: return
+        val id = next.id
         val history = (recent + listOfNotNull(current)).takeLast(100)
         prefs.edit()
             .putString("verse_id", id)
-            .putString("verse_text", next.getString("text"))
-            .putString("verse_reference", "${next.getString("book")} ${next.getInt("chapter")}:${next.getInt("verse")}")
+            .putString("verse_text", next.text)
+            .putString("verse_reference", "${next.book} ${next.chapter}:${next.verse}")
             .putString("recent_verse_ids", history.joinToString(","))
             .apply()
+    }
+
+    private data class VerseData(
+        val id: String,
+        val book: String,
+        val chapter: Int,
+        val verse: Int,
+        val text: String,
+    )
+
+    private fun pickRandomVerse(excluded: Set<String?>): VerseData? {
+        var chosen: VerseData? = null
+        var eligibleCount = 0
+        applicationContext.assets.open("flutter_assets/assets/verses.json").use { stream ->
+            JsonReader(InputStreamReader(stream, Charsets.UTF_8)).use { reader ->
+                reader.beginArray()
+                while (reader.hasNext()) {
+                    var id = ""
+                    var book = ""
+                    var chapter = 0
+                    var verse = 0
+                    var text = ""
+                    reader.beginObject()
+                    while (reader.hasNext()) {
+                        when (reader.nextName()) {
+                            "id" -> id = reader.nextString()
+                            "book" -> book = reader.nextString()
+                            "chapter" -> chapter = reader.nextInt()
+                            "verse" -> verse = reader.nextInt()
+                            "text" -> text = reader.nextString()
+                            else -> reader.skipValue()
+                        }
+                    }
+                    reader.endObject()
+                    if (id !in excluded) {
+                        eligibleCount++
+                        if (Random.nextInt(eligibleCount) == 0) {
+                            chosen = VerseData(id, book, chapter, verse, text)
+                        }
+                    }
+                }
+                reader.endArray()
+            }
+        }
+        return chosen
     }
 
     companion object {
