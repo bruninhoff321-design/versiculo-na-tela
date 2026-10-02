@@ -36,7 +36,8 @@ class _DescubraScreenState extends State<DescubraScreen> {
     );
     if (result == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Escolha uma situação ou escreva algo primeiro')),
+        const SnackBar(
+            content: Text('Escolha uma situação ou escreva algo primeiro')),
       );
       return;
     }
@@ -112,10 +113,11 @@ class _DescubraScreenState extends State<DescubraScreen> {
                   const SizedBox(height: 14),
                   Text(
                     // Seção 13: linguagem acolhedora, nunca "Deus está te dizendo isso".
-                    'Este versículo pode falar sobre '
-                    '${_result!.matchedThemes.take(3).join(", ")}. '
-                    'Não é uma mensagem exclusiva para você — é uma reflexão '
-                    'para este momento.',
+                    _result!.matchedThemes.isEmpty
+                        ? 'Escolhi uma reflexão para este momento. Se quiser algo mais específico, selecione uma situação acima.'
+                        : 'Este versículo pode falar sobre '
+                            '${_result!.matchedThemes.take(3).join(", ")}. '
+                            'É uma reflexão para este momento.',
                     style: TextStyle(color: Theme.of(context).hintColor),
                   ),
                   const SizedBox(height: 16),
@@ -124,8 +126,7 @@ class _DescubraScreenState extends State<DescubraScreen> {
                     runSpacing: 8,
                     children: [
                       OutlinedButton(
-                        onPressed: () =>
-                            app.toggleFavorite(_result!.verse.id),
+                        onPressed: () => app.toggleFavorite(_result!.verse.id),
                         child: const Text('Favoritar'),
                       ),
                       OutlinedButton(
@@ -141,7 +142,8 @@ class _DescubraScreenState extends State<DescubraScreen> {
                           await app.putOnWidget(_result!.verse);
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Colocado no widget')),
+                              const SnackBar(
+                                  content: Text('Colocado no widget')),
                             );
                           }
                         },
