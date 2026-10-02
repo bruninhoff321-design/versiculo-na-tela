@@ -66,6 +66,21 @@ void main() {
       expect(result!.matchedThemes, isEmpty);
     });
 
+    test('descrição livre não escolhe texto sem curadoria temática', () {
+      final useCase = MatchVerseForInputUseCase();
+      final result = useCase(
+        allVerses: [
+          _v('sem_tema', []),
+          _v('paz1', ['paz'])
+        ],
+        selectedThemeIds: {},
+        freeText: 'preciso de uma palavra hoje',
+        synonyms: const {},
+        recentHistory: const [],
+      );
+      expect(result?.verse.id, 'paz1');
+    });
+
     test('normalize() ignora acentuação e caixa', () {
       expect(MatchVerseForInputUseCase.normalize('AnsIEDADE'), 'ansiedade');
       expect(MatchVerseForInputUseCase.normalize('Solidão'), 'solidao');
