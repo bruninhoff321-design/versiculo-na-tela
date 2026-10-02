@@ -83,7 +83,7 @@ class AjustesScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 6),
-                    Text(t.label, style: const TextStyle(fontSize: 11)),
+                    Text(t.label, style: const TextStyle(fontSize: 14)),
                   ],
                 ),
               ),
@@ -180,6 +180,6 @@ class _Hint extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(text,
-        style: TextStyle(fontSize: 12.5, color: Theme.of(context).hintColor));
+        style: TextStyle(fontSize: 14.5, color: Theme.of(context).hintColor));
   }
 }
