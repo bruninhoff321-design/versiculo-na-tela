@@ -1,19 +1,18 @@
-# assets/verses.json — ATENÇÃO
+# Texto bíblico embarcado
 
-O `verses.json` incluído aqui é uma AMOSTRA de 34 versículos com
-`"translationId": "placeholder-amostra"`, escrita como texto de
-desenvolvimento/teste — NÃO é a transcrição literal da Bíblia Livre
-(BLIVRE).
+`verses.json` contém os 31.102 versículos dos 66 livros da edição
+Textus Receptus 2018.2.0 da Bíblia Livre (BLIVRE), importados sem
+reescrever o texto. `curated_tags.json` contém apenas classificações
+temáticas de 36 referências para a função de busca por situação; essas
+classificações não fazem parte da tradução.
 
-Antes de publicar o app nas lojas:
+Para reproduzir o arquivo, baixe `bliv-tr_vpl.zip` da [versão
+2018.2.0](https://github.com/blivre/BibliaLivre/releases/tag/2018.2.0) e rode:
 
-1. Baixe o texto-fonte real (ver LICENCIAMENTO-TRADUCAO.md na raiz do
-   projeto).
-2. Rode `scripts/converter_blivre_tsv.py` para gerar um `verses.json`
-   completo a partir do texto licenciado de verdade.
-3. Revise os temas sugeridos automaticamente antes de considerar o banco
-   pronto para produção.
-4. Substitua este arquivo pelo gerado no passo 2.
+```text
+python scripts/importar_biblia_livre.py caminho/bliv-tr_vpl.zip
+```
 
-O schema (campos e formato) já é o definitivo — só o conteúdo de texto
-desta amostra é temporário.
+O importador confere o SHA-256 do arquivo-fonte, 31.102 referências
+distintas e 66 livros. Veja `LICENCIAMENTO-TRADUCAO.md` para o crédito
+obrigatório.
