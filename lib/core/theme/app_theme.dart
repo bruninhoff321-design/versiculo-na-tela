@@ -32,6 +32,10 @@ class AppTheme {
         surface: AppColors.claroSurface,
       ),
       textTheme: GoogleFonts.manropeTextTheme(base.textTheme).copyWith(
+        bodyMedium: GoogleFonts.manrope(fontSize: 16, height: 1.4),
+        bodyLarge: GoogleFonts.manrope(fontSize: 18, height: 1.4),
+        labelLarge: GoogleFonts.manrope(
+            fontSize: 16, fontWeight: FontWeight.w700),
         displayLarge: GoogleFonts.fraunces(
           fontSize: 28,
           fontStyle: FontStyle.italic,
@@ -57,6 +61,10 @@ class AppTheme {
         surface: AppColors.escuroSurface,
       ),
       textTheme: GoogleFonts.manropeTextTheme(base.textTheme).copyWith(
+        bodyMedium: GoogleFonts.manrope(fontSize: 16, height: 1.4),
+        bodyLarge: GoogleFonts.manrope(fontSize: 18, height: 1.4),
+        labelLarge: GoogleFonts.manrope(
+            fontSize: 16, fontWeight: FontWeight.w700),
         displayLarge: GoogleFonts.fraunces(
           fontSize: 28,
           fontStyle: FontStyle.italic,
