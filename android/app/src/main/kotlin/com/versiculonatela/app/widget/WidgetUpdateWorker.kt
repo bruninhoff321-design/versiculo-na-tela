@@ -9,6 +9,9 @@ import androidx.work.WorkManager
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.ExistingPeriodicWorkPolicy
 import java.util.concurrent.TimeUnit
+import es.antonborri.home_widget.HomeWidgetPlugin
+import org.json.JSONArray
+import kotlin.random.Random
 
 /**
  * Agendamento da PREFERÊNCIA de atualização (seção 5 do briefing).
@@ -27,6 +30,7 @@ class WidgetUpdateWorker(context: Context, params: WorkerParameters) :
 
     override suspend fun doWork(): Result {
         return try {
+            rotateVerse()
             val manager = AppWidgetManager.getInstance(applicationContext)
             val component = ComponentName(applicationContext, VersiculoWidgetReceiver::class.java)
             val ids = manager.getAppWidgetIds(component)
@@ -37,10 +41,42 @@ class WidgetUpdateWorker(context: Context, params: WorkerParameters) :
                     manager.updateAppWidget(id, views)
                 }
             }
+            try {
+                LockScreenWallpaper.update(applicationContext)
+            } catch (_: Exception) {
+                // O fabricante pode negar a troca; o widget ainda foi atualizado.
+            }
             Result.success()
         } catch (e: Exception) {
             Result.retry()
         }
+    }
+
+    private fun rotateVerse() {
+        val prefs = HomeWidgetPlugin.getData(applicationContext)
+        val json = applicationContext.assets.open("flutter_assets/assets/verses.json")
+            .bufferedReader().use { JSONArray(it.readText()) }
+        if (json.length() < 2) return
+
+        val current = prefs.getString("verse_id", null)
+        val recent = prefs.getString("recent_verse_ids", "")
+            .orEmpty().split(',').filter { it.isNotBlank() }
+        val noRepeat = prefs.getInt("no_repeat_count", 20).coerceAtLeast(0)
+        val excluded = recent.takeLast(noRepeat).toSet() + current
+        val eligible = (0 until json.length()).filter {
+            json.getJSONObject(it).getString("id") !in excluded
+        }.ifEmpty {
+            (0 until json.length()).filter { json.getJSONObject(it).getString("id") != current }
+        }
+        val next = json.getJSONObject(eligible[Random.nextInt(eligible.size)])
+        val id = next.getString("id")
+        val history = (recent + listOfNotNull(current)).takeLast(100)
+        prefs.edit()
+            .putString("verse_id", id)
+            .putString("verse_text", next.getString("text"))
+            .putString("verse_reference", "${next.getString("book")} ${next.getInt("chapter")}:${next.getInt("verse")}")
+            .putString("recent_verse_ids", history.joinToString(","))
+            .apply()
     }
 
     companion object {
