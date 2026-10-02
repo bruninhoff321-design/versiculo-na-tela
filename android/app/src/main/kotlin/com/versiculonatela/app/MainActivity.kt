@@ -1,6 +1,7 @@
 package com.versiculonatela.app
 
 import com.versiculonatela.app.widget.WidgetUpdateWorker
+import com.versiculonatela.app.widget.LockScreenWallpaper
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -23,6 +24,28 @@ class MainActivity : FlutterActivity() {
                         val minutes = call.argument<Int>("minutes")
                         WidgetUpdateWorker.schedule(applicationContext, minutes)
                         result.success(null)
+                    }
+                    "lockWallpaperEnabled" -> result.success(
+                        LockScreenWallpaper.isEnabled(applicationContext)
+                    )
+                    "setLockWallpaperEnabled" -> {
+                        try {
+                            LockScreenWallpaper.setEnabled(
+                                applicationContext,
+                                call.argument<Boolean>("enabled") == true
+                            )
+                            result.success(null)
+                        } catch (error: Exception) {
+                            result.error("wallpaper_failed", error.message, null)
+                        }
+                    }
+                    "refreshLockWallpaper" -> {
+                        try {
+                            LockScreenWallpaper.update(applicationContext)
+                            result.success(null)
+                        } catch (error: Exception) {
+                            result.error("wallpaper_failed", error.message, null)
+                        }
                     }
                     else -> result.notImplemented()
                 }
