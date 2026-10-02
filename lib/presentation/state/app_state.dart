@@ -66,6 +66,7 @@ class AppState extends ChangeNotifier {
 
     final savedId = localStore.readCurrentVerseId();
     currentVerse = (savedId != null ? _byId[savedId] : null) ??
+        _byId['sal.23.1'] ??
         (_allVerses.isNotEmpty ? _allVerses.first : null);
 
     if (currentVerse != null && history.isEmpty) {
