@@ -57,7 +57,8 @@ class MatchVerseForInputUseCase {
       });
     }
 
-    if (themes.isEmpty || allVerses.isEmpty) return null;
+    if (allVerses.isEmpty || (themes.isEmpty && normalizedText.trim().isEmpty))
+      return null;
 
     final recentIds = recentHistory.length <= recentWindow
         ? recentHistory.map((h) => h.verseId).toSet()
@@ -72,8 +73,20 @@ class MatchVerseForInputUseCase {
 
     for (final verse in allVerses) {
       final matched = verse.themes.where(themes.contains).toSet();
-      if (matched.isEmpty) continue;
+      if (matched.isEmpty && themes.isNotEmpty) continue;
       var score = matched.length.toDouble();
+      // Texto livre continua funcionando mesmo quando não contém uma palavra
+      // prevista na taxonomia. As palavras cadastradas nos próprios versos
+      // ajudam a escolher uma reflexão relacionada, sem gerar texto bíblico.
+      if (themes.isEmpty) {
+        final words = normalizedText
+            .split(RegExp(r'[^a-z0-9]+'))
+            .where((word) => word.length >= 4)
+            .toSet();
+        score += verse.keywords
+            .where((keyword) => words.contains(normalize(keyword)))
+            .length;
+      }
       if (recentIds.contains(verse.id)) score -= 0.4; // prioriza não repetidos
       score += _random.nextDouble() * 0.01; // desempata sem viés fixo
       if (score > bestScore) {
