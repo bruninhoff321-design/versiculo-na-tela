@@ -170,6 +170,8 @@ void main() {
       value: app,
       child: const MaterialApp(home: Scaffold(body: AjustesScreen())),
     ));
+    await tester.tap(find.text('Aparência do widget'));
+    await tester.pumpAndSettle();
     for (final theme in WidgetVisualTheme.values) {
       await tester.tap(find.text(theme.label));
       await tester.pump();
