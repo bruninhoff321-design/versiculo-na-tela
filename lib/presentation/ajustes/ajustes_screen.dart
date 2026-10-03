@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../core/theme/app_theme.dart';
 import '../../domain/models/app_settings.dart';
 import '../state/app_state.dart';
+import '../shared/widget_setup.dart';
 
 class AjustesScreen extends StatelessWidget {
   const AjustesScreen({super.key});
@@ -89,7 +90,24 @@ class AjustesScreen extends StatelessWidget {
                 style: TextStyle(fontSize: 13)),
           ],
         ),
-        section(
+                section(
+          title: 'Versículo na tela inicial',
+          subtitle: 'Adicionar o widget em um toque',
+          icon: Icons.add_to_home_screen_rounded,
+          children: [
+            const Text('Mostre o versículo sobre a foto da sua tela inicial.'),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                onPressed: () => addWidgetToHome(context),
+                icon: const Icon(Icons.add_rounded),
+                label: const Text('Ativar na tela inicial'),
+              ),
+            ),
+          ],
+        ),
+section(
           title: 'Tela de bloqueio',
           subtitle: app.lockWallpaperEnabled ? 'Ativada' : 'Desativada',
           icon: Icons.lock_outline_rounded,
