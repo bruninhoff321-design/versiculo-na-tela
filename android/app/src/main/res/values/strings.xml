@@ -1,3 +1,4 @@
 <resources>
     <string name="widget_description">Mostra um versículo bíblico direto na sua tela inicial.</string>
+    <string name="compact_widget_description">Versículo pequeno, com fundo discreto, para a tela inicial ou o LockStar.</string>
 </resources>
