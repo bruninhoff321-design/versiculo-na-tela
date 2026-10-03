@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:home_widget/home_widget.dart';
 
 import 'lock_wallpaper_service.dart';
@@ -25,6 +27,8 @@ class WidgetSyncService {
 
   static const String androidWidgetReceiver =
       'com.versiculonatela.app.widget.VersiculoWidgetReceiver';
+  static const String androidCompactWidgetReceiver =
+      'com.versiculonatela.app.widget.VersiculoCompactWidgetReceiver';
   static const String iosWidgetKind = 'VersiculoWidget';
 
   Future<void> init() async {
@@ -66,5 +70,10 @@ class WidgetSyncService {
       qualifiedAndroidName: androidWidgetReceiver,
       iOSName: iosWidgetKind,
     );
+    if (Platform.isAndroid) {
+      await HomeWidget.updateWidget(
+        qualifiedAndroidName: androidCompactWidgetReceiver,
+      );
+    }
   }
 }
