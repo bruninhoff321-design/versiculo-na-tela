@@ -39,3 +39,33 @@ Future<void> addWidgetToHome(BuildContext context) async {
     ),
   );
 }
+/// A Samsung controla quais widgets aparecem no espaço abaixo do relógio.
+Future<void> showLockScreenWidgetGuide(BuildContext context) async {
+  await showDialog<void>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Versículo pequeno na tela de bloqueio'),
+      content: const SingleChildScrollView(
+        child: Text(
+          'O espaço abaixo do relógio é controlado pela Samsung. '
+          'Se “Versículo na Tela” não aparece na lista comum, tente pelo '
+          'Good Lock da Samsung:\n\n'
+          '1. Abra Good Lock e entre em LockStar.\n\n'
+          '2. Edite a tela de bloqueio e toque em adicionar widget.\n\n'
+          '3. Procure “Versículo na Tela (compacto)” e ajuste abaixo do relógio.\n\n'
+          'Se o LockStar não estiver disponível no seu A33 ou não listar o '
+          'widget, essa posição não pode ser ativada pelo app. A opção de '
+          'papel de parede abaixo substitui a foto; deixe-a desligada para '
+          'preservar sua imagem. Se já foi usada, escolha sua foto novamente '
+          'em “Papéis de parede”.',
+        ),
+      ),
+      actions: [
+        FilledButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Entendi'),
+        ),
+      ],
+    ),
+  );
+}
