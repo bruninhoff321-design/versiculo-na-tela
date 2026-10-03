@@ -42,6 +42,19 @@ class WidgetUpdateWorker(context: Context, params: WorkerParameters) :
                     manager.updateAppWidget(id, views)
                 }
             }
+            val compactComponent = ComponentName(
+                applicationContext, VersiculoCompactWidgetReceiver::class.java
+            )
+            val compactIds = manager.getAppWidgetIds(compactComponent)
+            if (compactIds.isNotEmpty()) {
+                val data = WidgetPreferences.read(applicationContext)
+                for (id in compactIds) {
+                    manager.updateAppWidget(
+                        id,
+                        VersiculoCompactWidgetReceiver.buildRemoteViews(applicationContext, data),
+                    )
+                }
+            }
             try {
                 LockScreenWallpaper.update(applicationContext)
             } catch (_: Exception) {
