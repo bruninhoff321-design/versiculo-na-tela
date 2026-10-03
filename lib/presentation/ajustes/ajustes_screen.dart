@@ -90,7 +90,7 @@ class AjustesScreen extends StatelessWidget {
                 style: TextStyle(fontSize: 13)),
           ],
         ),
-                section(
+        section(
           title: 'Versículo na tela inicial',
           subtitle: 'Adicionar o widget em um toque',
           icon: Icons.add_to_home_screen_rounded,
@@ -109,18 +109,39 @@ class AjustesScreen extends StatelessWidget {
         ),
 section(
           title: 'Tela de bloqueio',
-          subtitle: app.lockWallpaperEnabled ? 'Ativada' : 'Desativada',
+          subtitle: 'Versículo pequeno sem cobrir sua foto',
           icon: Icons.lock_outline_rounded,
           children: [
+            const Text(
+              'No Samsung, o espaço abaixo do relógio aceita apenas os widgets '
+              'que o sistema oferece. Veja como testar a versão compacta pelo LockStar.',
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                onPressed: () => showLockScreenWidgetGuide(context),
+                icon: const Icon(Icons.widgets_outlined),
+                label: const Text('Como colocar abaixo do relógio'),
+              ),
+            ),
+            const Divider(height: 32),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
-              title: const Text('Mostrar versículo na tela de bloqueio'),
+              title: const Text('Usar imagem do app no bloqueio'),
               subtitle: const Text(
-                  'O app atualiza o papel de parede da tela de bloqueio.'),
+                  'Substitui sua foto por um fundo com o versículo. Desligar não restaura a foto anterior.'),
               value: app.lockWallpaperEnabled,
               onChanged: (enabled) async {
                 try {
                   await app.setLockWallpaperEnabled(enabled);
+                  if (!enabled && context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text(
+                        'Para voltar à sua foto, escolha-a novamente em Papéis de parede.',
+                      ),
+                    ));
+                  }
                 } catch (_) {
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
