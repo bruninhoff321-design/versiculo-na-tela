@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:gravity="center"
     android:padding="16dp"
-    android:background="#F7F4EC">
+    android:background="#64F7F4EC">
 
     <TextView
         android:id="@+id/widget_verse_text"
@@ -15,6 +15,10 @@
         android:gravity="center"
         android:textSize="16sp"
         android:textStyle="italic"
+        android:shadowColor="#E0000000"
+        android:shadowDx="1"
+        android:shadowDy="2"
+        android:shadowRadius="4"
         android:maxLines="6"
         android:ellipsize="end"
         android:text="" />
@@ -27,6 +31,10 @@
         android:gravity="center"
         android:textSize="14sp"
         android:textStyle="bold"
+        android:shadowColor="#E0000000"
+        android:shadowDx="1"
+        android:shadowDy="2"
+        android:shadowRadius="4"
         android:text="" />
 
 </LinearLayout>
