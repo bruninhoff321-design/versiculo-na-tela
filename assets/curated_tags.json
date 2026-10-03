@@ -1,0 +1,400 @@
+{
+  "sal.23.1": {
+    "themes": [
+      "paz",
+      "fe"
+    ],
+    "keywords": [
+      "medo",
+      "protecao",
+      "paz",
+      "confianca"
+    ]
+  },
+  "mat.11.28": {
+    "themes": [
+      "cansaco",
+      "paz"
+    ],
+    "keywords": [
+      "cansado",
+      "cansaco",
+      "sobrecarregado",
+      "descanso"
+    ]
+  },
+  "fil.4.13": {
+    "themes": [
+      "forca",
+      "proposito"
+    ],
+    "keywords": [
+      "forca",
+      "dificuldade",
+      "desafio"
+    ]
+  },
+  "isa.41.10": {
+    "themes": [
+      "medo",
+      "forca"
+    ],
+    "keywords": [
+      "medo",
+      "ansiedade",
+      "sozinho"
+    ]
+  },
+  "pro.3.5": {
+    "themes": [
+      "decisao",
+      "fe"
+    ],
+    "keywords": [
+      "decisao",
+      "duvida",
+      "escolha"
+    ]
+  },
+  "sal.34.18": {
+    "themes": [
+      "tristeza",
+      "luto"
+    ],
+    "keywords": [
+      "triste",
+      "tristeza",
+      "dor",
+      "perda"
+    ]
+  },
+  "jos.1.9": {
+    "themes": [
+      "medo",
+      "forca",
+      "decisao"
+    ],
+    "keywords": [
+      "medo",
+      "coragem",
+      "mudanca"
+    ]
+  },
+  "sal.55.22": {
+    "themes": [
+      "ansiedade",
+      "trabalho",
+      "dinheiro"
+    ],
+    "keywords": [
+      "ansiedade",
+      "carga",
+      "peso",
+      "dinheiro",
+      "contas"
+    ]
+  },
+  "sal.37.5": {
+    "themes": [
+      "decisao",
+      "fe",
+      "esperanca"
+    ],
+    "keywords": [
+      "futuro",
+      "incerteza",
+      "planos"
+    ]
+  },
+  "rom.8.28": {
+    "themes": [
+      "esperanca",
+      "fe"
+    ],
+    "keywords": [
+      "esperanca",
+      "sentido",
+      "proposito"
+    ]
+  },
+  "mat.6.34": {
+    "themes": [
+      "ansiedade"
+    ],
+    "keywords": [
+      "ansiedade",
+      "preocupacao",
+      "amanha"
+    ]
+  },
+  "fil.4.6": {
+    "themes": [
+      "ansiedade",
+      "paz"
+    ],
+    "keywords": [
+      "ansiedade",
+      "preocupacao",
+      "oracao"
+    ]
+  },
+  "1pe.5.7": {
+    "themes": [
+      "ansiedade"
+    ],
+    "keywords": [
+      "ansiedade",
+      "preocupacao",
+      "cuidado"
+    ]
+  },
+  "sal.121.1": {
+    "themes": [
+      "solidao"
+    ],
+    "keywords": [
+      "ajuda",
+      "sozinho",
+      "socorro"
+    ]
+  },
+  "jer.29.11": {
+    "themes": [
+      "esperanca",
+      "proposito"
+    ],
+    "keywords": [
+      "futuro",
+      "esperanca",
+      "planos",
+      "proposito"
+    ]
+  },
+  "sal.46.1": {
+    "themes": [
+      "medo",
+      "fase_dificil"
+    ],
+    "keywords": [
+      "angustia",
+      "medo",
+      "refugio"
+    ]
+  },
+  "joa.14.27": {
+    "themes": [
+      "paz"
+    ],
+    "keywords": [
+      "paz",
+      "turbacao",
+      "calma"
+    ]
+  },
+  "pro.17.22": {
+    "themes": [
+      "tristeza"
+    ],
+    "keywords": [
+      "triste",
+      "tristeza",
+      "alegria"
+    ]
+  },
+  "sal.30.5": {
+    "themes": [
+      "tristeza",
+      "esperanca",
+      "luto"
+    ],
+    "keywords": [
+      "choro",
+      "tristeza",
+      "luto",
+      "noite"
+    ]
+  },
+  "lam.3.22": {
+    "themes": [
+      "esperanca",
+      "recomeco"
+    ],
+    "keywords": [
+      "recomeco",
+      "novo",
+      "esperanca"
+    ]
+  },
+  "mat.6.33": {
+    "themes": [
+      "proposito",
+      "fe"
+    ],
+    "keywords": [
+      "proposito",
+      "prioridade",
+      "dinheiro"
+    ]
+  },
+  "gal.6.9": {
+    "themes": [
+      "trabalho",
+      "forca"
+    ],
+    "keywords": [
+      "trabalho",
+      "cansaco",
+      "perseveranca"
+    ]
+  },
+  "heb.13.5": {
+    "themes": [
+      "dinheiro",
+      "solidao"
+    ],
+    "keywords": [
+      "dinheiro",
+      "contas",
+      "sozinho",
+      "abandono"
+    ]
+  },
+  "isa.40.31": {
+    "themes": [
+      "forca",
+      "cansaco"
+    ],
+    "keywords": [
+      "forca",
+      "cansaco",
+      "exaustao"
+    ]
+  },
+  "sal.27.1": {
+    "themes": [
+      "medo"
+    ],
+    "keywords": [
+      "medo",
+      "escuridao"
+    ]
+  },
+  "efe.4.32": {
+    "themes": [
+      "perdao",
+      "familia",
+      "relacionamento"
+    ],
+    "keywords": [
+      "perdao",
+      "magoa",
+      "familia",
+      "relacionamento"
+    ]
+  },
+  "col.3.13": {
+    "themes": [
+      "perdao",
+      "relacionamento"
+    ],
+    "keywords": [
+      "perdao",
+      "queixa",
+      "magoa"
+    ]
+  },
+  "2co.5.17": {
+    "themes": [
+      "recomeco"
+    ],
+    "keywords": [
+      "recomecar",
+      "novo",
+      "mudanca"
+    ]
+  },
+  "apo.21.5": {
+    "themes": [
+      "recomeco",
+      "esperanca"
+    ],
+    "keywords": [
+      "recomecar",
+      "novo"
+    ]
+  },
+  "1te.5.18": {
+    "themes": [
+      "gratidao"
+    ],
+    "keywords": [
+      "gratidao",
+      "agradecer"
+    ]
+  },
+  "sal.118.24": {
+    "themes": [
+      "gratidao",
+      "esperanca"
+    ],
+    "keywords": [
+      "gratidao",
+      "dia",
+      "alegria"
+    ]
+  },
+  "pro.16.9": {
+    "themes": [
+      "decisao",
+      "proposito"
+    ],
+    "keywords": [
+      "decisao",
+      "caminho",
+      "direcao"
+    ]
+  },
+  "tia.1.5": {
+    "themes": [
+      "decisao"
+    ],
+    "keywords": [
+      "sabedoria",
+      "decisao",
+      "duvida"
+    ]
+  },
+  "sal.139.14": {
+    "themes": [
+      "proposito",
+      "gratidao"
+    ],
+    "keywords": [
+      "proposito",
+      "identidade",
+      "valor"
+    ]
+  },
+  "sal.147.3": {
+    "themes": [
+      "tristeza",
+      "amor_sofrimento"
+    ],
+    "keywords": [
+      "coracao",
+      "feridas",
+      "tristeza"
+    ]
+  },
+  "tia.4.8": {
+    "themes": [
+      "aproximar_de_deus",
+      "fe"
+    ],
+    "keywords": [
+      "deus",
+      "aproximar",
+      "oracao"
+    ]
+  }
+}

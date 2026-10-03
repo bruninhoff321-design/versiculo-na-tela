@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// Mesma linguagem visual do protótipo web validado antes desta etapa:
-/// tons de pedra/pergaminho + um único acento âmbar, serifada Fraunces para
-/// o versículo (o "momento principal" da tela) e Manrope para a interface.
-/// Sem clichê de app "cristão" (nada de dourado brilhante, pomba, cruz).
+/// Azul quase preto e dourado quente para uma leitura calma e acessível.
 class AppColors {
   static const claroBg = Color(0xFFEDE9E1);
   static const claroSurface = Color(0xFFFFFFFF);
@@ -12,14 +9,14 @@ class AppColors {
   static const claroInk = Color(0xFF20242B);
   static const claroMuted = Color(0xFF6B6A62);
 
-  static const escuroBg = Color(0xFF14161C);
-  static const escuroSurface = Color(0xFF1D2027);
-  static const escuroSurface2 = Color(0xFF22252D);
-  static const escuroInk = Color(0xFFEDE6D8);
-  static const escuroMuted = Color(0xFFA29E92);
+  static const escuroBg = Color(0xFF0D141E);
+  static const escuroSurface = Color(0xFF17212E);
+  static const escuroSurface2 = Color(0xFF202D3B);
+  static const escuroInk = Color(0xFFFFF8EA);
+  static const escuroMuted = Color(0xFFB8C0C8);
 
   static const accentClaro = Color(0xFFA8763A);
-  static const accentEscuro = Color(0xFFD9A857);
+  static const accentEscuro = Color(0xFFF3C55E);
 }
 
 class AppTheme {
@@ -32,6 +29,10 @@ class AppTheme {
         surface: AppColors.claroSurface,
       ),
       textTheme: GoogleFonts.manropeTextTheme(base.textTheme).copyWith(
+        bodyMedium: GoogleFonts.manrope(fontSize: 16, height: 1.4),
+        bodyLarge: GoogleFonts.manrope(fontSize: 18, height: 1.4),
+        labelLarge:
+            GoogleFonts.manrope(fontSize: 16, fontWeight: FontWeight.w700),
         displayLarge: GoogleFonts.fraunces(
           fontSize: 28,
           fontStyle: FontStyle.italic,
@@ -54,9 +55,18 @@ class AppTheme {
       scaffoldBackgroundColor: AppColors.escuroBg,
       colorScheme: base.colorScheme.copyWith(
         primary: AppColors.accentEscuro,
+        onPrimary: const Color(0xFF1C1A15),
         surface: AppColors.escuroSurface,
+        surfaceContainerHighest: AppColors.escuroSurface2,
+        onSurface: AppColors.escuroInk,
       ),
       textTheme: GoogleFonts.manropeTextTheme(base.textTheme).copyWith(
+        bodyMedium: GoogleFonts.manrope(
+            fontSize: 16, height: 1.5, color: AppColors.escuroInk),
+        bodyLarge: GoogleFonts.manrope(
+            fontSize: 18, height: 1.5, color: AppColors.escuroInk),
+        labelLarge:
+            GoogleFonts.manrope(fontSize: 16, fontWeight: FontWeight.w700),
         displayLarge: GoogleFonts.fraunces(
           fontSize: 28,
           fontStyle: FontStyle.italic,
@@ -69,6 +79,23 @@ class AppTheme {
         backgroundColor: AppColors.escuroBg,
         foregroundColor: AppColors.escuroInk,
         elevation: 0,
+      ),
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: AppColors.escuroBg,
+        indicatorColor: AppColors.accentEscuro.withOpacity(.17),
+        labelTextStyle: WidgetStateProperty.all(
+          GoogleFonts.manrope(fontSize: 12, fontWeight: FontWeight.w700),
+        ),
+      ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          backgroundColor: AppColors.accentEscuro,
+          foregroundColor: const Color(0xFF1C1A15),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+          textStyle:
+              GoogleFonts.manrope(fontSize: 17, fontWeight: FontWeight.w800),
+        ),
       ),
     );
   }

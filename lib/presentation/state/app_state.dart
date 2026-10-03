@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import '../../data/local/app_local_store.dart';
 import '../../data/notifications/notification_service.dart';
 import '../../data/widget_bridge/native_scheduler.dart';
+import '../../data/widget_bridge/lock_wallpaper_service.dart';
 import '../../data/widget_bridge/widget_sync_service.dart';
 import '../../domain/models/app_settings.dart';
 import '../../domain/models/history_entry.dart';
@@ -52,6 +53,7 @@ class AppState extends ChangeNotifier {
   Verse? currentVerse;
   List<HistoryEntry> history = [];
   Set<String> favoriteIds = {};
+  bool lockWallpaperEnabled = false;
 
   Future<void> bootstrap() async {
     _allVerses = await verseRepository.loadAll();
@@ -64,6 +66,7 @@ class AppState extends ChangeNotifier {
 
     final savedId = localStore.readCurrentVerseId();
     currentVerse = (savedId != null ? _byId[savedId] : null) ??
+        _byId['sal.23.1'] ??
         (_allVerses.isNotEmpty ? _allVerses.first : null);
 
     if (currentVerse != null && history.isEmpty) {
@@ -73,7 +76,8 @@ class AppState extends ChangeNotifier {
     _loading = false;
     notifyListeners();
     // Serviços nativos nunca impedem a abertura ou o uso offline do app.
-    unawaited(_syncWidget());
+    unawaited(_restoreWidgetVerseAndSync());
+    unawaited(_loadLockWallpaperPreference());
     unawaited(_syncNotifications());
     unawaited(_runOptional(
         'agendamento do widget', () => scheduler.apply(settings.frequency)));
@@ -91,6 +95,46 @@ class AppState extends ChangeNotifier {
       debugPrint('Não foi possível atualizar $service: $error');
       return false;
     }
+  }
+
+  Future<void> _restoreWidgetVerseAndSync() async {
+    final initialVerseId = currentVerse?.id;
+    try {
+      final ready =
+          await (_widgetReady ??= _runOptional('widget', widgetSync.init));
+      if (ready) {
+        final widgetId = await widgetSync
+            .readCurrentVerseId()
+            .timeout(const Duration(seconds: 10));
+        final verse = widgetId == null ? null : _byId[widgetId];
+        if (verse != null &&
+            currentVerse?.id == initialVerseId &&
+            verse.id != currentVerse?.id) {
+          currentVerse = verse;
+          await localStore.writeCurrentVerseId(verse.id);
+          await _appendHistory(verse.id, HistorySource.widget);
+          notifyListeners();
+        }
+      }
+    } catch (error) {
+      debugPrint('Não foi possível ler o versículo do widget: $error');
+    }
+    await _syncWidget();
+  }
+
+  Future<void> _loadLockWallpaperPreference() async {
+    try {
+      lockWallpaperEnabled = await LockWallpaperService().isEnabled();
+      notifyListeners();
+    } catch (_) {
+      // O papel de parede é um recurso opcional do Android.
+    }
+  }
+
+  Future<void> setLockWallpaperEnabled(bool enabled) async {
+    await LockWallpaperService().setEnabled(enabled);
+    lockWallpaperEnabled = enabled;
+    notifyListeners();
   }
 
   Future<void> _syncWidget() async {

@@ -27,7 +27,8 @@ void main() {
       'medo': ['medo', 'temo'],
     };
 
-    test('nunca inventa versículo: resultado é sempre um dos já existentes', () {
+    test('nunca inventa versículo: resultado é sempre um dos já existentes',
+        () {
       final useCase = MatchVerseForInputUseCase();
       final result = useCase(
         allVerses: verses,
@@ -52,7 +53,7 @@ void main() {
       expect(result!.verse.id, 'dinheiro_medo');
     });
 
-    test('sem nenhum tema identificado, não retorna nada (a UI deve pedir mais informação)', () {
+    test('texto livre sem palavra da taxonomia ainda recebe uma reflexão', () {
       final useCase = MatchVerseForInputUseCase();
       final result = useCase(
         allVerses: verses,
@@ -61,7 +62,23 @@ void main() {
         synonyms: synonyms,
         recentHistory: const [],
       );
-      expect(result, isNull);
+      expect(result, isNotNull);
+      expect(result!.matchedThemes, isEmpty);
+    });
+
+    test('descrição livre não escolhe texto sem curadoria temática', () {
+      final useCase = MatchVerseForInputUseCase();
+      final result = useCase(
+        allVerses: [
+          _v('sem_tema', []),
+          _v('paz1', ['paz'])
+        ],
+        selectedThemeIds: {},
+        freeText: 'preciso de uma palavra hoje',
+        synonyms: const {},
+        recentHistory: const [],
+      );
+      expect(result?.verse.id, 'paz1');
     });
 
     test('normalize() ignora acentuação e caixa', () {

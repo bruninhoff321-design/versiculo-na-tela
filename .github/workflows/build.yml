@@ -5,6 +5,8 @@ name: Compilar Versículo na Tela
 on:
   push:
     branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
   workflow_dispatch: {}
 
 jobs:
@@ -82,6 +84,20 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: versiculo-na-tela-android
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+      # APK separado para testes no celular sem remover a instalação atual.
+      - name: Preparar app de teste lado a lado
+        run: |
+          sed -i 's/applicationId = "com.versiculonatela.app"/applicationId = "com.versiculonatela.app.teste"/' android/app/build.gradle.kts
+          sed -i 's/android:label="Versículo na Tela"/android:label="Versículo na Tela Teste"/' android/app/src/main/AndroidManifest.xml
+
+      - name: Compilar APK de teste
+        run: flutter build apk --release
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: versiculo-na-tela-teste
           path: build/app/outputs/flutter-apk/app-release.apk
 
   # ------------------------------------------------------------------
