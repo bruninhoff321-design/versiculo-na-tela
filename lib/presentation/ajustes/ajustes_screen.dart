@@ -107,7 +107,7 @@ class AjustesScreen extends StatelessWidget {
             ),
           ],
         ),
-section(
+        section(
           title: 'Tela de bloqueio',
           subtitle: 'Versículo pequeno sem cobrir sua foto',
           icon: Icons.lock_outline_rounded,
