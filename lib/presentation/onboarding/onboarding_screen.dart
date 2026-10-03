@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../shared/widget_setup.dart';
 import '../state/app_state.dart';
 
-/// Duas telas curtas; as opções avançadas ficam em Ajustes.
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
 
@@ -13,88 +13,86 @@ class OnboardingScreen extends StatefulWidget {
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
   int _step = 0;
-  static const _totalSteps = 2;
 
   Future<void> _finish() async {
-    final app = context.read<AppState>();
-    // O widget raiz troca o onboarding pela Home ao observar `onboarded`.
-    // Empilhar outra rota aqui criava duas Homes e um botão Voltar confuso.
-    await app.markOnboarded();
+    await context.read<AppState>().markOnboarded();
   }
 
   @override
   Widget build(BuildContext context) {
+    final gold = Theme.of(context).colorScheme.primary;
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(28),
+          padding: const EdgeInsets.all(24),
           child: Column(
             children: [
-              const Spacer(),
+              const SizedBox(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(_totalSteps, (i) {
-                  return Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 3),
-                    width: 6,
-                    height: 6,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: i == _step
-                          ? Theme.of(context).colorScheme.primary
-                          : Theme.of(context).dividerColor,
-                    ),
-                  );
-                }),
+                children: List.generate(2, (index) => Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  width: 10,
+                  height: 10,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: index == _step ? gold : Theme.of(context).dividerColor,
+                  ),
+                )),
               ),
-              const SizedBox(height: 24),
-              Expanded(child: Center(child: _buildStep())),
-              const Spacer(),
+              Expanded(
+                child: Center(
+                  child: SingleChildScrollView(
+                    child: _step == 0
+                        ? const _OnboardingText(
+                            title: 'Uma palavra de Deus para o seu dia.',
+                            body: 'Leia o versículo e receba outra palavra sempre que quiser.',
+                          )
+                        : Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const _OnboardingText(
+                                title: 'Leve o versículo com você.',
+                                body: 'Toque no botão para colocar o versículo na tela inicial. O celular pedirá sua confirmação.',
+                              ),
+                              const SizedBox(height: 24),
+                              SizedBox(
+                                width: double.infinity,
+                                height: 56,
+                                child: FilledButton.icon(
+                                  onPressed: () => addWidgetToHome(context),
+                                  icon: const Icon(Icons.add_to_home_screen_rounded),
+                                  label: const Text('Ativar na tela inicial'),
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              const Text('Você também pode fazer isso depois em Ajustes.',
+                                  textAlign: TextAlign.center),
+                            ],
+                          ),
+                  ),
+                ),
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   if (_step > 0)
                     TextButton(
-                      onPressed: () => setState(() => _step--),
+                      onPressed: () => setState(() => _step = 0),
                       child: const Text('Voltar'),
                     ),
-                  const SizedBox(width: 8),
                   FilledButton(
-                    onPressed: () {
-                      if (_step == _totalSteps - 1) {
-                        _finish();
-                      } else {
-                        setState(() => _step++);
-                      }
-                    },
-                    child: Text(
-                        _step == _totalSteps - 1 ? 'Começar' : 'Continuar'),
+                    onPressed: _step == 1 ? _finish : () => setState(() => _step = 1),
+                    child: Text(_step == 1 ? 'Começar' : 'Continuar'),
                   ),
                 ],
               ),
+              const SizedBox(height: 12),
             ],
           ),
         ),
       ),
     );
-  }
-
-  Widget _buildStep() {
-    switch (_step) {
-      case 0:
-        return const _OnboardingText(
-          title: 'Uma palavra de Deus para o seu dia.',
-          body:
-              'Abra o app, leia o versículo e toque para receber outra palavra quando quiser.',
-        );
-      default:
-        return const _OnboardingText(
-          title: 'Leve o versículo com você.',
-          body: 'Em Ajustes, abra “Tela de bloqueio” para mostrar o '
-              'versículo ali. Para colocar o widget na tela inicial, '
-              'segure um espaço vazio nela e escolha “Versículo na Tela”.',
-        );
-    }
   }
 }
 
@@ -104,23 +102,19 @@ class _OnboardingText extends StatelessWidget {
   const _OnboardingText({required this.title, required this.body});
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: Image.asset('assets/brand_icon.png', width: 112, height: 112),
-        ),
-        const SizedBox(height: 24),
-        Text(title,
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.headlineSmall),
-        const SizedBox(height: 12),
-        Text(body,
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Theme.of(context).hintColor)),
-      ],
-    );
-  }
+  Widget build(BuildContext context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Image.asset('assets/brand_icon.png', width: 112, height: 112),
+          ),
+          const SizedBox(height: 24),
+          Text(title, textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headlineSmall),
+          const SizedBox(height: 12),
+          Text(body, textAlign: TextAlign.center,
+              style: TextStyle(color: Theme.of(context).hintColor)),
+        ],
+      );
 }
