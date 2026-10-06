@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../domain/models/app_settings.dart';
 import '../descubra/descubra_screen.dart';
 import '../state/app_state.dart';
 
@@ -85,7 +86,11 @@ class HomeScreen extends StatelessWidget {
                               style: Theme.of(context)
                                   .textTheme
                                   .displayLarge
-                                  ?.copyWith(color: const Color(0xFFFFF9ED)),
+                                  ?.copyWith(
+                                    color: const Color(0xFFFFF9ED),
+                                    fontSize:
+                                        28 * app.settings.readingTextSize.scale,
+                                  ),
                             ),
                             if (verse != null) ...[
                               const SizedBox(height: 30),
