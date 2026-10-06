@@ -6,6 +6,7 @@ import '../favoritos/favoritos_screen.dart';
 import '../historico/historico_screen.dart';
 import '../home/home_screen.dart';
 import '../state/app_state.dart';
+import 'verse_note_editor.dart';
 
 /// Casca com navegação inferior — Início / Favoritos / Histórico / Ajustes
 /// (seção 2 do briefing). "O que você precisa ouvir?" não é uma aba fixa:
@@ -40,6 +41,15 @@ class _AppShellState extends State<AppShell> {
         title: Text(_titles[_index]),
         actions: _index == 0
             ? [
+                Consumer<AppState>(
+                  builder: (context, app, _) => IconButton(
+                    tooltip: 'Escrever reflexão',
+                    onPressed: app.currentVerse == null
+                        ? null
+                        : () => showVerseNoteEditor(context, app.currentVerse!),
+                    icon: const Icon(Icons.edit_note_rounded),
+                  ),
+                ),
                 IconButton(
                   tooltip: 'Outro versículo',
                   onPressed: () => context.read<AppState>().requestNewVerse(),
