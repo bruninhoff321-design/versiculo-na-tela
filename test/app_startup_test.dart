@@ -39,6 +39,7 @@ class _Taxonomy implements ThemeTaxonomyRepository {
 class _Store extends AppLocalStore {
   AppSettings saved = const AppSettings();
   final entries = <HistoryEntry>[];
+  final notes = <String, String>{};
   @override
   AppSettings readSettings() => saved;
   @override
@@ -50,6 +51,17 @@ class _Store extends AppLocalStore {
   List<HistoryEntry> readHistory() => List.of(entries);
   @override
   Set<String> readFavoriteIds() => {};
+  @override
+  Map<String, String> readNotes() => Map.of(notes);
+  @override
+  Future<void> saveNote(String verseId, String note) async {
+    if (note.trim().isEmpty) {
+      notes.remove(verseId);
+    } else {
+      notes[verseId] = note.trim();
+    }
+  }
+
   @override
   String? readCurrentVerseId() => null;
   @override
@@ -78,12 +90,24 @@ class _Widget extends WidgetSyncService {
 class _Notifications extends NotificationService {
   final Future<void> Function() initialize;
   _Notifications(this.initialize);
+  int scheduled = 0;
+  int cancelled = 0;
   @override
   Future<void> init() => initialize();
   @override
-  Future<void> scheduleDaily(String timeOfDay) async {}
+  Future<void> scheduleDaily(String timeOfDay) async {
+    scheduled++;
+  }
+
   @override
-  Future<void> cancelDaily() async {}
+  Future<void> cancelDaily() async {
+    cancelled++;
+  }
+
+  @override
+  Future<void> showLockScreenVerse(String text, String reference) async {}
+  @override
+  Future<void> cancelLockScreenVerse() async {}
 }
 
 class _Scheduler extends NativeWidgetScheduler {
@@ -105,6 +129,24 @@ AppState _app(_Store store, _Widget widget, _Notifications notifications,
     );
 
 void main() {
+  test('lembrete começa desligado e reflexões ficam salvas por versículo',
+      () async {
+    final store = _Store();
+    final notifications = _Notifications(() async {});
+    final app = _app(
+        store, _Widget(() async {}), notifications, _Scheduler(() async {}));
+    await app.bootstrap();
+    await Future<void>.delayed(Duration.zero);
+    expect(app.settings.dailyNotificationEnabled, isFalse);
+    expect(notifications.scheduled, 0);
+    await app.saveNote(_verse.id, 'Uma palavra para hoje');
+    expect(store.notes[_verse.id], 'Uma palavra para hoje');
+    expect(app.notes[_verse.id], 'Uma palavra para hoje');
+    await app.saveNote(_verse.id, '  ');
+    expect(app.notes.containsKey(_verse.id), isFalse);
+    app.dispose();
+  });
+
   test('abre e conclui onboarding enquanto serviços nativos estão pendentes',
       () async {
     final pending = Completer<void>();
