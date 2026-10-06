@@ -40,8 +40,8 @@ class NotificationService {
         await androidImpl?.requestNotificationsPermission() ?? true;
     final iosGranted = await iosImpl?.requestPermissions(
           alert: true,
-          badge: true,
-          sound: true,
+          badge: false,
+          sound: false,
         ) ??
         true;
     return androidGranted && iosGranted;
