@@ -137,6 +137,7 @@ class AppSettings {
   final WidgetVisualTheme widgetTheme;
   final WidgetSize widgetSize;
   final bool dailyNotificationEnabled;
+  final bool lockScreenNotificationEnabled;
   final String dailyNotificationTime; // "HH:mm"
   final bool onboarded;
 
@@ -145,7 +146,8 @@ class AppSettings {
     this.noRepeat = NoRepeatOption.next20,
     this.widgetTheme = WidgetVisualTheme.claro,
     this.widgetSize = WidgetSize.medium,
-    this.dailyNotificationEnabled = true,
+    this.dailyNotificationEnabled = false,
+    this.lockScreenNotificationEnabled = false,
     this.dailyNotificationTime = '07:00',
     this.onboarded = false,
   });
@@ -156,6 +158,7 @@ class AppSettings {
     WidgetVisualTheme? widgetTheme,
     WidgetSize? widgetSize,
     bool? dailyNotificationEnabled,
+    bool? lockScreenNotificationEnabled,
     String? dailyNotificationTime,
     bool? onboarded,
   }) {
@@ -166,6 +169,8 @@ class AppSettings {
       widgetSize: widgetSize ?? this.widgetSize,
       dailyNotificationEnabled:
           dailyNotificationEnabled ?? this.dailyNotificationEnabled,
+      lockScreenNotificationEnabled:
+          lockScreenNotificationEnabled ?? this.lockScreenNotificationEnabled,
       dailyNotificationTime:
           dailyNotificationTime ?? this.dailyNotificationTime,
       onboarded: onboarded ?? this.onboarded,
