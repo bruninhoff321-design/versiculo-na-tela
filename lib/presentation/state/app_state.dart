@@ -53,6 +53,7 @@ class AppState extends ChangeNotifier {
   Verse? currentVerse;
   List<HistoryEntry> history = [];
   Set<String> favoriteIds = {};
+  Map<String, String> notes = {};
   bool lockWallpaperEnabled = false;
 
   Future<void> bootstrap() async {
@@ -63,6 +64,7 @@ class AppState extends ChangeNotifier {
     settings = localStore.readSettings();
     history = localStore.readHistory();
     favoriteIds = localStore.readFavoriteIds();
+    notes = localStore.readNotes();
 
     final savedId = localStore.readCurrentVerseId();
     currentVerse = (savedId != null ? _byId[savedId] : null) ??
@@ -85,6 +87,7 @@ class AppState extends ChangeNotifier {
 
   Future<bool>? _widgetReady;
   Future<bool>? _notificationsReady;
+  Future<void> _notificationSync = Future<void>.value();
 
   Future<bool> _runOptional(
       String service, Future<void> Function() action) async {
@@ -114,6 +117,7 @@ class AppState extends ChangeNotifier {
           await localStore.writeCurrentVerseId(verse.id);
           await _appendHistory(verse.id, HistorySource.widget);
           notifyListeners();
+          unawaited(_syncNotifications());
         }
       }
     } catch (error) {
@@ -151,18 +155,46 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  Future<void> _syncNotifications() async {
+  Future<void> _syncNotifications() {
+    _notificationSync = _notificationSync.then((_) => _applyNotifications());
+    return _notificationSync;
+  }
+
+  Future<void> _applyNotifications() async {
     final ready = await (_notificationsReady ??=
         _runOptional('notificações', notifications.init));
     if (!ready) {
       _notificationsReady = null;
       return;
     }
-    await _runOptional(
-        'notificações',
-        () => settings.dailyNotificationEnabled
-            ? notifications.scheduleDaily(settings.dailyNotificationTime)
-            : notifications.cancelDaily());
+    await _runOptional('notificações', () async {
+      if (settings.dailyNotificationEnabled) {
+        await notifications.scheduleDaily(settings.dailyNotificationTime);
+      } else {
+        await notifications.cancelDaily();
+      }
+      final verse = currentVerse;
+      if (settings.lockScreenNotificationEnabled && verse != null) {
+        await notifications.showLockScreenVerse(verse.text, verse.reference);
+      } else {
+        await notifications.cancelLockScreenVerse();
+      }
+    });
+  }
+
+  Future<bool> setLockScreenNotificationEnabled(bool enabled) async {
+    if (enabled) {
+      final ready = await (_notificationsReady ??=
+          _runOptional('notificações', notifications.init));
+      if (!ready) {
+        _notificationsReady = null;
+        return false;
+      }
+      if (!await notifications.requestPermission()) return false;
+    }
+    await updateSettings(
+        (s) => s.copyWith(lockScreenNotificationEnabled: enabled));
+    return true;
   }
 
   Verse? verseById(String id) => _byId[id];
@@ -203,6 +235,12 @@ class AppState extends ChangeNotifier {
   Future<void> toggleFavorite(String verseId) async {
     await localStore.toggleFavorite(verseId);
     favoriteIds = localStore.readFavoriteIds();
+    notifyListeners();
+  }
+
+  Future<void> saveNote(String verseId, String text) async {
+    await localStore.saveNote(verseId, text);
+    notes = localStore.readNotes();
     notifyListeners();
   }
 
@@ -262,6 +300,7 @@ class AppState extends ChangeNotifier {
     }
     notifyListeners();
     unawaited(_syncWidget());
+    unawaited(_syncNotifications());
   }
 
   Future<void> _appendHistory(String verseId, HistorySource source) async {
