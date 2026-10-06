@@ -60,6 +60,11 @@ class WidgetUpdateWorker(context: Context, params: WorkerParameters) :
             } catch (_: Exception) {
                 // O fabricante pode negar a troca; o widget ainda foi atualizado.
             }
+            try {
+                LockVerseNotification.update(applicationContext)
+            } catch (_: Exception) {
+                // A permissão pode ter sido revogada; o widget ainda foi atualizado.
+            }
             Result.success()
         } catch (e: Exception) {
             Result.retry()

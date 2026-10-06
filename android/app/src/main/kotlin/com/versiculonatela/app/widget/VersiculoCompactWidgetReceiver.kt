@@ -32,11 +32,7 @@ class VersiculoCompactWidgetReceiver : AppWidgetProvider() {
                 R.id.compact_widget_root,
                 data.verseText + " " + data.verseReference,
             )
-            views.setInt(
-                R.id.compact_widget_root,
-                "setBackgroundColor",
-                Color.argb(78, 8, 17, 30),
-            )
+            views.setInt(R.id.compact_widget_root, "setBackgroundColor", Color.TRANSPARENT)
             val intent = Intent(context, MainActivity::class.java)
             val pendingIntent = PendingIntent.getActivity(
                 context,
