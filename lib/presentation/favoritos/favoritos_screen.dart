@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../domain/models/app_settings.dart';
 import '../shared/share_image.dart';
 import '../shared/verse_note_editor.dart';
 import '../state/app_state.dart';
@@ -99,7 +100,13 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                                       fontWeight: FontWeight.w700)),
                               const SizedBox(height: 10),
                               Text('“${v.text}”',
-                                  style: Theme.of(context).textTheme.bodyLarge),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(
+                                          fontSize: 18 *
+                                              app.settings.readingTextSize
+                                                  .scale)),
                               if (v.themes.isNotEmpty) ...[
                                 const SizedBox(height: 10),
                                 Text(v.themes.map(_themeLabel).join(' · '),
@@ -109,8 +116,13 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                               if (app.notes[v.id]?.isNotEmpty ?? false) ...[
                                 const SizedBox(height: 10),
                                 Text(app.notes[v.id]!,
-                                    style:
-                                        Theme.of(context).textTheme.bodyMedium),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(
+                                            fontSize: 16 *
+                                                app.settings.readingTextSize
+                                                    .scale)),
                               ],
                               const SizedBox(height: 8),
                               Row(
