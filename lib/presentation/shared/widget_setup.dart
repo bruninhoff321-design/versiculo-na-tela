@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-const _widgetChannel = MethodChannel('com.versiculonatela.app/widget_scheduler');
+const _widgetChannel =
+    MethodChannel('com.versiculonatela.app/widget_scheduler');
 
 Future<void> addWidgetToHome(BuildContext context) async {
   bool requested = false;
@@ -39,25 +40,25 @@ Future<void> addWidgetToHome(BuildContext context) async {
     ),
   );
 }
-/// A Samsung controla quais widgets aparecem no espaço abaixo do relógio.
+
+/// O seletor de widgets no bloqueio depende do fabricante e do launcher.
 Future<void> showLockScreenWidgetGuide(BuildContext context) async {
   await showDialog<void>(
     context: context,
     builder: (context) => AlertDialog(
-      title: const Text('Versículo pequeno na tela de bloqueio'),
+      title: const Text('Widget na tela de bloqueio'),
       content: const SingleChildScrollView(
         child: Text(
-          'O espaço abaixo do relógio é controlado pela Samsung. '
-          'Se “Versículo na Tela” não aparece na lista comum, tente pelo '
-          'Good Lock da Samsung:\n\n'
-          '1. Abra Good Lock e entre em LockStar.\n\n'
-          '2. Edite a tela de bloqueio e toque em adicionar widget.\n\n'
-          '3. Procure “Versículo na Tela (compacto)” e ajuste abaixo do relógio.\n\n'
-          'Se o LockStar não estiver disponível no seu A33 ou não listar o '
-          'widget, essa posição não pode ser ativada pelo app. A opção de '
-          'papel de parede abaixo substitui a foto; deixe-a desligada para '
-          'preservar sua imagem. Se já foi usada, escolha sua foto novamente '
-          'em “Papéis de parede”.',
+          'Alguns Androids permitem adicionar widgets ao bloqueio. Abra a '
+          'personalização da tela de bloqueio do seu celular e procure '
+          '“Versículo na Tela (compacto)” na lista de widgets.\n\n'
+          'Se não aparecer, o seletor padrão desse aparelho não oferece essa '
+          'posição para nosso widget. Você ainda pode ativar o versículo como notificação '
+          'silenciosa nos Ajustes do app.\n\n'
+          'Em aparelhos Samsung com Good Lock compatível, o LockStar também '
+          'pode oferecer widgets de outros apps. A posição final é sempre '
+          'controlada pelo celular. A opção de imagem do app substitui sua '
+          'foto; deixe-a desligada para preservar seu papel de parede.',
         ),
       ),
       actions: [
