@@ -1,4 +1,5 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -8,12 +9,15 @@ import 'package:timezone/timezone.dart' as tz;
 /// existe implementação própria de agendamento aqui.
 class NotificationService {
   static const int _dailyNotificationId = 1001;
+  static const int _lockScreenVerseId = 1002;
 
   final FlutterLocalNotificationsPlugin _plugin =
       FlutterLocalNotificationsPlugin();
 
   Future<void> init() async {
     tz_data.initializeTimeZones();
+    final localTimezone = await FlutterTimezone.getLocalTimezone();
+    tz.setLocalLocation(tz.getLocation(localTimezone));
 
     const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
     const iosInit = DarwinInitializationSettings(
@@ -27,15 +31,17 @@ class NotificationService {
   }
 
   Future<bool> requestPermission() async {
-    final androidImpl = _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
-    final iosImpl = _plugin.resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
+    final androidImpl = _plugin.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>();
+    final iosImpl = _plugin.resolvePlatformSpecificImplementation<
+        IOSFlutterLocalNotificationsPlugin>();
 
     final androidGranted =
         await androidImpl?.requestNotificationsPermission() ?? true;
     final iosGranted = await iosImpl?.requestPermissions(
           alert: true,
-          badge: true,
-          sound: true,
+          badge: false,
+          sound: false,
         ) ??
         true;
     return androidGranted && iosGranted;
@@ -50,8 +56,8 @@ class NotificationService {
     final minute = int.parse(parts[1]);
 
     final now = tz.TZDateTime.now(tz.local);
-    var scheduled = tz.TZDateTime(
-        tz.local, now.year, now.month, now.day, hour, minute);
+    var scheduled =
+        tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
     if (scheduled.isBefore(now)) {
       scheduled = scheduled.add(const Duration(days: 1));
     }
@@ -63,13 +69,15 @@ class NotificationService {
       scheduled,
       const NotificationDetails(
         android: AndroidNotificationDetails(
-          'versiculo_diario',
-          'Versículo diário',
-          channelDescription: 'Um lembrete diário com um versículo bíblico',
-          importance: Importance.defaultImportance,
-          priority: Priority.defaultPriority,
+          'versiculo_diario_silencioso',
+          'Lembrete diário silencioso',
+          channelDescription: 'Lembrete diário sem som ou vibração',
+          importance: Importance.low,
+          priority: Priority.low,
+          playSound: false,
+          enableVibration: false,
         ),
-        iOS: DarwinNotificationDetails(),
+        iOS: DarwinNotificationDetails(presentSound: false),
       ),
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       uiLocalNotificationDateInterpretation:
@@ -81,4 +89,29 @@ class NotificationService {
   Future<void> cancelDaily() async {
     await _plugin.cancel(_dailyNotificationId);
   }
+
+  Future<void> showLockScreenVerse(String text, String reference) async {
+    await _plugin.show(
+      _lockScreenVerseId,
+      reference,
+      text,
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          'versiculo_no_bloqueio',
+          'Versículo na tela de bloqueio',
+          channelDescription: 'Exibe o versículo sem som ou vibração',
+          importance: Importance.low,
+          priority: Priority.low,
+          playSound: false,
+          enableVibration: false,
+          ongoing: true,
+          autoCancel: false,
+          visibility: NotificationVisibility.public,
+          styleInformation: BigTextStyleInformation(text),
+        ),
+      ),
+    );
+  }
+
+  Future<void> cancelLockScreenVerse() => _plugin.cancel(_lockScreenVerseId);
 }

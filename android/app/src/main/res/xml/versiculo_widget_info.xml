@@ -8,14 +8,9 @@
   WorkManager (WidgetUpdateWorker), que respeita a preferência do usuário
   dentro dos limites do Android.
 
-  widgetCategory = apenas "home_screen": NÃO declaramos "keyguard" aqui.
-  O Android removeu o suporte a widgets de tela de bloqueio para a maioria
-  dos aparelhos a partir da versão 5.0 (Lollipop) — declarar essa categoria
-  hoje não faz o widget aparecer na tela de bloqueio em versões modernas, e
-  prometer isso violaria a seção 4 do briefing ("não prometer funcionamento
-  de uma função quando o sistema operacional não permitir"). A alternativa
-  oficial usada aqui é a notificação diária (NotificationService) e o
-  próprio widget de tela inicial.
+  Alguns aparelhos atuais aceitam widgets na tela de bloqueio; a categoria
+  keyguard torna este widget elegível nesses aparelhos. A escolha final de
+  exibi-lo ainda depende do sistema e do usuário.
 -->
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:minWidth="110dp"
@@ -25,7 +20,7 @@
     android:maxResizeWidth="250dp"
     android:maxResizeHeight="250dp"
     android:resizeMode="horizontal|vertical"
-    android:widgetCategory="home_screen"
+    android:widgetCategory="home_screen|keyguard"
     android:updatePeriodMillis="1800000"
     android:previewImage="@mipmap/ic_launcher"
     android:description="@string/widget_description" />

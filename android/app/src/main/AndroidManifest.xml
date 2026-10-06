@@ -5,9 +5,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <!-- Reagendar o WorkManager do widget depois que o aparelho reinicia -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <!-- Google Play Billing (compra vitalícia, seção 23) já declara isso
-         internamente na sua própria library, mas fica explícito aqui -->
-    <uses-permission android:name="com.android.vending.BILLING" />
+    <uses-permission android:name="android.permission.SET_WALLPAPER" />
 
     <application
         android:label="Versículo na Tela"
@@ -48,12 +46,18 @@
                 android:resource="@xml/versiculo_widget_info" />
         </receiver>
 
-    </application>
+            <receiver
+            android:name=".widget.VersiculoCompactWidgetReceiver"
+            android:exported="true"
+            android:label="Versículo na Tela (compacto)">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/versiculo_compact_widget_info" />
+        </receiver>
 
-    <!-- Necessário a partir do Android 11 para o plugin in_app_purchase
-         conseguir verificar a disponibilidade da Play Store -->
-    <queries>
-        <package android:name="com.android.vending" />
-    </queries>
+    </application>
 
 </manifest>

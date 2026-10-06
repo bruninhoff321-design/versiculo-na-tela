@@ -15,10 +15,12 @@ class AppLocalStore {
   static const _settingsBoxName = 'settings';
   static const _favoritesBoxName = 'favorites';
   static const _historyBoxName = 'history';
+  static const _notesBoxName = 'notes';
 
   late Box _settingsBox;
   late Box _favoritesBox;
   late Box _historyBox;
+  late Box _notesBox;
 
   static const int maxHistoryEntries = 500;
 
@@ -27,6 +29,7 @@ class AppLocalStore {
     _settingsBox = await Hive.openBox(_settingsBoxName);
     _favoritesBox = await Hive.openBox(_favoritesBoxName);
     _historyBox = await Hive.openBox(_historyBoxName);
+    _notesBox = await Hive.openBox(_notesBoxName);
   }
 
   // ---------------- Settings ----------------
@@ -41,8 +44,15 @@ class AppLocalStore {
           _settingsBox.get('widgetTheme') as String?),
       widgetSize:
           WidgetSizeX.fromName(_settingsBox.get('widgetSize') as String?),
+      readingTextSize: ReadingTextSizeX.fromName(
+          _settingsBox.get('readingTextSize') as String?),
       dailyNotificationEnabled:
-          (_settingsBox.get('dailyNotificationEnabled') as bool?) ?? true,
+          // Versões antigas ativavam o lembrete sem escolha explícita.
+          // Só mantemos ativo quando a pessoa o ligou nesta versão.
+          (_settingsBox.get('dailyNotificationConsent') as bool?) == true &&
+              (_settingsBox.get('dailyNotificationEnabled') as bool?) == true,
+      lockScreenNotificationEnabled:
+          (_settingsBox.get('lockScreenNotificationEnabled') as bool?) ?? false,
       dailyNotificationTime:
           (_settingsBox.get('dailyNotificationTime') as String?) ?? '07:00',
       onboarded: (_settingsBox.get('onboarded') as bool?) ?? false,
@@ -55,7 +65,10 @@ class AppLocalStore {
       'noRepeat': settings.noRepeat.count,
       'widgetTheme': settings.widgetTheme.name,
       'widgetSize': settings.widgetSize.name,
+      'readingTextSize': settings.readingTextSize.name,
       'dailyNotificationEnabled': settings.dailyNotificationEnabled,
+      'dailyNotificationConsent': settings.dailyNotificationEnabled,
+      'lockScreenNotificationEnabled': settings.lockScreenNotificationEnabled,
       'dailyNotificationTime': settings.dailyNotificationTime,
       'onboarded': settings.onboarded,
     });
@@ -78,6 +91,19 @@ class AppLocalStore {
       await _favoritesBox.delete(verseId);
     } else {
       await _favoritesBox.put(verseId, true);
+    }
+  }
+
+  Map<String, String> readNotes() => {
+        for (final key in _notesBox.keys.cast<String>())
+          key: _notesBox.get(key) as String,
+      };
+
+  Future<void> saveNote(String verseId, String note) async {
+    if (note.trim().isEmpty) {
+      await _notesBox.delete(verseId);
+    } else {
+      await _notesBox.put(verseId, note.trim());
     }
   }
 

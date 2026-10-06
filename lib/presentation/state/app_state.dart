@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import '../../data/local/app_local_store.dart';
 import '../../data/notifications/notification_service.dart';
 import '../../data/widget_bridge/native_scheduler.dart';
+import '../../data/widget_bridge/lock_wallpaper_service.dart';
 import '../../data/widget_bridge/widget_sync_service.dart';
 import '../../domain/models/app_settings.dart';
 import '../../domain/models/history_entry.dart';
@@ -52,6 +53,8 @@ class AppState extends ChangeNotifier {
   Verse? currentVerse;
   List<HistoryEntry> history = [];
   Set<String> favoriteIds = {};
+  Map<String, String> notes = {};
+  bool lockWallpaperEnabled = false;
 
   Future<void> bootstrap() async {
     _allVerses = await verseRepository.loadAll();
@@ -61,9 +64,11 @@ class AppState extends ChangeNotifier {
     settings = localStore.readSettings();
     history = localStore.readHistory();
     favoriteIds = localStore.readFavoriteIds();
+    notes = localStore.readNotes();
 
     final savedId = localStore.readCurrentVerseId();
     currentVerse = (savedId != null ? _byId[savedId] : null) ??
+        _byId['sal.23.1'] ??
         (_allVerses.isNotEmpty ? _allVerses.first : null);
 
     if (currentVerse != null && history.isEmpty) {
@@ -73,7 +78,8 @@ class AppState extends ChangeNotifier {
     _loading = false;
     notifyListeners();
     // Serviços nativos nunca impedem a abertura ou o uso offline do app.
-    unawaited(_syncWidget());
+    unawaited(_restoreWidgetVerseAndSync());
+    unawaited(_loadLockWallpaperPreference());
     unawaited(_syncNotifications());
     unawaited(_runOptional(
         'agendamento do widget', () => scheduler.apply(settings.frequency)));
@@ -81,6 +87,7 @@ class AppState extends ChangeNotifier {
 
   Future<bool>? _widgetReady;
   Future<bool>? _notificationsReady;
+  Future<void> _notificationSync = Future<void>.value();
 
   Future<bool> _runOptional(
       String service, Future<void> Function() action) async {
@@ -91,6 +98,47 @@ class AppState extends ChangeNotifier {
       debugPrint('Não foi possível atualizar $service: $error');
       return false;
     }
+  }
+
+  Future<void> _restoreWidgetVerseAndSync() async {
+    final initialVerseId = currentVerse?.id;
+    try {
+      final ready =
+          await (_widgetReady ??= _runOptional('widget', widgetSync.init));
+      if (ready) {
+        final widgetId = await widgetSync
+            .readCurrentVerseId()
+            .timeout(const Duration(seconds: 10));
+        final verse = widgetId == null ? null : _byId[widgetId];
+        if (verse != null &&
+            currentVerse?.id == initialVerseId &&
+            verse.id != currentVerse?.id) {
+          currentVerse = verse;
+          await localStore.writeCurrentVerseId(verse.id);
+          await _appendHistory(verse.id, HistorySource.widget);
+          notifyListeners();
+          unawaited(_syncNotifications());
+        }
+      }
+    } catch (error) {
+      debugPrint('Não foi possível ler o versículo do widget: $error');
+    }
+    await _syncWidget();
+  }
+
+  Future<void> _loadLockWallpaperPreference() async {
+    try {
+      lockWallpaperEnabled = await LockWallpaperService().isEnabled();
+      notifyListeners();
+    } catch (_) {
+      // O papel de parede é um recurso opcional do Android.
+    }
+  }
+
+  Future<void> setLockWallpaperEnabled(bool enabled) async {
+    await LockWallpaperService().setEnabled(enabled);
+    lockWallpaperEnabled = enabled;
+    notifyListeners();
   }
 
   Future<void> _syncWidget() async {
@@ -107,18 +155,59 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  Future<void> _syncNotifications() async {
+  Future<void> _syncNotifications() {
+    _notificationSync = _notificationSync.then((_) => _applyNotifications());
+    return _notificationSync;
+  }
+
+  Future<void> _applyNotifications() async {
     final ready = await (_notificationsReady ??=
         _runOptional('notificações', notifications.init));
     if (!ready) {
       _notificationsReady = null;
       return;
     }
-    await _runOptional(
-        'notificações',
-        () => settings.dailyNotificationEnabled
-            ? notifications.scheduleDaily(settings.dailyNotificationTime)
-            : notifications.cancelDaily());
+    await _runOptional('notificações', () async {
+      if (settings.dailyNotificationEnabled) {
+        await notifications.scheduleDaily(settings.dailyNotificationTime);
+      } else {
+        await notifications.cancelDaily();
+      }
+      final verse = currentVerse;
+      if (settings.lockScreenNotificationEnabled && verse != null) {
+        await notifications.showLockScreenVerse(verse.text, verse.reference);
+      } else {
+        await notifications.cancelLockScreenVerse();
+      }
+    });
+  }
+
+  Future<bool> setLockScreenNotificationEnabled(bool enabled) async {
+    if (enabled && !await _prepareNotifications()) return false;
+    await updateSettings(
+        (s) => s.copyWith(lockScreenNotificationEnabled: enabled));
+    return true;
+  }
+
+  Future<bool> setDailyNotificationEnabled(bool enabled) async {
+    if (enabled && !await _prepareNotifications()) return false;
+    await updateSettings((s) => s.copyWith(dailyNotificationEnabled: enabled));
+    return true;
+  }
+
+  Future<bool> _prepareNotifications() async {
+    final ready = await (_notificationsReady ??=
+        _runOptional('notificações', notifications.init));
+    if (!ready) {
+      _notificationsReady = null;
+      return false;
+    }
+    try {
+      return await notifications.requestPermission();
+    } catch (error) {
+      debugPrint('Não foi possível pedir permissão de notificações: $error');
+      return false;
+    }
   }
 
   Verse? verseById(String id) => _byId[id];
@@ -159,6 +248,12 @@ class AppState extends ChangeNotifier {
   Future<void> toggleFavorite(String verseId) async {
     await localStore.toggleFavorite(verseId);
     favoriteIds = localStore.readFavoriteIds();
+    notifyListeners();
+  }
+
+  Future<void> saveNote(String verseId, String text) async {
+    await localStore.saveNote(verseId, text);
+    notes = localStore.readNotes();
     notifyListeners();
   }
 
@@ -218,6 +313,7 @@ class AppState extends ChangeNotifier {
     }
     notifyListeners();
     unawaited(_syncWidget());
+    unawaited(_syncNotifications());
   }
 
   Future<void> _appendHistory(String verseId, HistorySource source) async {

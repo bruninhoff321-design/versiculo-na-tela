@@ -119,6 +119,39 @@ extension WidgetVisualThemeX on WidgetVisualTheme {
 
 enum WidgetSize { small, medium, large }
 
+/// Ajusta somente a leitura dos versículos dentro do aplicativo.
+enum ReadingTextSize { normal, large, extraLarge }
+
+extension ReadingTextSizeX on ReadingTextSize {
+  String get label {
+    switch (this) {
+      case ReadingTextSize.normal:
+        return 'Normal';
+      case ReadingTextSize.large:
+        return 'Grande';
+      case ReadingTextSize.extraLarge:
+        return 'Muito grande';
+    }
+  }
+
+  double get scale {
+    switch (this) {
+      case ReadingTextSize.normal:
+        return 1;
+      case ReadingTextSize.large:
+        return 1.2;
+      case ReadingTextSize.extraLarge:
+        return 1.4;
+    }
+  }
+
+  static ReadingTextSize fromName(String? name) =>
+      ReadingTextSize.values.firstWhere(
+        (size) => size.name == name,
+        orElse: () => ReadingTextSize.normal,
+      );
+}
+
 extension WidgetSizeX on WidgetSize {
   static WidgetSize fromName(String? name) {
     return WidgetSize.values.firstWhere(
@@ -136,7 +169,9 @@ class AppSettings {
   final NoRepeatOption noRepeat;
   final WidgetVisualTheme widgetTheme;
   final WidgetSize widgetSize;
+  final ReadingTextSize readingTextSize;
   final bool dailyNotificationEnabled;
+  final bool lockScreenNotificationEnabled;
   final String dailyNotificationTime; // "HH:mm"
   final bool onboarded;
 
@@ -145,7 +180,9 @@ class AppSettings {
     this.noRepeat = NoRepeatOption.next20,
     this.widgetTheme = WidgetVisualTheme.claro,
     this.widgetSize = WidgetSize.medium,
-    this.dailyNotificationEnabled = true,
+    this.readingTextSize = ReadingTextSize.normal,
+    this.dailyNotificationEnabled = false,
+    this.lockScreenNotificationEnabled = false,
     this.dailyNotificationTime = '07:00',
     this.onboarded = false,
   });
@@ -155,7 +192,9 @@ class AppSettings {
     NoRepeatOption? noRepeat,
     WidgetVisualTheme? widgetTheme,
     WidgetSize? widgetSize,
+    ReadingTextSize? readingTextSize,
     bool? dailyNotificationEnabled,
+    bool? lockScreenNotificationEnabled,
     String? dailyNotificationTime,
     bool? onboarded,
   }) {
@@ -164,8 +203,11 @@ class AppSettings {
       noRepeat: noRepeat ?? this.noRepeat,
       widgetTheme: widgetTheme ?? this.widgetTheme,
       widgetSize: widgetSize ?? this.widgetSize,
+      readingTextSize: readingTextSize ?? this.readingTextSize,
       dailyNotificationEnabled:
           dailyNotificationEnabled ?? this.dailyNotificationEnabled,
+      lockScreenNotificationEnabled:
+          lockScreenNotificationEnabled ?? this.lockScreenNotificationEnabled,
       dailyNotificationTime:
           dailyNotificationTime ?? this.dailyNotificationTime,
       onboarded: onboarded ?? this.onboarded,

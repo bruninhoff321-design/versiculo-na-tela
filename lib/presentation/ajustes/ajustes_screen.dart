@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../core/theme/app_theme.dart';
 import '../../domain/models/app_settings.dart';
 import '../state/app_state.dart';
+import '../shared/widget_setup.dart';
 
 class AjustesScreen extends StatelessWidget {
   const AjustesScreen({super.key});
@@ -12,147 +13,308 @@ class AjustesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final app = context.watch<AppState>();
     final settings = app.settings;
+    final gold = Theme.of(context).colorScheme.primary;
+
+    Widget section({
+      required String title,
+      required String subtitle,
+      required IconData icon,
+      required List<Widget> children,
+    }) {
+      return Card(
+        margin: const EdgeInsets.only(bottom: 12),
+        color: Theme.of(context).colorScheme.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+        child: ExpansionTile(
+          shape: const Border(),
+          collapsedShape: const Border(),
+          leading: Icon(icon, color: gold),
+          title:
+              Text(title, style: const TextStyle(fontWeight: FontWeight.w700)),
+          subtitle: Text(subtitle, style: const TextStyle(fontSize: 13)),
+          childrenPadding: const EdgeInsets.fromLTRB(18, 4, 18, 18),
+          children: children,
+        ),
+      );
+    }
 
     return ListView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),
       children: [
-        _SectionTitle('Quando o versículo deve mudar?'),
-        const _Hint(
-          'Preferência de atualização — o sistema operacional pode ajustar '
-          'o momento exato por bateria/desempenho.',
-        ),
-        const SizedBox(height: 10),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: UpdateFrequency.values.map((f) {
-            return ChoiceChip(
-              label: Text(f.label),
-              selected: settings.frequency == f,
-              onSelected: (_) =>
-                  app.updateSettings((s) => s.copyWith(frequency: f)),
-            );
-          }).toList(),
-        ),
-        const SizedBox(height: 28),
-        _SectionTitle('Não repetir versículos'),
-        const _Hint(
-          'Evite que um versículo apareça novamente até que você tenha '
-          'visto outros.',
-        ),
-        const SizedBox(height: 10),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: NoRepeatOption.values.map((o) {
-            return ChoiceChip(
-              label: Text(o.label),
-              selected: settings.noRepeat == o,
-              onSelected: (_) =>
-                  app.updateSettings((s) => s.copyWith(noRepeat: o)),
-            );
-          }).toList(),
-        ),
-        const SizedBox(height: 28),
-        _SectionTitle('Tema do widget'),
-        const _Hint('Todos os temas estão disponíveis.'),
-        const SizedBox(height: 12),
-        Wrap(
-          spacing: 14,
-          runSpacing: 14,
-          children: WidgetVisualTheme.values.map((t) {
-            final (bg, _) = AppTheme.widgetThemeColors(t.name);
-            return GestureDetector(
-              onTap: () =>
-                  app.updateSettings((s) => s.copyWith(widgetTheme: t)),
-              child: SizedBox(
-                width: 76,
-                child: Column(
-                  children: [
-                    Container(
-                      height: 52,
-                      decoration: BoxDecoration(
-                        color: bg,
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(
-                          color: settings.widgetTheme == t
-                              ? Theme.of(context).colorScheme.primary
-                              : Colors.transparent,
-                          width: 2,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(t.label, style: const TextStyle(fontSize: 11)),
-                  ],
-                ),
+        Text('Do seu jeito',
+            style: Theme.of(context)
+                .textTheme
+                .headlineSmall
+                ?.copyWith(fontWeight: FontWeight.w800)),
+        const SizedBox(height: 4),
+        const Text('Toque em uma seção para ajustar apenas o que precisar.'),
+        const SizedBox(height: 20),
+        section(
+          title: 'Troca de versículos',
+          subtitle: settings.frequency.label,
+          icon: Icons.autorenew_rounded,
+          children: [
+            const _SettingLabel('Quando mudar?'),
+            const SizedBox(height: 8),
+            for (final frequency in UpdateFrequency.values)
+              RadioListTile<UpdateFrequency>(
+                dense: true,
+                contentPadding: EdgeInsets.zero,
+                title: Text(frequency.label),
+                value: frequency,
+                groupValue: settings.frequency,
+                onChanged: (value) {
+                  if (value != null) {
+                    app.updateSettings((s) => s.copyWith(frequency: value));
+                  }
+                },
               ),
-            );
-          }).toList(),
-        ),
-        const SizedBox(height: 28),
-        _SectionTitle('Tamanho do widget'),
-        const SizedBox(height: 10),
-        SegmentedButton<WidgetSize>(
-          segments: const [
-            ButtonSegment(value: WidgetSize.small, label: Text('Pequeno')),
-            ButtonSegment(value: WidgetSize.medium, label: Text('Médio')),
-            ButtonSegment(value: WidgetSize.large, label: Text('Grande')),
+            const SizedBox(height: 8),
+            const _SettingLabel('Evitar repetições'),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: NoRepeatOption.values
+                  .map((option) => ChoiceChip(
+                        label: Text(option.label),
+                        selected: settings.noRepeat == option,
+                        onSelected: (_) => app.updateSettings(
+                            (s) => s.copyWith(noRepeat: option)),
+                      ))
+                  .toList(),
+            ),
+            const SizedBox(height: 12),
+            const Text(
+                'O Android pode atrasar a atualização para economizar bateria.',
+                style: TextStyle(fontSize: 13)),
           ],
-          selected: {settings.widgetSize},
-          onSelectionChanged: (v) =>
-              app.updateSettings((s) => s.copyWith(widgetSize: v.first)),
         ),
-        const SizedBox(height: 28),
-        _SectionTitle('Versículo diário'),
-        const SizedBox(height: 10),
-        SwitchListTile(
-          contentPadding: EdgeInsets.zero,
-          title: const Text('Notificação diária'),
-          value: settings.dailyNotificationEnabled,
-          onChanged: (v) => app
-              .updateSettings((s) => s.copyWith(dailyNotificationEnabled: v)),
+        section(
+          title: 'Versículo na tela inicial',
+          subtitle: 'Adicionar o widget em um toque',
+          icon: Icons.add_to_home_screen_rounded,
+          children: [
+            const Text('Mostre o versículo sobre a foto da sua tela inicial.'),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                onPressed: () => addWidgetToHome(context),
+                icon: const Icon(Icons.add_rounded),
+                label: const Text('Ativar na tela inicial'),
+              ),
+            ),
+          ],
         ),
-        if (settings.dailyNotificationEnabled)
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: const Text('Horário'),
-            trailing: TextButton(
-              child: Text(settings.dailyNotificationTime),
-              onPressed: () async {
-                final parts = settings.dailyNotificationTime.split(':');
-                final picked = await showTimePicker(
-                  context: context,
-                  initialTime: TimeOfDay(
-                    hour: int.parse(parts[0]),
-                    minute: int.parse(parts[1]),
-                  ),
-                );
-                if (picked != null) {
-                  final formatted = '${picked.hour.toString().padLeft(2, '0')}:'
-                      '${picked.minute.toString().padLeft(2, '0')}';
-                  await app.updateSettings(
-                      (s) => s.copyWith(dailyNotificationTime: formatted));
+        section(
+          title: 'Tela de bloqueio',
+          subtitle: 'Versículo visível sem trocar sua foto',
+          icon: Icons.lock_outline_rounded,
+          children: [
+            const Text(
+              'Mostre o versículo como notificação silenciosa, sem trocar seu papel de parede. '
+              'Cada Android decide onde exibir o texto na tela de bloqueio.',
+            ),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Mostrar versículo no bloqueio'),
+              subtitle: const Text(
+                  'Notificação silenciosa, sem trocar sua foto. '
+                  'Pode ser ocultada pelas configurações de notificações do celular.'),
+              value: settings.lockScreenNotificationEnabled,
+              onChanged: (enabled) async {
+                final ok = await app.setLockScreenNotificationEnabled(enabled);
+                if (!ok && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text(
+                        'Permita notificações para mostrar o versículo no bloqueio.'),
+                  ));
                 }
               },
             ),
-          ),
-        const SizedBox(height: 28),
-        ExpansionTile(
-          tilePadding: EdgeInsets.zero,
-          title: const Text('Sobre / licença do texto bíblico'),
-          children: const [
-            Padding(
-              padding: EdgeInsets.only(bottom: 16),
-              child: Text(
-                'Todas as Escrituras em português citadas são da Bíblia '
-                'Livre (BLIVRE), Copyright © Diego Santos, Mario Sérgio e '
-                'Marco Teles — sites.google.com/site/biblialivre. Licença '
-                'Creative Commons Atribuição 3.0 Brasil (CC BY 3.0 BR). '
-                'Reprodução permitida desde que devidamente mencionados '
-                'fonte e autores.',
-                style: TextStyle(fontSize: 12.5),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                onPressed: () => showLockScreenWidgetGuide(context),
+                icon: const Icon(Icons.widgets_outlined),
+                label: const Text('Ver opções de widget no bloqueio'),
               ),
+            ),
+            const Divider(height: 32),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Usar imagem do app no bloqueio'),
+              subtitle: const Text(
+                  'Substitui sua foto por um fundo com o versículo. Desligar não restaura a foto anterior.'),
+              value: app.lockWallpaperEnabled,
+              onChanged: (enabled) async {
+                try {
+                  await app.setLockWallpaperEnabled(enabled);
+                  if (!enabled && context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text(
+                        'Para voltar à sua foto, escolha-a novamente em Papéis de parede.',
+                      ),
+                    ));
+                  }
+                } catch (_) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text(
+                          'Este celular não permitiu alterar a tela de bloqueio.'),
+                    ));
+                  }
+                }
+              },
+            ),
+          ],
+        ),
+        section(
+          title: 'Aparência do widget',
+          subtitle:
+              '${settings.widgetTheme.label} · tamanho ${settings.widgetSize.name}',
+          icon: Icons.palette_outlined,
+          children: [
+            const _SettingLabel('Estilo'),
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              children: WidgetVisualTheme.values.map((visual) {
+                final (background, _) = AppTheme.widgetThemeColors(visual.name);
+                return InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: () => app
+                      .updateSettings((s) => s.copyWith(widgetTheme: visual)),
+                  child: SizedBox(
+                    width: 76,
+                    child: Column(children: [
+                      Container(
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: background,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: settings.widgetTheme == visual
+                                ? gold
+                                : Colors.transparent,
+                            width: 3,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Text(visual.label, style: const TextStyle(fontSize: 13)),
+                    ]),
+                  ),
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 22),
+            const _SettingLabel('Tamanho'),
+            const SizedBox(height: 10),
+            SegmentedButton<WidgetSize>(
+              segments: const [
+                ButtonSegment(value: WidgetSize.small, label: Text('Pequeno')),
+                ButtonSegment(value: WidgetSize.medium, label: Text('Médio')),
+                ButtonSegment(value: WidgetSize.large, label: Text('Grande')),
+              ],
+              selected: {settings.widgetSize},
+              onSelectionChanged: (values) => app
+                  .updateSettings((s) => s.copyWith(widgetSize: values.first)),
+            ),
+          ],
+        ),
+        section(
+          title: 'Tamanho da leitura',
+          subtitle: settings.readingTextSize.label,
+          icon: Icons.format_size_rounded,
+          children: [
+            const Text('Aumente o texto dos versículos dentro do app.'),
+            const SizedBox(height: 10),
+            for (final size in ReadingTextSize.values)
+              RadioListTile<ReadingTextSize>(
+                contentPadding: EdgeInsets.zero,
+                title: Text(size.label),
+                value: size,
+                groupValue: settings.readingTextSize,
+                onChanged: (value) {
+                  if (value != null) {
+                    app.updateSettings(
+                        (s) => s.copyWith(readingTextSize: value));
+                  }
+                },
+              ),
+          ],
+        ),
+        section(
+          title: 'Lembrete diário',
+          subtitle: settings.dailyNotificationEnabled
+              ? 'Ativado às ${settings.dailyNotificationTime}'
+              : 'Desativado',
+          icon: Icons.notifications_outlined,
+          children: [
+            const Text('Desligado até você escolher. Sem som nem vibração.'),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Receber uma notificação diária'),
+              value: settings.dailyNotificationEnabled,
+              onChanged: (enabled) async {
+                final ok = await app.setDailyNotificationEnabled(enabled);
+                if (!ok && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content:
+                        Text('Permita notificações para receber o lembrete.'),
+                  ));
+                }
+              },
+            ),
+            if (settings.dailyNotificationEnabled)
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('Horário'),
+                trailing: TextButton(
+                  child: Text(settings.dailyNotificationTime),
+                  onPressed: () async {
+                    final parts = settings.dailyNotificationTime.split(':');
+                    final picked = await showTimePicker(
+                      context: context,
+                      initialTime: TimeOfDay(
+                        hour: int.parse(parts[0]),
+                        minute: int.parse(parts[1]),
+                      ),
+                    );
+                    if (picked != null) {
+                      final formatted =
+                          '${picked.hour.toString().padLeft(2, '0')}:'
+                          '${picked.minute.toString().padLeft(2, '0')}';
+                      await app.updateSettings(
+                          (s) => s.copyWith(dailyNotificationTime: formatted));
+                    }
+                  },
+                ),
+              ),
+          ],
+        ),
+        section(
+          title: 'Sobre o app',
+          subtitle: 'Criador e licença do texto bíblico',
+          icon: Icons.info_outline_rounded,
+          children: const [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text('Versículo na Tela · Criado por Bruno Brasil.',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+            ),
+            SizedBox(height: 14),
+            Text(
+              'Texto bíblico: Bíblia Livre (BLIVRE), Copyright © Diego '
+              'Santos, Mario Sérgio e Marco Teles — edição de fevereiro '
+              'de 2018. https://sites.google.com/site/biblialivre/. '
+              'Licença Creative Commons Atribuição 3.0 Brasil '
+              '(CC BY 3.0 BR).',
+              style: TextStyle(fontSize: 13, height: 1.5),
             ),
           ],
         ),
@@ -161,25 +323,13 @@ class AjustesScreen extends StatelessWidget {
   }
 }
 
-class _SectionTitle extends StatelessWidget {
+class _SettingLabel extends StatelessWidget {
   final String text;
-  const _SectionTitle(this.text);
-  @override
-  Widget build(BuildContext context) {
-    return Text(text,
-        style: Theme.of(context)
-            .textTheme
-            .titleMedium
-            ?.copyWith(fontWeight: FontWeight.w700));
-  }
-}
+  const _SettingLabel(this.text);
 
-class _Hint extends StatelessWidget {
-  final String text;
-  const _Hint(this.text);
   @override
-  Widget build(BuildContext context) {
-    return Text(text,
-        style: TextStyle(fontSize: 12.5, color: Theme.of(context).hintColor));
-  }
+  Widget build(BuildContext context) => Align(
+        alignment: Alignment.centerLeft,
+        child: Text(text, style: const TextStyle(fontWeight: FontWeight.w700)),
+      );
 }

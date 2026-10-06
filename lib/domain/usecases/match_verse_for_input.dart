@@ -57,7 +57,8 @@ class MatchVerseForInputUseCase {
       });
     }
 
-    if (themes.isEmpty || allVerses.isEmpty) return null;
+    if (allVerses.isEmpty || (themes.isEmpty && normalizedText.trim().isEmpty))
+      return null;
 
     final recentIds = recentHistory.length <= recentWindow
         ? recentHistory.map((h) => h.verseId).toSet()
@@ -69,11 +70,30 @@ class MatchVerseForInputUseCase {
     Verse? best;
     var bestScore = -1.0;
     final bestMatchedThemes = <String>{};
+    final words = normalizedText
+        .split(RegExp(r'[^a-z0-9]+'))
+        .where((word) => word.length >= 4)
+        .toSet();
 
     for (final verse in allVerses) {
       final matched = verse.themes.where(themes.contains).toSet();
-      if (matched.isEmpty) continue;
+      if (matched.isEmpty && themes.isNotEmpty) continue;
+      // O banco inteiro participa da troca automática, mas uma descrição
+      // livre só deve retornar versos com curadoria temática. Sem esse filtro,
+      // qualquer um dos 31 mil versos venceria um empate sem relação com o
+      // que a pessoa escreveu.
+      if (themes.isEmpty && verse.themes.isEmpty && verse.keywords.isEmpty) {
+        continue;
+      }
       var score = matched.length.toDouble();
+      // Texto livre continua funcionando mesmo quando não contém uma palavra
+      // prevista na taxonomia. As palavras cadastradas nos próprios versos
+      // ajudam a escolher uma reflexão relacionada, sem gerar texto bíblico.
+      if (themes.isEmpty) {
+        score += verse.keywords
+            .where((keyword) => words.contains(normalize(keyword)))
+            .length;
+      }
       if (recentIds.contains(verse.id)) score -= 0.4; // prioriza não repetidos
       score += _random.nextDouble() * 0.01; // desempata sem viés fixo
       if (score > bestScore) {

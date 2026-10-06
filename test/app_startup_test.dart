@@ -39,6 +39,7 @@ class _Taxonomy implements ThemeTaxonomyRepository {
 class _Store extends AppLocalStore {
   AppSettings saved = const AppSettings();
   final entries = <HistoryEntry>[];
+  final notes = <String, String>{};
   @override
   AppSettings readSettings() => saved;
   @override
@@ -50,6 +51,17 @@ class _Store extends AppLocalStore {
   List<HistoryEntry> readHistory() => List.of(entries);
   @override
   Set<String> readFavoriteIds() => {};
+  @override
+  Map<String, String> readNotes() => Map.of(notes);
+  @override
+  Future<void> saveNote(String verseId, String note) async {
+    if (note.trim().isEmpty) {
+      notes.remove(verseId);
+    } else {
+      notes[verseId] = note.trim();
+    }
+  }
+
   @override
   String? readCurrentVerseId() => null;
   @override
@@ -67,6 +79,8 @@ class _Widget extends WidgetSyncService {
   @override
   Future<void> init() => initialize();
   @override
+  Future<String?> readCurrentVerseId() async => null;
+  @override
   Future<void> syncCurrentVerse(
       {required Verse verse, required AppSettings settings}) async {
     syncs++;
@@ -76,12 +90,32 @@ class _Widget extends WidgetSyncService {
 class _Notifications extends NotificationService {
   final Future<void> Function() initialize;
   _Notifications(this.initialize);
+  int scheduled = 0;
+  int cancelled = 0;
+  bool permissionGranted = true;
+  int permissionRequests = 0;
   @override
   Future<void> init() => initialize();
   @override
-  Future<void> scheduleDaily(String timeOfDay) async {}
+  Future<bool> requestPermission() async {
+    permissionRequests++;
+    return permissionGranted;
+  }
+
   @override
-  Future<void> cancelDaily() async {}
+  Future<void> scheduleDaily(String timeOfDay) async {
+    scheduled++;
+  }
+
+  @override
+  Future<void> cancelDaily() async {
+    cancelled++;
+  }
+
+  @override
+  Future<void> showLockScreenVerse(String text, String reference) async {}
+  @override
+  Future<void> cancelLockScreenVerse() async {}
 }
 
 class _Scheduler extends NativeWidgetScheduler {
@@ -103,6 +137,60 @@ AppState _app(_Store store, _Widget widget, _Notifications notifications,
     );
 
 void main() {
+  test('lembrete só liga com permissão e mantém a escolha salva', () async {
+    final store = _Store();
+    final notifications = _Notifications(() async {})
+      ..permissionGranted = false;
+    final app = _app(
+        store, _Widget(() async {}), notifications, _Scheduler(() async {}));
+    await app.bootstrap();
+    expect(await app.setDailyNotificationEnabled(true), isFalse);
+    expect(app.settings.dailyNotificationEnabled, isFalse);
+    expect(store.saved.dailyNotificationEnabled, isFalse);
+
+    notifications.permissionGranted = true;
+    expect(await app.setDailyNotificationEnabled(true), isTrue);
+    expect(store.saved.dailyNotificationEnabled, isTrue);
+    expect(notifications.permissionRequests, 2);
+    expect(await app.setDailyNotificationEnabled(false), isTrue);
+    expect(store.saved.dailyNotificationEnabled, isFalse);
+    app.dispose();
+  });
+
+  test('preferência de leitura maior permanece entre aberturas', () async {
+    final store = _Store();
+    final first = _app(store, _Widget(() async {}), _Notifications(() async {}),
+        _Scheduler(() async {}));
+    await first.bootstrap();
+    await first.updateSettings(
+        (s) => s.copyWith(readingTextSize: ReadingTextSize.extraLarge));
+    first.dispose();
+
+    final reopened = _app(store, _Widget(() async {}),
+        _Notifications(() async {}), _Scheduler(() async {}));
+    await reopened.bootstrap();
+    expect(reopened.settings.readingTextSize, ReadingTextSize.extraLarge);
+    reopened.dispose();
+  });
+
+  test('lembrete começa desligado e reflexões ficam salvas por versículo',
+      () async {
+    final store = _Store();
+    final notifications = _Notifications(() async {});
+    final app = _app(
+        store, _Widget(() async {}), notifications, _Scheduler(() async {}));
+    await app.bootstrap();
+    await Future<void>.delayed(Duration.zero);
+    expect(app.settings.dailyNotificationEnabled, isFalse);
+    expect(notifications.scheduled, 0);
+    await app.saveNote(_verse.id, 'Uma palavra para hoje');
+    expect(store.notes[_verse.id], 'Uma palavra para hoje');
+    expect(app.notes[_verse.id], 'Uma palavra para hoje');
+    await app.saveNote(_verse.id, '  ');
+    expect(app.notes.containsKey(_verse.id), isFalse);
+    app.dispose();
+  });
+
   test('abre e conclui onboarding enquanto serviços nativos estão pendentes',
       () async {
     final pending = Completer<void>();
@@ -168,6 +256,8 @@ void main() {
       value: app,
       child: const MaterialApp(home: Scaffold(body: AjustesScreen())),
     ));
+    await tester.tap(find.text('Aparência do widget'));
+    await tester.pumpAndSettle();
     for (final theme in WidgetVisualTheme.values) {
       await tester.tap(find.text(theme.label));
       await tester.pump();

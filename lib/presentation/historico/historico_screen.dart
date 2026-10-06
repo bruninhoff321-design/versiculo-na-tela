@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../../domain/models/app_settings.dart';
 import '../../domain/models/history_entry.dart';
 import '../state/app_state.dart';
 
@@ -34,7 +35,10 @@ class HistoricoScreen extends StatelessWidget {
             : item.verse.text;
         return ListTile(
           title: Text('“$preview”',
-              style: const TextStyle(fontStyle: FontStyle.italic)),
+              style: TextStyle(
+                fontStyle: FontStyle.italic,
+                fontSize: 16 * app.settings.readingTextSize.scale,
+              )),
           subtitle: Text(
             '${item.verse.reference} · '
             '${formatter.format(item.entry.timestamp)} · '

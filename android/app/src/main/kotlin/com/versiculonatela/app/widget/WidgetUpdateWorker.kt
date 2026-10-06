@@ -3,12 +3,16 @@ package com.versiculonatela.app.widget
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
+import android.util.JsonReader
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.WorkManager
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.ExistingPeriodicWorkPolicy
 import java.util.concurrent.TimeUnit
+import es.antonborri.home_widget.HomeWidgetPlugin
+import java.io.InputStreamReader
+import kotlin.random.Random
 
 /**
  * Agendamento da PREFERÊNCIA de atualização (seção 5 do briefing).
@@ -27,6 +31,7 @@ class WidgetUpdateWorker(context: Context, params: WorkerParameters) :
 
     override suspend fun doWork(): Result {
         return try {
+            rotateVerse()
             val manager = AppWidgetManager.getInstance(applicationContext)
             val component = ComponentName(applicationContext, VersiculoWidgetReceiver::class.java)
             val ids = manager.getAppWidgetIds(component)
@@ -37,10 +42,100 @@ class WidgetUpdateWorker(context: Context, params: WorkerParameters) :
                     manager.updateAppWidget(id, views)
                 }
             }
+            val compactComponent = ComponentName(
+                applicationContext, VersiculoCompactWidgetReceiver::class.java
+            )
+            val compactIds = manager.getAppWidgetIds(compactComponent)
+            if (compactIds.isNotEmpty()) {
+                val data = WidgetPreferences.read(applicationContext)
+                for (id in compactIds) {
+                    manager.updateAppWidget(
+                        id,
+                        VersiculoCompactWidgetReceiver.buildRemoteViews(applicationContext, data),
+                    )
+                }
+            }
+            try {
+                LockScreenWallpaper.update(applicationContext)
+            } catch (_: Exception) {
+                // O fabricante pode negar a troca; o widget ainda foi atualizado.
+            }
+            try {
+                LockVerseNotification.update(applicationContext)
+            } catch (_: Exception) {
+                // A permissão pode ter sido revogada; o widget ainda foi atualizado.
+            }
             Result.success()
         } catch (e: Exception) {
             Result.retry()
         }
+    }
+
+    private fun rotateVerse() {
+        val prefs = HomeWidgetPlugin.getData(applicationContext)
+        val current = prefs.getString("verse_id", null)
+        val recent = prefs.getString("recent_verse_ids", "")
+            .orEmpty().split(',').filter { it.isNotBlank() }
+        val noRepeat = prefs.getInt("no_repeat_count", 20).coerceAtLeast(0)
+        val excluded = recent.takeLast(noRepeat).toSet() + current
+        // Lê o arquivo em fluxo: a Bíblia completa não deve ocupar dezenas de
+        // megabytes de memória toda vez que o Android atualizar o widget.
+        val next = pickRandomVerse(excluded)
+            ?: pickRandomVerse(setOfNotNull(current))
+            ?: return
+        val id = next.id
+        val history = (recent + listOfNotNull(current)).takeLast(100)
+        prefs.edit()
+            .putString("verse_id", id)
+            .putString("verse_text", next.text)
+            .putString("verse_reference", "${next.book} ${next.chapter}:${next.verse}")
+            .putString("recent_verse_ids", history.joinToString(","))
+            .apply()
+    }
+
+    private data class VerseData(
+        val id: String,
+        val book: String,
+        val chapter: Int,
+        val verse: Int,
+        val text: String,
+    )
+
+    private fun pickRandomVerse(excluded: Set<String?>): VerseData? {
+        var chosen: VerseData? = null
+        var eligibleCount = 0
+        applicationContext.assets.open("flutter_assets/assets/verses.json").use { stream ->
+            JsonReader(InputStreamReader(stream, Charsets.UTF_8)).use { reader ->
+                reader.beginArray()
+                while (reader.hasNext()) {
+                    var id = ""
+                    var book = ""
+                    var chapter = 0
+                    var verse = 0
+                    var text = ""
+                    reader.beginObject()
+                    while (reader.hasNext()) {
+                        when (reader.nextName()) {
+                            "id" -> id = reader.nextString()
+                            "book" -> book = reader.nextString()
+                            "chapter" -> chapter = reader.nextInt()
+                            "verse" -> verse = reader.nextInt()
+                            "text" -> text = reader.nextString()
+                            else -> reader.skipValue()
+                        }
+                    }
+                    reader.endObject()
+                    if (id !in excluded) {
+                        eligibleCount++
+                        if (Random.nextInt(eligibleCount) == 0) {
+                            chosen = VerseData(id, book, chapter, verse, text)
+                        }
+                    }
+                }
+                reader.endArray()
+            }
+        }
+        return chosen
     }
 
     companion object {
