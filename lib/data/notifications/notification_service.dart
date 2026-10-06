@@ -9,6 +9,7 @@ import 'package:timezone/timezone.dart' as tz;
 /// existe implementação própria de agendamento aqui.
 class NotificationService {
   static const int _dailyNotificationId = 1001;
+  static const int _lockScreenVerseId = 1002;
 
   final FlutterLocalNotificationsPlugin _plugin =
       FlutterLocalNotificationsPlugin();
@@ -68,13 +69,15 @@ class NotificationService {
       scheduled,
       const NotificationDetails(
         android: AndroidNotificationDetails(
-          'versiculo_diario',
-          'Versículo diário',
-          channelDescription: 'Um lembrete diário com um versículo bíblico',
-          importance: Importance.defaultImportance,
-          priority: Priority.defaultPriority,
+          'versiculo_diario_silencioso',
+          'Lembrete diário silencioso',
+          channelDescription: 'Lembrete diário sem som ou vibração',
+          importance: Importance.low,
+          priority: Priority.low,
+          playSound: false,
+          enableVibration: false,
         ),
-        iOS: DarwinNotificationDetails(),
+        iOS: DarwinNotificationDetails(presentSound: false),
       ),
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       uiLocalNotificationDateInterpretation:
@@ -86,4 +89,29 @@ class NotificationService {
   Future<void> cancelDaily() async {
     await _plugin.cancel(_dailyNotificationId);
   }
+
+  Future<void> showLockScreenVerse(String text, String reference) async {
+    await _plugin.show(
+      _lockScreenVerseId,
+      reference,
+      text,
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          'versiculo_no_bloqueio',
+          'Versículo na tela de bloqueio',
+          channelDescription: 'Exibe o versículo sem som ou vibração',
+          importance: Importance.low,
+          priority: Priority.low,
+          playSound: false,
+          enableVibration: false,
+          ongoing: true,
+          autoCancel: false,
+          visibility: NotificationVisibility.public,
+          styleInformation: BigTextStyleInformation(text),
+        ),
+      ),
+    );
+  }
+
+  Future<void> cancelLockScreenVerse() => _plugin.cancel(_lockScreenVerseId);
 }
