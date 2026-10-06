@@ -49,6 +49,8 @@ class WidgetSyncService {
         'widget_theme', settings.widgetTheme.name);
     await HomeWidget.saveWidgetData<String>(
         'widget_size', settings.widgetSize.name);
+    await HomeWidget.saveWidgetData<bool>('lock_screen_notification_enabled',
+        settings.lockScreenNotificationEnabled);
     await HomeWidget.saveWidgetData<int>(
         'no_repeat_count', settings.noRepeat.count);
     await HomeWidget.saveWidgetData<String>(
