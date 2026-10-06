@@ -44,6 +44,8 @@ class AppLocalStore {
           _settingsBox.get('widgetTheme') as String?),
       widgetSize:
           WidgetSizeX.fromName(_settingsBox.get('widgetSize') as String?),
+      readingTextSize: ReadingTextSizeX.fromName(
+          _settingsBox.get('readingTextSize') as String?),
       dailyNotificationEnabled:
           // Versões antigas ativavam o lembrete sem escolha explícita.
           // Só mantemos ativo quando a pessoa o ligou nesta versão.
@@ -63,6 +65,7 @@ class AppLocalStore {
       'noRepeat': settings.noRepeat.count,
       'widgetTheme': settings.widgetTheme.name,
       'widgetSize': settings.widgetSize.name,
+      'readingTextSize': settings.readingTextSize.name,
       'dailyNotificationEnabled': settings.dailyNotificationEnabled,
       'dailyNotificationConsent': settings.dailyNotificationEnabled,
       'lockScreenNotificationEnabled': settings.lockScreenNotificationEnabled,
