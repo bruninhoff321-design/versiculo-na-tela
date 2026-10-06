@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../shared/share_image.dart';
+import '../shared/verse_note_editor.dart';
 import '../state/app_state.dart';
 
 class FavoritosScreen extends StatefulWidget {
@@ -105,10 +106,22 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                                     style:
                                         TextStyle(color: gold, fontSize: 13)),
                               ],
+                              if (app.notes[v.id]?.isNotEmpty ?? false) ...[
+                                const SizedBox(height: 10),
+                                Text(app.notes[v.id]!,
+                                    style:
+                                        Theme.of(context).textTheme.bodyMedium),
+                              ],
                               const SizedBox(height: 8),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
+                                  IconButton(
+                                    tooltip: 'Escrever reflexão',
+                                    icon: const Icon(Icons.edit_note_rounded),
+                                    onPressed: () =>
+                                        showVerseNoteEditor(context, v),
+                                  ),
                                   IconButton(
                                     tooltip: 'Compartilhar',
                                     icon: const Icon(Icons.ios_share),
