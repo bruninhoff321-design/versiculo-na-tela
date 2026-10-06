@@ -183,18 +183,31 @@ class AppState extends ChangeNotifier {
   }
 
   Future<bool> setLockScreenNotificationEnabled(bool enabled) async {
-    if (enabled) {
-      final ready = await (_notificationsReady ??=
-          _runOptional('notificações', notifications.init));
-      if (!ready) {
-        _notificationsReady = null;
-        return false;
-      }
-      if (!await notifications.requestPermission()) return false;
-    }
+    if (enabled && !await _prepareNotifications()) return false;
     await updateSettings(
         (s) => s.copyWith(lockScreenNotificationEnabled: enabled));
     return true;
+  }
+
+  Future<bool> setDailyNotificationEnabled(bool enabled) async {
+    if (enabled && !await _prepareNotifications()) return false;
+    await updateSettings((s) => s.copyWith(dailyNotificationEnabled: enabled));
+    return true;
+  }
+
+  Future<bool> _prepareNotifications() async {
+    final ready = await (_notificationsReady ??=
+        _runOptional('notificações', notifications.init));
+    if (!ready) {
+      _notificationsReady = null;
+      return false;
+    }
+    try {
+      return await notifications.requestPermission();
+    } catch (error) {
+      debugPrint('Não foi possível pedir permissão de notificações: $error');
+      return false;
+    }
   }
 
   Verse? verseById(String id) => _byId[id];
