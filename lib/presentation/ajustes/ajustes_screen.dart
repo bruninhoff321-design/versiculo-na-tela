@@ -109,12 +109,30 @@ class AjustesScreen extends StatelessWidget {
         ),
         section(
           title: 'Tela de bloqueio',
-          subtitle: 'Versículo pequeno sem cobrir sua foto',
+          subtitle: 'Versículo visível sem trocar sua foto',
           icon: Icons.lock_outline_rounded,
           children: [
             const Text(
-              'No Samsung, o espaço abaixo do relógio aceita apenas os widgets '
-              'que o sistema oferece. Veja como testar a versão compacta pelo LockStar.',
+              'No A33, o espaço abaixo do relógio não mostrou o widget do app. '
+              'Você pode exibir o versículo como notificação silenciosa no bloqueio. '
+              'A Samsung decide a posição e se mostra o texto completo.',
+            ),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Mostrar versículo no bloqueio'),
+              subtitle: const Text(
+                  'Notificação silenciosa, sem trocar sua foto. '
+                  'Pode ser ocultada pelas configurações de notificações do celular.'),
+              value: settings.lockScreenNotificationEnabled,
+              onChanged: (enabled) async {
+                final ok = await app.setLockScreenNotificationEnabled(enabled);
+                if (!ok && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text(
+                        'Permita notificações para mostrar o versículo no bloqueio.'),
+                  ));
+                }
+              },
             ),
             const SizedBox(height: 12),
             SizedBox(
@@ -122,7 +140,7 @@ class AjustesScreen extends StatelessWidget {
               child: FilledButton.icon(
                 onPressed: () => showLockScreenWidgetGuide(context),
                 icon: const Icon(Icons.widgets_outlined),
-                label: const Text('Como colocar abaixo do relógio'),
+                label: const Text('Testar widget abaixo do relógio'),
               ),
             ),
             const Divider(height: 32),
@@ -216,6 +234,7 @@ class AjustesScreen extends StatelessWidget {
               : 'Desativado',
           icon: Icons.notifications_outlined,
           children: [
+            const Text('Desligado até você escolher. Sem som nem vibração.'),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
               title: const Text('Receber uma notificação diária'),
