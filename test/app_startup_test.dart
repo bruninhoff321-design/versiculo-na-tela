@@ -92,8 +92,16 @@ class _Notifications extends NotificationService {
   _Notifications(this.initialize);
   int scheduled = 0;
   int cancelled = 0;
+  bool permissionGranted = true;
+  int permissionRequests = 0;
   @override
   Future<void> init() => initialize();
+  @override
+  Future<bool> requestPermission() async {
+    permissionRequests++;
+    return permissionGranted;
+  }
+
   @override
   Future<void> scheduleDaily(String timeOfDay) async {
     scheduled++;
@@ -129,6 +137,42 @@ AppState _app(_Store store, _Widget widget, _Notifications notifications,
     );
 
 void main() {
+  test('lembrete só liga com permissão e mantém a escolha salva', () async {
+    final store = _Store();
+    final notifications = _Notifications(() async {})
+      ..permissionGranted = false;
+    final app = _app(
+        store, _Widget(() async {}), notifications, _Scheduler(() async {}));
+    await app.bootstrap();
+    expect(await app.setDailyNotificationEnabled(true), isFalse);
+    expect(app.settings.dailyNotificationEnabled, isFalse);
+    expect(store.saved.dailyNotificationEnabled, isFalse);
+
+    notifications.permissionGranted = true;
+    expect(await app.setDailyNotificationEnabled(true), isTrue);
+    expect(store.saved.dailyNotificationEnabled, isTrue);
+    expect(notifications.permissionRequests, 2);
+    expect(await app.setDailyNotificationEnabled(false), isTrue);
+    expect(store.saved.dailyNotificationEnabled, isFalse);
+    app.dispose();
+  });
+
+  test('preferência de leitura maior permanece entre aberturas', () async {
+    final store = _Store();
+    final first = _app(store, _Widget(() async {}), _Notifications(() async {}),
+        _Scheduler(() async {}));
+    await first.bootstrap();
+    await first.updateSettings(
+        (s) => s.copyWith(readingTextSize: ReadingTextSize.extraLarge));
+    first.dispose();
+
+    final reopened = _app(store, _Widget(() async {}),
+        _Notifications(() async {}), _Scheduler(() async {}));
+    await reopened.bootstrap();
+    expect(reopened.settings.readingTextSize, ReadingTextSize.extraLarge);
+    reopened.dispose();
+  });
+
   test('lembrete começa desligado e reflexões ficam salvas por versículo',
       () async {
     final store = _Store();
