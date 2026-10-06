@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../domain/models/app_settings.dart';
 import '../../domain/models/situation.dart';
 import '../../domain/models/verse.dart';
 import '../shared/share_image.dart';
@@ -179,7 +180,7 @@ class _DescubraScreenState extends State<DescubraScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('UMA REFLEXÃO PARA VOCÊ',
+                  Text('UM VERSÍCULO PARA VOCÊ',
                       style: TextStyle(
                           color: gold,
                           letterSpacing: 1.2,
@@ -187,7 +188,9 @@ class _DescubraScreenState extends State<DescubraScreen> {
                           fontSize: 12)),
                   const SizedBox(height: 16),
                   Text('“${_result!.verse.text}”',
-                      style: Theme.of(context).textTheme.titleLarge),
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontSize: 22 * app.settings.readingTextSize.scale,
+                          )),
                   const SizedBox(height: 12),
                   Text(_result!.verse.reference,
                       style:
