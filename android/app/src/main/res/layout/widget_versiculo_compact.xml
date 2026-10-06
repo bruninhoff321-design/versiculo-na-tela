@@ -5,31 +5,33 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center_vertical"
-    android:paddingHorizontal="10dp"
-    android:paddingVertical="5dp"
-    android:background="#4E08111E">
-
-    <TextView
-        android:id="@+id/compact_verse_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:maxLines="2"
-        android:textColor="#FFFFFFFF"
-        android:textSize="12sp"
-        android:shadowColor="#CC000000"
-        android:shadowRadius="3"
-        android:text="" />
+    android:paddingHorizontal="4dp"
+    android:paddingVertical="4dp"
+    android:background="@android:color/transparent">
 
     <TextView
         android:id="@+id/compact_verse_reference"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textColor="#FFFFD47B"
-        android:textSize="10sp"
-        android:textStyle="bold"
+        android:textColor="#FFFFFFFF"
+        android:textSize="13sp"
+        android:textStyle="bold|italic"
+        android:shadowColor="#CC000000"
+        android:shadowRadius="5"
+        android:text="" />
+
+    <TextView
+        android:id="@+id/compact_verse_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:ellipsize="end"
+        android:maxLines="3"
+        android:textColor="#FFFFFFFF"
+        android:textSize="12sp"
+        android:shadowColor="#EE000000"
+        android:shadowRadius="5"
         android:text="" />
 </LinearLayout>
