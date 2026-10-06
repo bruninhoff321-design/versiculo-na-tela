@@ -113,9 +113,8 @@ class AjustesScreen extends StatelessWidget {
           icon: Icons.lock_outline_rounded,
           children: [
             const Text(
-              'No A33, o espaço abaixo do relógio não mostrou o widget do app. '
-              'Você pode exibir o versículo como notificação silenciosa no bloqueio. '
-              'A Samsung decide a posição e se mostra o texto completo.',
+              'Mostre o versículo como notificação silenciosa, sem trocar seu papel de parede. '
+              'Cada Android decide onde exibir o texto na tela de bloqueio.',
             ),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
@@ -140,7 +139,7 @@ class AjustesScreen extends StatelessWidget {
               child: FilledButton.icon(
                 onPressed: () => showLockScreenWidgetGuide(context),
                 icon: const Icon(Icons.widgets_outlined),
-                label: const Text('Testar widget abaixo do relógio'),
+                label: const Text('Ver opções de widget no bloqueio'),
               ),
             ),
             const Divider(height: 32),
@@ -228,6 +227,28 @@ class AjustesScreen extends StatelessWidget {
           ],
         ),
         section(
+          title: 'Tamanho da leitura',
+          subtitle: settings.readingTextSize.label,
+          icon: Icons.format_size_rounded,
+          children: [
+            const Text('Aumente o texto dos versículos dentro do app.'),
+            const SizedBox(height: 10),
+            for (final size in ReadingTextSize.values)
+              RadioListTile<ReadingTextSize>(
+                contentPadding: EdgeInsets.zero,
+                title: Text(size.label),
+                value: size,
+                groupValue: settings.readingTextSize,
+                onChanged: (value) {
+                  if (value != null) {
+                    app.updateSettings(
+                        (s) => s.copyWith(readingTextSize: value));
+                  }
+                },
+              ),
+          ],
+        ),
+        section(
           title: 'Lembrete diário',
           subtitle: settings.dailyNotificationEnabled
               ? 'Ativado às ${settings.dailyNotificationTime}'
@@ -239,9 +260,15 @@ class AjustesScreen extends StatelessWidget {
               contentPadding: EdgeInsets.zero,
               title: const Text('Receber uma notificação diária'),
               value: settings.dailyNotificationEnabled,
-              onChanged: (enabled) => app.updateSettings(
-                (s) => s.copyWith(dailyNotificationEnabled: enabled),
-              ),
+              onChanged: (enabled) async {
+                final ok = await app.setDailyNotificationEnabled(enabled);
+                if (!ok && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content:
+                        Text('Permita notificações para receber o lembrete.'),
+                  ));
+                }
+              },
             ),
             if (settings.dailyNotificationEnabled)
               ListTile(
