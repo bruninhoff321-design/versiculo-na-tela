@@ -22,15 +22,20 @@ class PrayerComposer {
         .whereType<String>()
         .take(2)
         .toList();
+    // Sem uma necessidade escolhida, o assunto também varia a cada dia.
+    final dailyNeed = _dailyThemes[variation % _dailyThemes.length];
 
     final parts = <String>[
       opening[variation % opening.length],
       petition[(variation ~/ 5) % petition.length],
       if (needs.isEmpty)
-        _generalPetitions[(variation ~/ 25) % _generalPetitions.length]
+        _themePetitions[dailyNeed]!
       else
         ...needs,
+      _gratitudes[(variation ~/ 3) % _gratitudes.length],
+      _intercessions[(variation ~/ 7) % _intercessions.length],
       _reflections[(variation ~/ 25) % _reflections.length],
+      _commitments[(variation ~/ 11) % _commitments.length],
       if (verseReference != null && verseReference.trim().isNotEmpty)
         'Ao lembrar da tua Palavra em ${verseReference.trim()}, '
             'ajuda-me a vivê-la hoje.',
@@ -71,12 +76,26 @@ class PrayerComposer {
     'Que eu possa soltar as preocupações que não consigo resolver agora.',
   ];
 
-  static const _generalPetitions = [
-    'Tu conheces o que trago no coração; dá-me esperança para seguir.',
-    'Mesmo quando não encontro palavras, escuta o que meu coração precisa.',
-    'Sustenta-me com tua presença e mostra-me o próximo passo.',
-    'Ajuda-me a reconhecer tua companhia nos momentos simples deste dia.',
-    'Que eu encontre em ti consolo, direção e força para continuar.',
+  static const _dailyThemes = [
+    'paz', 'familia', 'esperanca', 'trabalho', 'fe', 'gratidao', 'recomeco',
+  ];
+
+  static const _gratitudes = [
+    'Obrigado pelas pessoas que caminham comigo, pelos pequenos cuidados que recebo e pelas oportunidades de fazer o bem. Mesmo quando o dia não acontece como imaginei, ajuda-me a perceber motivos sinceros para agradecer.',
+    'Agradeço pela vida, pelo pão de hoje e pela chance de aprender de novo. Que eu não passe apressado pelas coisas simples nem esqueça de reconhecer quem me ajuda a continuar.',
+    'Obrigado porque posso trazer a ti minhas dúvidas sem esconder o que sinto. Abre meus olhos para as bênçãos discretas deste dia e ensina-me a cuidar delas com alegria.',
+  ];
+
+  static const _intercessions = [
+    'Lembro também de quem enfrenta dor, solidão ou falta de recursos. Dá consolo, companhia e ajuda concreta a essas pessoas; mostra-me quando posso ser uma resposta por meio de um gesto de bondade.',
+    'Cuida de quem amo e de quem hoje precisa de forças para seguir. Aproxima pessoas dispostas a ouvir e a ajudar, e faz de mim alguém atento ao sofrimento do próximo.',
+    'Peço por aqueles que estão cansados, doentes ou preocupados com o amanhã. Que encontrem acolhimento e caminhos de cuidado; ensina-nos a não deixar ninguém caminhar sozinho.',
+  ];
+
+  static const _commitments = [
+    'Quero ouvir antes de responder, agir com justiça e não perder a esperança quando houver obstáculos. Se eu errar, dá-me humildade para reconhecer e coragem para recomeçar.',
+    'Ajuda-me a fazer minha parte com honestidade e paciência. Que minhas palavras levem paz, que minhas escolhas respeitem o próximo e que eu saiba pedir ajuda quando precisar.',
+    'Ensina-me a transformar esta oração em atitudes: cuidar, perdoar com sabedoria e perseverar no que é bom. Não quero viver apenas de palavras, mas caminhar contigo de verdade.',
   ];
 
   static const _reflections = [

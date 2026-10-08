@@ -29,4 +29,12 @@ void main() {
     expect(prayer, contains('Salmos 37:5'));
     expect(prayer, contains('Em nome de Jesus, amém.'));
   });
+
+  test('sem escolha, o assunto varia e o texto tem corpo para narração', () {
+    final first = composer.compose(day: DateTime(2026, 10, 8), morning: true);
+    final next = composer.compose(day: DateTime(2026, 10, 9), morning: true);
+    expect(first, isNot(next));
+    expect(first.split(RegExp(r'\s+')).length, inInclusiveRange(130, 190));
+    expect(next.split(RegExp(r'\s+')).length, inInclusiveRange(130, 190));
+  });
 }
