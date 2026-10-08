@@ -1,4 +1,6 @@
 <resources>
     <string name="widget_description">Mostra um versículo bíblico direto na sua tela inicial.</string>
-    <string name="compact_widget_description">Versículo pequeno, com fundo discreto, para a tela inicial ou o LockStar.</string>
+    <string name="compact_widget_description">Versículo compacto e transparente para telas que aceitam widgets.</string>
+    <string name="compact_widget_preview_reference">Isaías 41:10</string>
+    <string name="compact_widget_preview_text">Não temas, porque eu sou contigo.</string>
 </resources>
