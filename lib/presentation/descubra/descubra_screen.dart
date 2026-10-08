@@ -5,6 +5,7 @@ import '../../domain/models/app_settings.dart';
 import '../../domain/models/situation.dart';
 import '../../domain/models/verse.dart';
 import '../shared/share_image.dart';
+import '../oracao/prayer_screen.dart';
 import '../state/app_state.dart';
 
 class DescubraScreen extends StatefulWidget {
@@ -28,6 +29,7 @@ class _DescubraScreenState extends State<DescubraScreen> {
   final Set<int> _selected = {};
   final _textController = TextEditingController();
   ({Verse verse, List<String> matchedThemes})? _result;
+  List<String> _prayerThemeIds = const [];
   bool _showMore = false;
 
   @override
@@ -52,7 +54,10 @@ class _DescubraScreenState extends State<DescubraScreen> {
       ));
       return;
     }
-    setState(() => _result = result);
+    setState(() {
+      _result = result;
+      _prayerThemeIds = {...themeIds, ...result.matchedThemes}.toList();
+    });
     FocusScope.of(context).unfocus();
   }
 
@@ -230,6 +235,19 @@ class _DescubraScreenState extends State<DescubraScreen> {
                         },
                         icon: const Icon(Icons.phone_android_outlined),
                         label: const Text('Mostrar na tela'),
+                      ),
+                      FilledButton.icon(
+                        onPressed: () => Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => PrayerScreen(
+                              morning: DateTime.now().hour < 12,
+                              themeIds: _prayerThemeIds,
+                              verseReference: _result!.verse.reference,
+                            ),
+                          ),
+                        ),
+                        icon: const Icon(Icons.volunteer_activism_outlined),
+                        label: const Text('Fazer uma oração'),
                       ),
                     ],
                   ),

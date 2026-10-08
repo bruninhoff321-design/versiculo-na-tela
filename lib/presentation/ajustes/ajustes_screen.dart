@@ -295,6 +295,31 @@ class AjustesScreen extends StatelessWidget {
           ],
         ),
         section(
+          title: 'Hora da oração',
+          subtitle: settings.prayerRemindersEnabled
+              ? 'Lembretes às 5h e às 18h'
+              : 'Desativado',
+          icon: Icons.volunteer_activism_outlined,
+          children: [
+            const Text('Se você ativar, enviaremos lembretes silenciosos '
+                'às 5h e às 18h. Toque para abrir a oração do dia.'),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Receber lembretes de oração'),
+              value: settings.prayerRemindersEnabled,
+              onChanged: (enabled) async {
+                final ok = await app.setPrayerRemindersEnabled(enabled);
+                if (!ok && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('Permita notificações para receber '
+                        'os lembretes de oração.'),
+                  ));
+                }
+              },
+            ),
+          ],
+        ),
+        section(
           title: 'Sobre o app',
           subtitle: 'Criador e licença do texto bíblico',
           icon: Icons.info_outline_rounded,

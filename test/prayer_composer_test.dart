@@ -1,0 +1,32 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:versiculo_na_tela/domain/prayer/prayer_composer.dart';
+
+void main() {
+  const composer = PrayerComposer();
+
+  test('oração diária muda no dia seguinte e se mantém estável no mesmo dia',
+      () {
+    final today = DateTime(2026, 10, 8, 5);
+    final tomorrow = DateTime(2026, 10, 9, 5);
+    final first = composer.compose(day: today, morning: true);
+    expect(
+        composer.compose(day: DateTime(2026, 10, 8, 18), morning: true), first);
+    expect(composer.compose(day: tomorrow, morning: true), isNot(first));
+    expect(composer.compose(day: DateTime(2026, 10, 13), morning: true),
+        isNot(first));
+    expect(composer.compose(day: today, morning: false), isNot(first));
+  });
+
+  test('oração por necessidade usa o tema e não inventa texto bíblico', () {
+    final prayer = composer.compose(
+      day: DateTime(2026, 10, 8),
+      morning: true,
+      themeIds: const ['ansiedade', 'familia'],
+      verseReference: 'Salmos 37:5',
+    );
+    expect(prayer, contains('preocupação'));
+    expect(prayer, contains('família'));
+    expect(prayer, contains('Salmos 37:5'));
+    expect(prayer, contains('Em nome de Jesus, amém.'));
+  });
+}
