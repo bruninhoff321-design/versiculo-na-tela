@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:gravity="center"
     android:padding="16dp"
-    android:background="#64F7F4EC">
+    android:background="@android:color/transparent">
 
     <TextView
         android:id="@+id/widget_verse_text"
@@ -15,6 +15,7 @@
         android:gravity="center"
         android:textSize="16sp"
         android:textStyle="italic"
+        android:textColor="@android:color/white"
         android:shadowColor="#E0000000"
         android:shadowDx="1"
         android:shadowDy="2"
@@ -31,6 +32,7 @@
         android:gravity="center"
         android:textSize="14sp"
         android:textStyle="bold"
+        android:textColor="@android:color/white"
         android:shadowColor="#E0000000"
         android:shadowDx="1"
         android:shadowDy="2"

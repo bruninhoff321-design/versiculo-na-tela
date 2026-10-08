@@ -89,11 +89,21 @@ extension NoRepeatOptionX on NoRepeatOption {
 }
 
 /// Todos os temas visuais estão disponíveis nesta versão.
-enum WidgetVisualTheme { claro, escuro, papel, gradiente, elegante, ceu }
+enum WidgetVisualTheme {
+  transparente,
+  claro,
+  escuro,
+  papel,
+  gradiente,
+  elegante,
+  ceu
+}
 
 extension WidgetVisualThemeX on WidgetVisualTheme {
   String get label {
     switch (this) {
+      case WidgetVisualTheme.transparente:
+        return 'Transparente';
       case WidgetVisualTheme.claro:
         return 'Claro';
       case WidgetVisualTheme.escuro:
@@ -112,7 +122,7 @@ extension WidgetVisualThemeX on WidgetVisualTheme {
   static WidgetVisualTheme fromName(String? name) {
     return WidgetVisualTheme.values.firstWhere(
       (t) => t.name == name,
-      orElse: () => WidgetVisualTheme.claro,
+      orElse: () => WidgetVisualTheme.transparente,
     );
   }
 }
@@ -171,6 +181,7 @@ class AppSettings {
   final WidgetSize widgetSize;
   final ReadingTextSize readingTextSize;
   final bool dailyNotificationEnabled;
+  final bool prayerRemindersEnabled;
   final bool lockScreenNotificationEnabled;
   final String dailyNotificationTime; // "HH:mm"
   final bool onboarded;
@@ -178,10 +189,11 @@ class AppSettings {
   const AppSettings({
     this.frequency = UpdateFrequency.min60,
     this.noRepeat = NoRepeatOption.next20,
-    this.widgetTheme = WidgetVisualTheme.claro,
+    this.widgetTheme = WidgetVisualTheme.transparente,
     this.widgetSize = WidgetSize.medium,
     this.readingTextSize = ReadingTextSize.normal,
     this.dailyNotificationEnabled = false,
+    this.prayerRemindersEnabled = false,
     this.lockScreenNotificationEnabled = false,
     this.dailyNotificationTime = '07:00',
     this.onboarded = false,
@@ -194,6 +206,7 @@ class AppSettings {
     WidgetSize? widgetSize,
     ReadingTextSize? readingTextSize,
     bool? dailyNotificationEnabled,
+    bool? prayerRemindersEnabled,
     bool? lockScreenNotificationEnabled,
     String? dailyNotificationTime,
     bool? onboarded,
@@ -206,6 +219,8 @@ class AppSettings {
       readingTextSize: readingTextSize ?? this.readingTextSize,
       dailyNotificationEnabled:
           dailyNotificationEnabled ?? this.dailyNotificationEnabled,
+      prayerRemindersEnabled:
+          prayerRemindersEnabled ?? this.prayerRemindersEnabled,
       lockScreenNotificationEnabled:
           lockScreenNotificationEnabled ?? this.lockScreenNotificationEnabled,
       dailyNotificationTime:

@@ -105,6 +105,8 @@ class AppTheme {
   /// para o widget da tela inicial).
   static (Color bg, Color fg) widgetThemeColors(String widgetThemeName) {
     switch (widgetThemeName) {
+      case 'transparente':
+        return (Colors.transparent, const Color(0xFFFFFFFF));
       case 'escuro':
         return (const Color(0xFF1B1D22), const Color(0xFFF3EFE4));
       case 'papel':

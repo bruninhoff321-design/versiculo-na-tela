@@ -5,6 +5,7 @@ import '../ajustes/ajustes_screen.dart';
 import '../favoritos/favoritos_screen.dart';
 import '../historico/historico_screen.dart';
 import '../home/home_screen.dart';
+import '../oracao/prayer_screen.dart';
 import '../state/app_state.dart';
 import 'verse_note_editor.dart';
 
@@ -20,6 +21,32 @@ class AppShell extends StatefulWidget {
 
 class _AppShellState extends State<AppShell> {
   int _index = 0;
+  late final ValueNotifier<String?> _openedPrayer;
+
+  @override
+  void initState() {
+    super.initState();
+    _openedPrayer = context.read<AppState>().notifications.openedPrayer;
+    _openedPrayer.addListener(_openPrayerFromNotification);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _openPrayerFromNotification();
+    });
+  }
+
+  void _openPrayerFromNotification() {
+    final payload = _openedPrayer.value;
+    if (payload != 'prayer:morning' && payload != 'prayer:evening') return;
+    _openedPrayer.value = null;
+    Navigator.of(context).push(MaterialPageRoute<void>(
+      builder: (_) => PrayerScreen(morning: payload == 'prayer:morning'),
+    ));
+  }
+
+  @override
+  void dispose() {
+    _openedPrayer.removeListener(_openPrayerFromNotification);
+    super.dispose();
+  }
 
   static const _titles = [
     'Versículo na Tela',

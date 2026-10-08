@@ -6,6 +6,7 @@ import WidgetKit
 /// duas plataformas.
 func widgetThemeColors(_ theme: String) -> (Color, Color) {
     switch theme {
+    case "transparente": return (Color.clear, Color.white)
     case "escuro": return (Color(red: 0x1B/255, green: 0x1D/255, blue: 0x22/255),
                             Color(red: 0xF3/255, green: 0xEF/255, blue: 0xE4/255))
     case "papel": return (Color(red: 0xED/255, green: 0xE3/255, blue: 0xCC/255),

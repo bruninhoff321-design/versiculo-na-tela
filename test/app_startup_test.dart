@@ -113,6 +113,12 @@ class _Notifications extends NotificationService {
   }
 
   @override
+  Future<void> schedulePrayerReminders() async {}
+
+  @override
+  Future<void> cancelPrayerReminders() async {}
+
+  @override
   Future<void> showLockScreenVerse(String text, String reference) async {}
   @override
   Future<void> cancelLockScreenVerse() async {}
@@ -154,6 +160,24 @@ void main() {
     expect(notifications.permissionRequests, 2);
     expect(await app.setDailyNotificationEnabled(false), isTrue);
     expect(store.saved.dailyNotificationEnabled, isFalse);
+    app.dispose();
+  });
+
+  test('oração começa desligada e só liga após permissão', () async {
+    final store = _Store();
+    final notifications = _Notifications(() async {})
+      ..permissionGranted = false;
+    final app = _app(
+        store, _Widget(() async {}), notifications, _Scheduler(() async {}));
+    await app.bootstrap();
+    expect(app.settings.prayerRemindersEnabled, isFalse);
+    expect(await app.setPrayerRemindersEnabled(true), isFalse);
+    expect(store.saved.prayerRemindersEnabled, isFalse);
+    notifications.permissionGranted = true;
+    expect(await app.setPrayerRemindersEnabled(true), isTrue);
+    expect(store.saved.prayerRemindersEnabled, isTrue);
+    await app.setPrayerRemindersEnabled(false);
+    expect(store.saved.prayerRemindersEnabled, isFalse);
     app.dispose();
   });
 

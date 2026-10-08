@@ -22,7 +22,7 @@ struct Provider: TimelineProvider {
         date: Date(),
         verseText: "Vinde a mim, todos os que estais cansados e sobrecarregados, e eu vos aliviarei.",
         verseReference: "Mateus 11:28",
-        widgetTheme: "claro"
+        widgetTheme: "transparente"
     )
 
     func placeholder(in context: Context) -> VersiculoEntry {

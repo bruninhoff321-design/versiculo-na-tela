@@ -21,7 +21,7 @@ object WidgetPreferences {
     private val FALLBACK = WidgetData(
         verseText = "Vinde a mim, todos os que estais cansados e sobrecarregados, e eu vos aliviarei.",
         verseReference = "Mateus 11:28",
-        theme = "claro",
+        theme = "transparente",
     )
 
     fun read(context: Context): WidgetData {

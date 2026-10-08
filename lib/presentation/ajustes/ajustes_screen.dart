@@ -194,7 +194,9 @@ class AjustesScreen extends StatelessWidget {
                       Container(
                         height: 50,
                         decoration: BoxDecoration(
-                          color: background,
+                          color: visual == WidgetVisualTheme.transparente
+                              ? const Color(0xFF293242)
+                              : background,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color: settings.widgetTheme == visual
@@ -203,6 +205,13 @@ class AjustesScreen extends StatelessWidget {
                             width: 3,
                           ),
                         ),
+                        child: visual == WidgetVisualTheme.transparente
+                            ? const Center(
+                                child: Text('Aa',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold)))
+                            : null,
                       ),
                       const SizedBox(height: 5),
                       Text(visual.label, style: const TextStyle(fontSize: 13)),

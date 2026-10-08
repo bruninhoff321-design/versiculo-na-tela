@@ -173,6 +173,11 @@ class AppState extends ChangeNotifier {
       } else {
         await notifications.cancelDaily();
       }
+      if (settings.prayerRemindersEnabled) {
+        await notifications.schedulePrayerReminders();
+      } else {
+        await notifications.cancelPrayerReminders();
+      }
       final verse = currentVerse;
       if (settings.lockScreenNotificationEnabled && verse != null) {
         await notifications.showLockScreenVerse(verse.text, verse.reference);
@@ -192,6 +197,12 @@ class AppState extends ChangeNotifier {
   Future<bool> setDailyNotificationEnabled(bool enabled) async {
     if (enabled && !await _prepareNotifications()) return false;
     await updateSettings((s) => s.copyWith(dailyNotificationEnabled: enabled));
+    return true;
+  }
+
+  Future<bool> setPrayerRemindersEnabled(bool enabled) async {
+    if (enabled && !await _prepareNotifications()) return false;
+    await updateSettings((s) => s.copyWith(prayerRemindersEnabled: enabled));
     return true;
   }
 

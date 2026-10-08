@@ -51,6 +51,8 @@ class AppLocalStore {
           // Só mantemos ativo quando a pessoa o ligou nesta versão.
           (_settingsBox.get('dailyNotificationConsent') as bool?) == true &&
               (_settingsBox.get('dailyNotificationEnabled') as bool?) == true,
+      prayerRemindersEnabled:
+          (_settingsBox.get('prayerRemindersEnabled') as bool?) == true,
       lockScreenNotificationEnabled:
           (_settingsBox.get('lockScreenNotificationEnabled') as bool?) ?? false,
       dailyNotificationTime:
@@ -67,6 +69,7 @@ class AppLocalStore {
       'widgetSize': settings.widgetSize.name,
       'readingTextSize': settings.readingTextSize.name,
       'dailyNotificationEnabled': settings.dailyNotificationEnabled,
+      'prayerRemindersEnabled': settings.prayerRemindersEnabled,
       'dailyNotificationConsent': settings.dailyNotificationEnabled,
       'lockScreenNotificationEnabled': settings.lockScreenNotificationEnabled,
       'dailyNotificationTime': settings.dailyNotificationTime,
