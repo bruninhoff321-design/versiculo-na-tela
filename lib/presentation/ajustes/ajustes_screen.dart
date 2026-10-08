@@ -107,42 +107,30 @@ class AjustesScreen extends StatelessWidget {
             ),
           ],
         ),
+        Card(
+          margin: const EdgeInsets.only(bottom: 12),
+          child: SwitchListTile(
+            secondary: Icon(Icons.lock_outline_rounded, color: gold),
+            title: const Text('Versículo no bloqueio'),
+            subtitle: const Text('Ative aqui, sem instalar outro app e sem '
+                'trocar sua foto. O Android decide a posição do texto.'),
+            value: settings.lockScreenNotificationEnabled,
+            onChanged: (enabled) async {
+              final ok = await app.setLockScreenNotificationEnabled(enabled);
+              if (!ok && context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  content: Text(
+                      'Permita notificações para mostrar o versículo no bloqueio.'),
+                ));
+              }
+            },
+          ),
+        ),
         section(
-          title: 'Tela de bloqueio',
-          subtitle: 'Versículo visível sem trocar sua foto',
-          icon: Icons.lock_outline_rounded,
+          title: 'Imagem do app no bloqueio',
+          subtitle: 'Opção que substitui sua foto',
+          icon: Icons.wallpaper_outlined,
           children: [
-            const Text(
-              'Mostre o versículo como notificação silenciosa, sem trocar seu papel de parede. '
-              'Cada Android decide onde exibir o texto na tela de bloqueio.',
-            ),
-            SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              title: const Text('Mostrar versículo no bloqueio'),
-              subtitle: const Text(
-                  'Notificação silenciosa, sem trocar sua foto. '
-                  'Pode ser ocultada pelas configurações de notificações do celular.'),
-              value: settings.lockScreenNotificationEnabled,
-              onChanged: (enabled) async {
-                final ok = await app.setLockScreenNotificationEnabled(enabled);
-                if (!ok && context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text(
-                        'Permita notificações para mostrar o versículo no bloqueio.'),
-                  ));
-                }
-              },
-            ),
-            const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton.icon(
-                onPressed: () => showLockScreenWidgetGuide(context),
-                icon: const Icon(Icons.widgets_outlined),
-                label: const Text('Ver opções de widget no bloqueio'),
-              ),
-            ),
-            const Divider(height: 32),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
               title: const Text('Usar imagem do app no bloqueio'),

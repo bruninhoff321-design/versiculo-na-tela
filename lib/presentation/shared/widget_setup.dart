@@ -40,33 +40,3 @@ Future<void> addWidgetToHome(BuildContext context) async {
     ),
   );
 }
-
-/// O seletor de widgets no bloqueio depende do fabricante e do launcher.
-Future<void> showLockScreenWidgetGuide(BuildContext context) async {
-  await showDialog<void>(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: const Text('Widget na tela de bloqueio'),
-      content: const SingleChildScrollView(
-        child: Text(
-          'Alguns Androids permitem adicionar widgets ao bloqueio. Abra a '
-          'personalização da tela de bloqueio do seu celular e procure '
-          '“Versículo na Tela (compacto)” na lista de widgets.\n\n'
-          'Se não aparecer, o seletor padrão desse aparelho não oferece essa '
-          'posição para nosso widget. Você ainda pode ativar o versículo como notificação '
-          'silenciosa nos Ajustes do app.\n\n'
-          'Em aparelhos Samsung com Good Lock compatível, o LockStar também '
-          'pode oferecer widgets de outros apps. A posição final é sempre '
-          'controlada pelo celular. A opção de imagem do app substitui sua '
-          'foto; deixe-a desligada para preservar seu papel de parede.',
-        ),
-      ),
-      actions: [
-        FilledButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Entendi'),
-        ),
-      ],
-    ),
-  );
-}
