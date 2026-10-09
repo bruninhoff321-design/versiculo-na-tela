@@ -1,6 +1,7 @@
 import 'dart:async' show unawaited;
 
 import 'package:flutter/material.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:provider/provider.dart';
 
 import 'app.dart';
@@ -13,6 +14,12 @@ import 'presentation/state/app_state.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await JustAudioBackground.init(
+    androidNotificationChannelId: 'com.versiculonatela.app.prayer_audio',
+    androidNotificationChannelName: 'Áudio da oração',
+    androidNotificationOngoing: true,
+  );
 
   final localStore = AppLocalStore();
   await localStore.init();

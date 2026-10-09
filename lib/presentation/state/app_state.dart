@@ -54,6 +54,7 @@ class AppState extends ChangeNotifier {
   List<HistoryEntry> history = [];
   Set<String> favoriteIds = {};
   Map<String, String> notes = {};
+  List<String> prayerThemeIds = const [];
   bool lockWallpaperEnabled = false;
 
   Future<void> bootstrap() async {
@@ -65,6 +66,7 @@ class AppState extends ChangeNotifier {
     history = localStore.readHistory();
     favoriteIds = localStore.readFavoriteIds();
     notes = localStore.readNotes();
+    prayerThemeIds = localStore.readPrayerThemeIds();
 
     final savedId = localStore.readCurrentVerseId();
     currentVerse = (savedId != null ? _byId[savedId] : null) ??
@@ -265,6 +267,12 @@ class AppState extends ChangeNotifier {
   Future<void> saveNote(String verseId, String text) async {
     await localStore.saveNote(verseId, text);
     notes = localStore.readNotes();
+    notifyListeners();
+  }
+
+  Future<void> setPrayerThemes(Iterable<String> ids) async {
+    prayerThemeIds = ids.toSet().toList()..sort();
+    await localStore.writePrayerThemeIds(prayerThemeIds);
     notifyListeners();
   }
 

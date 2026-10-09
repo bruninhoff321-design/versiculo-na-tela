@@ -37,4 +37,23 @@ void main() {
     expect(first.split(RegExp(r'\s+')).length, inInclusiveRange(130, 190));
     expect(next.split(RegExp(r'\s+')).length, inInclusiveRange(130, 190));
   });
+
+  test('tema força aparece na oração escolhida pela pessoa', () {
+    final prayer = composer.compose(
+      day: DateTime(2026, 10, 9),
+      morning: true,
+      themeIds: const ['forca'],
+    );
+    expect(prayer, contains('enfrentar os desafios'));
+  });
+
+  test('oração sobre luto começa acolhendo a dor antes de agradecer', () {
+    final prayer = composer.compose(
+      day: DateTime(2026, 10, 9),
+      morning: true,
+      themeIds: const ['luto'],
+    );
+    expect(prayer, startsWith('Senhor Deus, tu conheces o que estou vivendo'));
+    expect(prayer.substring(0, 250), contains('Acolhe minha saudade'));
+  });
 }

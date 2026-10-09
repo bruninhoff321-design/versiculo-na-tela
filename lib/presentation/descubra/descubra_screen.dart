@@ -38,7 +38,7 @@ class _DescubraScreenState extends State<DescubraScreen> {
     super.dispose();
   }
 
-  void _find() {
+  Future<void> _find() async {
     final app = context.read<AppState>();
     final themeIds = <String>{};
     for (final i in _selected) {
@@ -54,9 +54,12 @@ class _DescubraScreenState extends State<DescubraScreen> {
       ));
       return;
     }
+    final prayerThemes = {...themeIds, ...result.matchedThemes}.toList();
+    await app.setPrayerThemes(prayerThemes);
+    if (!mounted) return;
     setState(() {
       _result = result;
-      _prayerThemeIds = {...themeIds, ...result.matchedThemes}.toList();
+      _prayerThemeIds = prayerThemes;
     });
     FocusScope.of(context).unfocus();
   }
@@ -164,6 +167,21 @@ class _DescubraScreenState extends State<DescubraScreen> {
                   OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
             ),
           ),
+          if (app.prayerThemeIds.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            TextButton.icon(
+              onPressed: () async {
+                await app.setPrayerThemes(const []);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('As próximas orações terão temas variados.'),
+                  ));
+                }
+              },
+              icon: const Icon(Icons.shuffle),
+              label: const Text('Usar temas variados nas próximas orações'),
+            ),
+          ],
           const SizedBox(height: 16),
           SizedBox(
             height: 58,
@@ -175,6 +193,13 @@ class _DescubraScreenState extends State<DescubraScreen> {
           ),
           if (_result != null) ...[
             const SizedBox(height: 26),
+            Text(
+              _prayerThemeIds.isEmpty
+                  ? 'As próximas orações usarão um tema variado.'
+                  : 'As próximas orações também vão considerar o tema que você escolheu.',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 10),
             Container(
               padding: const EdgeInsets.all(22),
               decoration: BoxDecoration(

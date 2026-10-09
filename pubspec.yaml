@@ -29,6 +29,10 @@ dependencies:
   flutter_local_notifications: ^17.2.3
   timezone: ^0.9.4
   flutter_timezone: ^4.1.1
+  # Player único de oração, com controles de mídia no Android/iOS.
+  just_audio: 0.9.46
+  just_audio_background: 0.0.1-beta.15
+  audio_service: 0.18.17
 
   # Compartilhar a imagem gerada do versículo pelos recursos nativos do SO
   share_plus: ^10.0.2
@@ -51,3 +55,4 @@ flutter:
     - assets/brand_icon.png
     - assets/verses.json
     - assets/taxonomia_temas.json
+    - assets/prayer_demo.mp3

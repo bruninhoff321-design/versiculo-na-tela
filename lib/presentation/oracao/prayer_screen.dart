@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 
+import '../../data/audio/prayer_audio_player.dart';
 import '../../domain/prayer/prayer_composer.dart';
 
-/// Texto diário e oração por tema. A narração será ligada quando houver uma
-/// voz que possa ser usada para gerar os áudios de cada nova oração.
+/// Texto diário e oração por tema. A prévia de áudio é uma demonstração
+/// separada; ainda não narra a oração pessoal exibida nesta tela.
 class PrayerScreen extends StatelessWidget {
   final bool morning;
   final List<String> themeIds;
@@ -52,6 +54,40 @@ class PrayerScreen extends StatelessWidget {
                     .textTheme
                     .bodyLarge
                     ?.copyWith(height: 1.7)),
+            const SizedBox(height: 28),
+            const Divider(),
+            const SizedBox(height: 12),
+            Text('Ouça uma prévia',
+                style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 6),
+            const Text(
+              'Exemplo de oração de esperança com voz gerada por IA e música '
+              'de fundo. O áudio diário personalizado ainda está em preparação.',
+            ),
+            const SizedBox(height: 12),
+            StreamBuilder<PlayerState>(
+              stream: PrayerAudioPlayer.instance.player.playerStateStream,
+              builder: (context, snapshot) {
+                final playing = snapshot.data?.playing == true;
+                return FilledButton.icon(
+                  onPressed: () async {
+                    try {
+                      await PrayerAudioPlayer.instance.toggleDemo();
+                    } catch (_) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Não foi possível reproduzir a prévia.'),
+                          ),
+                        );
+                      }
+                    }
+                  },
+                  icon: Icon(playing ? Icons.pause : Icons.play_arrow),
+                  label: Text(playing ? 'Pausar prévia' : 'Ouvir prévia'),
+                );
+              },
+            ),
           ],
         ),
       ),

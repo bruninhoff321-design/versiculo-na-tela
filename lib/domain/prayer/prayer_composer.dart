@@ -26,12 +26,14 @@ class PrayerComposer {
     final dailyNeed = _dailyThemes[variation % _dailyThemes.length];
 
     final parts = <String>[
+      if (needs.isNotEmpty)
+        'Senhor Deus, tu conheces o que estou vivendo, inclusive o que ainda '
+            'não consigo colocar em palavras. Acolhe-me neste momento.',
+      if (needs.isNotEmpty) ...needs,
       opening[variation % opening.length],
       petition[(variation ~/ 5) % petition.length],
       if (needs.isEmpty)
-        _themePetitions[dailyNeed]!
-      else
-        ...needs,
+        _themePetitions[dailyNeed]!,
       _gratitudes[(variation ~/ 3) % _gratitudes.length],
       _intercessions[(variation ~/ 7) % _intercessions.length],
       _reflections[(variation ~/ 25) % _reflections.length],
@@ -121,6 +123,7 @@ class PrayerComposer {
     'medo': 'Dá-me coragem diante do medo e lembra-me de que estás comigo.',
     'tristeza': 'Acolhe minha tristeza e traz consolo ao meu coração.',
     'cansaco': 'Renova minhas forças e permite que eu descanse sem culpa.',
+    'forca': 'Fortalece-me para enfrentar os desafios de hoje sem perder a fé.',
     'fe':
         'Fortalece minha fé mesmo quando não consigo enxergar o caminho inteiro.',
     'amor_sofrimento':

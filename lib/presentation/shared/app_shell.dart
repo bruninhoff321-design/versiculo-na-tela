@@ -38,7 +38,10 @@ class _AppShellState extends State<AppShell> {
     if (payload != 'prayer:morning' && payload != 'prayer:evening') return;
     _openedPrayer.value = null;
     Navigator.of(context).push(MaterialPageRoute<void>(
-      builder: (_) => PrayerScreen(morning: payload == 'prayer:morning'),
+      builder: (_) => PrayerScreen(
+        morning: payload == 'prayer:morning',
+        themeIds: context.read<AppState>().prayerThemeIds,
+      ),
     ));
   }
 

@@ -83,6 +83,18 @@ class AppLocalStore {
     await _settingsBox.put('currentVerseId', verseId);
   }
 
+  /// Somente os temas escolhidos são guardados. O relato livre permanece
+  /// nesta tela e não é enviado nem salvo para os lembretes de oração.
+  List<String> readPrayerThemeIds() =>
+      (_settingsBox.get('prayerThemeIds') as List?)
+          ?.whereType<String>()
+          .toList(growable: false) ??
+      const [];
+
+  Future<void> writePrayerThemeIds(Iterable<String> ids) async {
+    await _settingsBox.put('prayerThemeIds', ids.toSet().toList()..sort());
+  }
+
   // ---------------- Favorites ----------------
 
   Set<String> readFavoriteIds() => _favoritesBox.keys.cast<String>().toSet();
