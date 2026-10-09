@@ -1,7 +1,7 @@
 name: versiculo_na_tela
 description: "Um versículo bíblico sempre visível na tela do celular."
 publish_to: 'none'
-version: 0.1.7+8
+version: 0.1.8+9
 
 environment:
   sdk: '>=3.3.0 <4.0.0'
@@ -33,6 +33,7 @@ dependencies:
   just_audio: 0.9.46
   just_audio_background: 0.0.1-beta.15
   audio_service: 0.18.17
+  flutter_tts: ^4.2.5
 
   # Compartilhar a imagem gerada do versículo pelos recursos nativos do SO
   share_plus: ^10.0.2

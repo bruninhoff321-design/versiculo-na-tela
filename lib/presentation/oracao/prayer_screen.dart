@@ -4,8 +4,7 @@ import 'package:just_audio/just_audio.dart';
 import '../../data/audio/prayer_audio_player.dart';
 import '../../domain/prayer/prayer_composer.dart';
 
-/// Texto diário e oração por tema. A prévia de áudio é uma demonstração
-/// separada; ainda não narra a oração pessoal exibida nesta tela.
+/// Texto diário e oração por tema, narrada pela voz offline do aparelho.
 class PrayerScreen extends StatelessWidget {
   final bool morning;
   final List<String> themeIds;
@@ -31,6 +30,9 @@ class PrayerScreen extends StatelessWidget {
       themeIds: themeIds,
       verseReference: verseReference,
     );
+    final prayerId =
+        '${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}'
+        '-${morning ? 'manha' : 'noite'}-${themeIds.join('_')}';
 
     return Scaffold(
       appBar: AppBar(title: Text(title)),
@@ -55,14 +57,62 @@ class PrayerScreen extends StatelessWidget {
                     .bodyLarge
                     ?.copyWith(height: 1.7)),
             const SizedBox(height: 28),
+            Text('Ouvir esta oração',
+                style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 6),
+            const Text(
+              'Usa a voz em português instalada no seu celular, sem conta nem cobrança. '
+              'A primeira reprodução pode levar alguns segundos para preparar o áudio.',
+            ),
+            const SizedBox(height: 12),
+            ValueListenableBuilder<bool>(
+              valueListenable: PrayerAudioPlayer.instance.preparing,
+              builder: (context, preparing, _) => StreamBuilder<PlayerState>(
+                stream: PrayerAudioPlayer.instance.player.playerStateStream,
+                builder: (context, snapshot) {
+                  final playing = snapshot.data?.playing == true &&
+                      PrayerAudioPlayer.instance.currentPrayerId == prayerId;
+                  return FilledButton.icon(
+                    onPressed: preparing
+                        ? null
+                        : () async {
+                            try {
+                              await PrayerAudioPlayer.instance.toggleDaily(
+                                text: prayer,
+                                id: prayerId,
+                              );
+                            } catch (error) {
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(
+                                  content: Text('$error'),
+                                ));
+                              }
+                            }
+                          },
+                    icon: Icon(preparing
+                        ? Icons.hourglass_top
+                        : playing
+                            ? Icons.pause
+                            : Icons.play_arrow),
+                    label: Text(preparing
+                        ? 'Preparando áudio...'
+                        : playing
+                            ? 'Pausar oração'
+                            : 'Ouvir oração'),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 24),
             const Divider(),
             const SizedBox(height: 12),
             Text('Ouça uma prévia',
                 style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 6),
             const Text(
-              'Exemplo de oração de esperança com voz gerada por IA e música '
-              'de fundo. O áudio diário personalizado ainda está em preparação.',
+              'Exemplo de oração de esperança com voz gerada por IA e música de fundo. '
+              'A oração acima usa a voz gratuita do próprio aparelho.',
             ),
             const SizedBox(height: 12),
             StreamBuilder<PlayerState>(
@@ -77,7 +127,8 @@ class PrayerScreen extends StatelessWidget {
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text('Não foi possível reproduzir a prévia.'),
+                            content:
+                                Text('Não foi possível reproduzir a prévia.'),
                           ),
                         );
                       }
