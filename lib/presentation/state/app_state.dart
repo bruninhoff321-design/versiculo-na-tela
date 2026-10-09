@@ -3,6 +3,7 @@ import 'dart:async' show unawaited;
 import 'package:flutter/foundation.dart';
 
 import '../../data/local/app_local_store.dart';
+import '../../data/audio/prayer_audio_player.dart';
 import '../../data/notifications/notification_service.dart';
 import '../../data/widget_bridge/native_scheduler.dart';
 import '../../data/widget_bridge/lock_wallpaper_service.dart';
@@ -83,6 +84,9 @@ class AppState extends ChangeNotifier {
     unawaited(_restoreWidgetVerseAndSync());
     unawaited(_loadLockWallpaperPreference());
     unawaited(_syncNotifications());
+    if (settings.prayerRemindersEnabled) {
+      unawaited(_prewarmPrayerAudio());
+    }
     unawaited(_runOptional(
         'agendamento do widget', () => scheduler.apply(settings.frequency)));
   }
@@ -205,7 +209,19 @@ class AppState extends ChangeNotifier {
   Future<bool> setPrayerRemindersEnabled(bool enabled) async {
     if (enabled && !await _prepareNotifications()) return false;
     await updateSettings((s) => s.copyWith(prayerRemindersEnabled: enabled));
+    if (enabled) {
+      unawaited(_prewarmPrayerAudio());
+    }
     return true;
+  }
+
+  Future<void> _prewarmPrayerAudio() async {
+    try {
+      await PrayerAudioPlayer.instance.prewarmNextTwo(prayerThemeIds);
+    } catch (error) {
+      // A voz instalada no aparelho é opcional; nunca bloqueia o app.
+      debugPrint('Não foi possível preparar o áudio antecipado: $error');
+    }
   }
 
   Future<bool> _prepareNotifications() async {
@@ -273,6 +289,9 @@ class AppState extends ChangeNotifier {
   Future<void> setPrayerThemes(Iterable<String> ids) async {
     prayerThemeIds = ids.toSet().toList()..sort();
     await localStore.writePrayerThemeIds(prayerThemeIds);
+    if (settings.prayerRemindersEnabled) {
+      unawaited(_prewarmPrayerAudio());
+    }
     notifyListeners();
   }
 

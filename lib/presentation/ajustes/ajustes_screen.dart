@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/theme/app_theme.dart';
+import '../../data/audio/prayer_audio_player.dart';
 import '../../domain/models/app_settings.dart';
 import '../state/app_state.dart';
 import '../shared/widget_setup.dart';
@@ -325,6 +326,42 @@ class AjustesScreen extends StatelessWidget {
                   ));
                 }
               },
+            ),
+            const Text(
+              'O app prepara os próximos áudios quando é aberto. '
+              'Se o Android adiar essa preparação, o áudio será criado '
+              'quando você tocar na oração. Os arquivos antigos são '
+              'apagados automaticamente.',
+            ),
+            const SizedBox(height: 8),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton.icon(
+                icon: const Icon(Icons.delete_outline),
+                label: const Text('Limpar áudios de oração'),
+                onPressed: () async {
+                  try {
+                    final result =
+                        await PrayerAudioPlayer.instance.clearGeneratedAudio();
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text(result.files == 0
+                            ? 'Nenhum áudio de oração para limpar.'
+                            : '${result.files} áudio(s) apagado(s). '
+                                'Eles serão refeitos quando necessário.'),
+                      ));
+                    }
+                  } catch (_) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content:
+                                Text('Não foi possível limpar os áudios.')),
+                      );
+                    }
+                  }
+                },
+              ),
             ),
           ],
         ),

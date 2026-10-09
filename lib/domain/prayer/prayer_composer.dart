@@ -4,6 +4,18 @@
 class PrayerComposer {
   const PrayerComposer();
 
+  String idFor({
+    required DateTime day,
+    required bool morning,
+    Iterable<String> themeIds = const [],
+    String? verseReference,
+  }) {
+    final themes = themeIds.toSet().toList()..sort();
+    return '${day.year}-${day.month}-${day.day}'
+        '-${morning ? 'manha' : 'noite'}-${themes.join('_')}'
+        '-${verseReference?.trim() ?? ''}';
+  }
+
   String compose({
     required DateTime day,
     required bool morning,
@@ -32,8 +44,7 @@ class PrayerComposer {
       if (needs.isNotEmpty) ...needs,
       opening[variation % opening.length],
       petition[(variation ~/ 5) % petition.length],
-      if (needs.isEmpty)
-        _themePetitions[dailyNeed]!,
+      if (needs.isEmpty) _themePetitions[dailyNeed]!,
       _gratitudes[(variation ~/ 3) % _gratitudes.length],
       _intercessions[(variation ~/ 7) % _intercessions.length],
       _reflections[(variation ~/ 25) % _reflections.length],
@@ -79,7 +90,13 @@ class PrayerComposer {
   ];
 
   static const _dailyThemes = [
-    'paz', 'familia', 'esperanca', 'trabalho', 'fe', 'gratidao', 'recomeco',
+    'paz',
+    'familia',
+    'esperanca',
+    'trabalho',
+    'fe',
+    'gratidao',
+    'recomeco',
   ];
 
   static const _gratitudes = [

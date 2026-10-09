@@ -24,15 +24,20 @@ class PrayerScreen extends StatelessWidget {
         : morning
             ? 'Oração da manhã'
             : 'Oração da noite';
-    final prayer = const PrayerComposer().compose(
-      day: DateTime.now(),
+    final today = DateTime.now();
+    const composer = PrayerComposer();
+    final prayer = composer.compose(
+      day: today,
       morning: morning,
       themeIds: themeIds,
       verseReference: verseReference,
     );
-    final prayerId =
-        '${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}'
-        '-${morning ? 'manha' : 'noite'}-${themeIds.join('_')}';
+    final prayerId = composer.idFor(
+      day: today,
+      morning: morning,
+      themeIds: themeIds,
+      verseReference: verseReference,
+    );
 
     return Scaffold(
       appBar: AppBar(title: Text(title)),
