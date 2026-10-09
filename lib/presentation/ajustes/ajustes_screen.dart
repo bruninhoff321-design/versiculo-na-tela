@@ -14,6 +14,7 @@ class AjustesScreen extends StatelessWidget {
     final app = context.watch<AppState>();
     final settings = app.settings;
     final gold = Theme.of(context).colorScheme.primary;
+    final android = Theme.of(context).platform == TargetPlatform.android;
 
     Widget section({
       required String title,
@@ -161,53 +162,61 @@ class AjustesScreen extends StatelessWidget {
         ),
         section(
           title: 'Aparência do widget',
-          subtitle:
-              '${settings.widgetTheme.label} · tamanho ${settings.widgetSize.name}',
+          subtitle: android
+              ? 'Fundo transparente · tamanho ${settings.widgetSize.name}'
+              : '${settings.widgetTheme.label} · tamanho ${settings.widgetSize.name}',
           icon: Icons.palette_outlined,
           children: [
-            const _SettingLabel('Estilo'),
-            const SizedBox(height: 10),
-            Wrap(
-              spacing: 12,
-              runSpacing: 12,
-              children: WidgetVisualTheme.values.map((visual) {
-                final (background, _) = AppTheme.widgetThemeColors(visual.name);
-                return InkWell(
-                  borderRadius: BorderRadius.circular(12),
-                  onTap: () => app
-                      .updateSettings((s) => s.copyWith(widgetTheme: visual)),
-                  child: SizedBox(
-                    width: 76,
-                    child: Column(children: [
-                      Container(
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: visual == WidgetVisualTheme.transparente
-                              ? const Color(0xFF293242)
-                              : background,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: settings.widgetTheme == visual
-                                ? gold
-                                : Colors.transparent,
-                            width: 3,
+            if (android)
+              const Text('Na tela inicial, só o versículo e a referência '
+                  'aparecem sobre o seu wallpaper.'),
+            if (!android) ...[
+              const _SettingLabel('Estilo'),
+              const SizedBox(height: 10),
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: WidgetVisualTheme.values.map((visual) {
+                  final (background, _) =
+                      AppTheme.widgetThemeColors(visual.name);
+                  return InkWell(
+                    borderRadius: BorderRadius.circular(12),
+                    onTap: () => app
+                        .updateSettings((s) => s.copyWith(widgetTheme: visual)),
+                    child: SizedBox(
+                      width: 76,
+                      child: Column(children: [
+                        Container(
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: visual == WidgetVisualTheme.transparente
+                                ? const Color(0xFF293242)
+                                : background,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: settings.widgetTheme == visual
+                                  ? gold
+                                  : Colors.transparent,
+                              width: 3,
+                            ),
                           ),
+                          child: visual == WidgetVisualTheme.transparente
+                              ? const Center(
+                                  child: Text('Aa',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold)))
+                              : null,
                         ),
-                        child: visual == WidgetVisualTheme.transparente
-                            ? const Center(
-                                child: Text('Aa',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold)))
-                            : null,
-                      ),
-                      const SizedBox(height: 5),
-                      Text(visual.label, style: const TextStyle(fontSize: 13)),
-                    ]),
-                  ),
-                );
-              }).toList(),
-            ),
+                        const SizedBox(height: 5),
+                        Text(visual.label,
+                            style: const TextStyle(fontSize: 13)),
+                      ]),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
             const SizedBox(height: 22),
             const _SettingLabel('Tamanho'),
             const SizedBox(height: 10),
