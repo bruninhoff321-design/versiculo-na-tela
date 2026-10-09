@@ -4,7 +4,7 @@ name: Compilar Versículo na Tela
 # disparado manualmente pela aba "Actions" do GitHub (botão "Run workflow").
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main, master, melhorias/mega-oracao ]
   pull_request:
     branches: [ main, master ]
   workflow_dispatch: {}
