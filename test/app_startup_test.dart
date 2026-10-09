@@ -40,6 +40,7 @@ class _Store extends AppLocalStore {
   AppSettings saved = const AppSettings();
   final entries = <HistoryEntry>[];
   final notes = <String, String>{};
+  List<String> prayerThemes = const [];
   @override
   AppSettings readSettings() => saved;
   @override
@@ -66,6 +67,12 @@ class _Store extends AppLocalStore {
   String? readCurrentVerseId() => null;
   @override
   Future<void> writeCurrentVerseId(String verseId) async {}
+  @override
+  List<String> readPrayerThemeIds() => List.of(prayerThemes);
+  @override
+  Future<void> writePrayerThemeIds(Iterable<String> ids) async {
+    prayerThemes = ids.toSet().toList()..sort();
+  }
   @override
   Future<void> appendHistory(HistoryEntry entry) async {
     entries.add(entry);
@@ -197,6 +204,23 @@ void main() {
     reopened.dispose();
   });
 
+  test('tema de oração permanece entre aberturas e pode voltar a variar', () async {
+    final store = _Store();
+    final first = _app(store, _Widget(() async {}), _Notifications(() async {}),
+        _Scheduler(() async {}));
+    await first.bootstrap();
+    await first.setPrayerThemes(const ['luto']);
+    first.dispose();
+
+    final reopened = _app(store, _Widget(() async {}),
+        _Notifications(() async {}), _Scheduler(() async {}));
+    await reopened.bootstrap();
+    expect(reopened.prayerThemeIds, ['luto']);
+    await reopened.setPrayerThemes(const []);
+    expect(store.prayerThemes, isEmpty);
+    reopened.dispose();
+  });
+
   test('lembrete começa desligado e reflexões ficam salvas por versículo',
       () async {
     final store = _Store();
@@ -267,7 +291,7 @@ void main() {
     app.dispose();
   });
 
-  testWidgets('todos os temas são selecionáveis e não há controles de compra',
+  testWidgets('widget Android informa fundo transparente e não oferece compra',
       (tester) async {
     await tester.binding.setSurfaceSize(const Size(1000, 2400));
     addTearDown(() => tester.binding.setSurfaceSize(null));
@@ -282,11 +306,9 @@ void main() {
     ));
     await tester.tap(find.text('Aparência do widget'));
     await tester.pumpAndSettle();
-    for (final theme in WidgetVisualTheme.values) {
-      await tester.tap(find.text(theme.label));
-      await tester.pump();
-      expect(app.settings.widgetTheme, theme);
-    }
+    expect(find.textContaining('Fundo transparente'), findsOneWidget);
+    expect(find.textContaining('só o versículo e a referência'), findsOneWidget);
+    expect(find.text('Papel'), findsNothing);
     expect(find.text('Comprar Premium'), findsNothing);
     expect(find.text('Restaurar compra'), findsNothing);
     expect(find.byIcon(Icons.lock), findsNothing);
