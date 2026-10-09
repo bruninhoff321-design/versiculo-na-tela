@@ -2,9 +2,12 @@ package com.versiculonatela.app.widget
 
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.widget.RemoteViews
+import com.versiculonatela.app.MainActivity
 import com.versiculonatela.app.R
 
 /** Exibe o versículo escolhido pelo app ou pelo atualizador nativo. */
@@ -30,6 +33,13 @@ class VersiculoWidgetReceiver : AppWidgetProvider() {
             views.setInt(R.id.widget_root, "setBackgroundColor", Color.TRANSPARENT)
             views.setTextColor(R.id.widget_verse_text, Color.WHITE)
             views.setTextColor(R.id.widget_verse_reference, Color.WHITE)
+            val openApp = PendingIntent.getActivity(
+                context,
+                0,
+                Intent(context, MainActivity::class.java),
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+            )
+            views.setOnClickPendingIntent(R.id.widget_root, openApp)
             return views
         }
     }

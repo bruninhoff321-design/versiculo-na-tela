@@ -21,6 +21,9 @@
     android:maxResizeHeight="250dp"
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen|keyguard"
+    android:initialLayout="@layout/widget_versiculo"
+    android:initialKeyguardLayout="@layout/widget_versiculo"
     android:updatePeriodMillis="1800000"
+    android:previewLayout="@layout/widget_versiculo_compact_preview"
     android:previewImage="@mipmap/ic_launcher"
     android:description="@string/widget_description" />
