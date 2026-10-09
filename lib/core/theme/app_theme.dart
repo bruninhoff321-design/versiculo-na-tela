@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 /// Azul quase preto e dourado quente para uma leitura calma e acessível.
 class AppColors {
@@ -28,19 +27,24 @@ class AppTheme {
         primary: AppColors.accentClaro,
         surface: AppColors.claroSurface,
       ),
-      textTheme: GoogleFonts.manropeTextTheme(base.textTheme).copyWith(
-        bodyMedium: GoogleFonts.manrope(fontSize: 16, height: 1.4),
-        bodyLarge: GoogleFonts.manrope(fontSize: 18, height: 1.4),
-        labelLarge:
-            GoogleFonts.manrope(fontSize: 16, fontWeight: FontWeight.w700),
-        displayLarge: GoogleFonts.fraunces(
-          fontSize: 28,
-          fontStyle: FontStyle.italic,
-          fontWeight: FontWeight.w500,
-          color: AppColors.claroInk,
-          height: 1.4,
-        ),
-      ),
+      textTheme: base.textTheme.apply(fontFamily: 'Manrope').copyWith(
+            bodyMedium: const TextStyle(
+                fontFamily: 'Manrope', fontSize: 16, height: 1.4),
+            bodyLarge: const TextStyle(
+                fontFamily: 'Manrope', fontSize: 18, height: 1.4),
+            labelLarge: const TextStyle(
+                fontFamily: 'Manrope',
+                fontSize: 16,
+                fontWeight: FontWeight.w700),
+            displayLarge: const TextStyle(
+              fontFamily: 'Fraunces',
+              fontSize: 28,
+              fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.w500,
+              color: AppColors.claroInk,
+              height: 1.4,
+            ),
+          ),
       appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.claroBg,
         foregroundColor: AppColors.claroInk,
@@ -60,21 +64,30 @@ class AppTheme {
         surfaceContainerHighest: AppColors.escuroSurface2,
         onSurface: AppColors.escuroInk,
       ),
-      textTheme: GoogleFonts.manropeTextTheme(base.textTheme).copyWith(
-        bodyMedium: GoogleFonts.manrope(
-            fontSize: 16, height: 1.5, color: AppColors.escuroInk),
-        bodyLarge: GoogleFonts.manrope(
-            fontSize: 18, height: 1.5, color: AppColors.escuroInk),
-        labelLarge:
-            GoogleFonts.manrope(fontSize: 16, fontWeight: FontWeight.w700),
-        displayLarge: GoogleFonts.fraunces(
-          fontSize: 28,
-          fontStyle: FontStyle.italic,
-          fontWeight: FontWeight.w500,
-          color: AppColors.escuroInk,
-          height: 1.4,
-        ),
-      ),
+      textTheme: base.textTheme.apply(fontFamily: 'Manrope').copyWith(
+            bodyMedium: const TextStyle(
+                fontFamily: 'Manrope',
+                fontSize: 16,
+                height: 1.5,
+                color: AppColors.escuroInk),
+            bodyLarge: const TextStyle(
+                fontFamily: 'Manrope',
+                fontSize: 18,
+                height: 1.5,
+                color: AppColors.escuroInk),
+            labelLarge: const TextStyle(
+                fontFamily: 'Manrope',
+                fontSize: 16,
+                fontWeight: FontWeight.w700),
+            displayLarge: const TextStyle(
+              fontFamily: 'Fraunces',
+              fontSize: 28,
+              fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.w500,
+              color: AppColors.escuroInk,
+              height: 1.4,
+            ),
+          ),
       appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.escuroBg,
         foregroundColor: AppColors.escuroInk,
@@ -84,7 +97,8 @@ class AppTheme {
         backgroundColor: AppColors.escuroBg,
         indicatorColor: AppColors.accentEscuro.withOpacity(.17),
         labelTextStyle: WidgetStateProperty.all(
-          GoogleFonts.manrope(fontSize: 12, fontWeight: FontWeight.w700),
+          const TextStyle(
+              fontFamily: 'Manrope', fontSize: 12, fontWeight: FontWeight.w700),
         ),
       ),
       filledButtonTheme: FilledButtonThemeData(
@@ -93,8 +107,8 @@ class AppTheme {
           foregroundColor: const Color(0xFF1C1A15),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-          textStyle:
-              GoogleFonts.manrope(fontSize: 17, fontWeight: FontWeight.w800),
+          textStyle: const TextStyle(
+              fontFamily: 'Manrope', fontSize: 17, fontWeight: FontWeight.w800),
         ),
       ),
     );

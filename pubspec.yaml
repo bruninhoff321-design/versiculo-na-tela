@@ -33,15 +33,12 @@ dependencies:
   just_audio: 0.9.46
   just_audio_background: 0.0.1-beta.15
   audio_service: 0.18.17
-  flutter_tts: ^4.2.5
+  flutter_tts: 4.2.3
 
   # Compartilhar a imagem gerada do versículo pelos recursos nativos do SO
   share_plus: ^10.0.2
 
   intl: ^0.19.0
-
-  # Mesma identidade visual do protótipo web (Fraunces + Manrope)
-  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:
@@ -52,6 +49,14 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  fonts:
+    - family: Manrope
+      fonts:
+        - asset: assets/fonts/Manrope.ttf
+    - family: Fraunces
+      fonts:
+        - asset: assets/fonts/Fraunces-Italic.ttf
+          style: italic
   assets:
     - assets/brand_icon.png
     - assets/verses.json

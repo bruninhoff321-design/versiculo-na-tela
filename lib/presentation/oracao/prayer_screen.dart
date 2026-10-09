@@ -85,7 +85,9 @@ class PrayerScreen extends StatelessWidget {
                               if (context.mounted) {
                                 ScaffoldMessenger.of(context)
                                     .showSnackBar(SnackBar(
-                                  content: Text('$error'),
+                                  content: Text(error is StateError
+                                      ? error.message.toString()
+                                      : 'Não foi possível preparar a leitura. Verifique a voz em português do aparelho.'),
                                 ));
                               }
                             }
