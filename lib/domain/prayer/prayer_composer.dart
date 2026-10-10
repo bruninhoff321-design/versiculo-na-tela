@@ -4,14 +4,16 @@
 class PrayerComposer {
   const PrayerComposer();
 
+  String? labelFor(String themeId) => _themeLabels[themeId];
+
   String idFor({
     required DateTime day,
     required bool morning,
     Iterable<String> themeIds = const [],
     String? verseReference,
   }) {
-    final themes = themeIds.toSet().toList()..sort();
-    return '${day.year}-${day.month}-${day.day}'
+    final themes = themeIds.toSet().toList();
+    return 'v2-${day.year}-${day.month}-${day.day}'
         '-${morning ? 'manha' : 'noite'}-${themes.join('_')}'
         '-${verseReference?.trim() ?? ''}';
   }
@@ -28,27 +30,37 @@ class PrayerComposer {
     final variation = dayNumber * 2 + period;
     final opening = morning ? _morningOpenings : _eveningOpenings;
     final petition = morning ? _morningPetitions : _eveningPetitions;
-    final themes = themeIds.toSet().toList()..sort();
-    final needs = themes
-        .map((id) => _themePetitions[id])
-        .whereType<String>()
-        .take(2)
-        .toList();
+    final themes = themeIds.toSet().where(_themePetitions.containsKey).toList();
+    final focusedThemes = themes.take(2).toList();
     // Sem uma necessidade escolhida, o assunto também varia a cada dia.
     final dailyNeed = _dailyThemes[variation % _dailyThemes.length];
 
     final parts = <String>[
-      if (needs.isNotEmpty)
+      if (focusedThemes.isNotEmpty)
         'Senhor Deus, tu conheces o que estou vivendo, inclusive o que ainda '
             'não consigo colocar em palavras. Acolhe-me neste momento.',
-      if (needs.isNotEmpty) ...needs,
+      for (final theme in focusedThemes) ...[
+        'Hoje trago especialmente a ti minha necessidade de ${_themeLabels[theme]}.',
+        _themePetitions[theme]!,
+        if (theme == focusedThemes.first) _themeReflections[theme]!,
+      ],
       opening[variation % opening.length],
       petition[(variation ~/ 5) % petition.length],
-      if (needs.isEmpty) _themePetitions[dailyNeed]!,
-      _gratitudes[(variation ~/ 3) % _gratitudes.length],
-      _intercessions[(variation ~/ 7) % _intercessions.length],
+      if (focusedThemes.isEmpty) _themePetitions[dailyNeed]!,
+      if (focusedThemes.isEmpty)
+        _gratitudes[(variation ~/ 3) % _gratitudes.length]
+      else
+        'Obrigado por me ouvir com paciência e por me lembrar que posso pedir ajuda.',
+      if (focusedThemes.isEmpty)
+        _intercessions[(variation ~/ 7) % _intercessions.length]
+      else
+        'Cuida também de quem vive uma dor parecida e aproxima de nós pessoas dispostas a ouvir.',
+      if (focusedThemes.isNotEmpty)
+        'Volto a colocar ${_themeLabels[focusedThemes.first]} diante de ti. '
+            'Que esta oração se torne apoio concreto para o próximo passo de hoje.',
       _reflections[(variation ~/ 25) % _reflections.length],
-      _commitments[(variation ~/ 11) % _commitments.length],
+      if (focusedThemes.isEmpty)
+        _commitments[(variation ~/ 11) % _commitments.length],
       if (verseReference != null && verseReference.trim().isNotEmpty)
         'Ao lembrar da tua Palavra em ${verseReference.trim()}, '
             'ajuda-me a vivê-la hoje.',
@@ -167,5 +179,77 @@ class PrayerComposer {
     'luto': 'Acolhe minha saudade e consola-me no tempo do luto.',
     'gratidao':
         'Abre meus olhos para reconhecer as bênçãos deste dia e agradecer.',
+  };
+
+  static const _themeLabels = <String, String>{
+    'paz': 'paz',
+    'ansiedade': 'alívio para a ansiedade',
+    'medo': 'coragem diante do medo',
+    'tristeza': 'consolo na tristeza',
+    'cansaco': 'descanso',
+    'forca': 'força',
+    'fe': 'fé',
+    'amor_sofrimento': 'cura para a dor no amor',
+    'dinheiro': 'sabedoria financeira',
+    'familia': 'cuidado com a família',
+    'trabalho': 'direção no trabalho',
+    'relacionamento': 'cuidado no relacionamento',
+    'perdao': 'perdão',
+    'recomeco': 'um recomeço',
+    'esperanca': 'esperança',
+    'decisao': 'sabedoria para decidir',
+    'proposito': 'propósito',
+    'aproximar_de_deus': 'proximidade contigo',
+    'solidao': 'companhia na solidão',
+    'fase_dificil': 'sustento nesta fase difícil',
+    'luto': 'consolo no luto',
+    'gratidao': 'gratidão',
+  };
+
+  static const _themeReflections = <String, String>{
+    'paz':
+        'Mesmo que a situação ao meu redor ainda não tenha mudado, ajuda-me a encontrar um momento de calma. Ensina-me a responder com serenidade e a cuidar do que está ao meu alcance.',
+    'ansiedade':
+        'Quando meus pensamentos correrem para o futuro, traz-me de volta ao presente. Ajuda-me a distinguir o que posso fazer agora daquilo que preciso entregar em tuas mãos.',
+    'medo':
+        'Não quero fingir que não sinto medo. Mostra-me um passo possível e aproxima pessoas que possam caminhar comigo enquanto enfrento o que me assusta.',
+    'tristeza':
+        'Permite que eu reconheça minha dor sem me sentir culpado por ela. Dá-me companhia, tempo e pequenos sinais de cuidado para atravessar este dia.',
+    'cansaco':
+        'Mostra-me onde preciso fazer uma pausa e o que posso deixar para depois. Renova meu corpo e minha mente e ensina-me que descansar também é cuidado.',
+    'forca':
+        'Há desafios que parecem maiores que minhas forças. Ajuda-me a perseverar sem carregar tudo sozinho e a pedir apoio quando eu precisar.',
+    'fe':
+        'Mesmo com dúvidas, quero continuar buscando tua presença. Abre meus olhos para tua Palavra e dá-me confiança para caminhar um passo de cada vez.',
+    'amor_sofrimento':
+        'Não deixes que esta ferida defina meu valor. Ajuda-me a reconhecer o que preciso curar, a estabelecer limites bons e a receber amor sem medo.',
+    'dinheiro':
+        'Tu conheces as contas e as preocupações que tenho. Dá-me clareza para organizar o que posso, coragem para pedir ajuda e oportunidades justas para seguir.',
+    'familia':
+        'Tu conheces cada pessoa da minha casa e as conversas que ainda precisamos ter. Ensina-nos a ouvir, respeitar e procurar reconciliação com cuidado.',
+    'trabalho':
+        'Acompanha-me nas tarefas, nas decisões e nas dificuldades do trabalho. Ajuda-me a agir com honestidade e a reconhecer caminhos quando uma porta se fechar.',
+    'relacionamento':
+        'Ensina-me a comunicar o que sinto com respeito e a escutar sem desprezar a dor do outro. Que haja verdade, cuidado e limites saudáveis entre nós.',
+    'perdao':
+        'Não quero apressar a cura nem negar o que aconteceu. Guia-me para soltar o peso da amargura, sem abandonar a sabedoria e os limites necessários.',
+    'recomeco':
+        'Ajuda-me a não medir meu futuro apenas pelos erros de ontem. Mostra-me o primeiro passo possível e dá-me paciência para construir algo novo.',
+    'esperanca':
+        'Quando o futuro parecer fechado, lembra-me de que este momento não é toda a minha história. Ajuda-me a enxergar uma possibilidade real de seguir e a encontrar apoio para não desistir.',
+    'decisao':
+        'Acalma a pressa e ajuda-me a avaliar as consequências com clareza. Aproxima conselhos confiáveis e dá-me coragem para escolher com responsabilidade.',
+    'proposito':
+        'Ajuda-me a perceber meus dons e a usá-los para servir. Que meus planos não sejam guiados só pela ansiedade, mas por amor, verdade e perseverança.',
+    'aproximar_de_deus':
+        'Ensina-me a reservar um tempo para tua Palavra e a falar contigo com sinceridade. Mesmo quando me sinto distante, ajuda-me a recomeçar esta conversa.',
+    'solidao':
+        'Tu vês os momentos em que me sinto invisível. Aproxima pessoas com quem eu possa conversar e ajuda-me a dar um pequeno passo em direção à companhia.',
+    'fase_dificil':
+        'Não preciso resolver toda esta fase hoje. Dá-me forças para o próximo passo, descanso quando necessário e pessoas que possam oferecer ajuda concreta.',
+    'luto':
+        'A saudade tem seu próprio tempo. Acolhe minhas lembranças e minhas lágrimas; aproxima pessoas que saibam ouvir sem exigir que eu esteja bem depressa.',
+    'gratidao':
+        'Ajuda-me a nomear as coisas boas sem ignorar as difíceis. Quero agradecer com sinceridade e transformar essa gratidão em cuidado com outras pessoas.',
   };
 }

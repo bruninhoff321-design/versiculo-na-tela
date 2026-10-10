@@ -37,6 +37,15 @@ class MatchVerseForInputUseCase {
     return out;
   }
 
+  static Set<String> detectThemes(
+      String freeText, Map<String, List<String>> synonyms) {
+    final normalizedText = normalize(freeText);
+    return {
+      for (final entry in synonyms.entries)
+        if (entry.value.any((word) => normalizedText.contains(word))) entry.key,
+    };
+  }
+
   /// [synonyms] é o mapa tema -> palavras-chave normalizadas (ver
   /// ThemeTaxonomyRepository / assets/taxonomia_temas.json).
   MatchResult? call({
@@ -49,16 +58,11 @@ class MatchVerseForInputUseCase {
   }) {
     final themes = {...selectedThemeIds};
     final normalizedText = normalize(freeText);
-    if (normalizedText.trim().isNotEmpty) {
-      synonyms.forEach((theme, keywords) {
-        if (keywords.any((kw) => normalizedText.contains(kw))) {
-          themes.add(theme);
-        }
-      });
-    }
+    themes.addAll(detectThemes(freeText, synonyms));
 
-    if (allVerses.isEmpty || (themes.isEmpty && normalizedText.trim().isEmpty))
+    if (allVerses.isEmpty || (themes.isEmpty && normalizedText.trim().isEmpty)) {
       return null;
+    }
 
     final recentIds = recentHistory.length <= recentWindow
         ? recentHistory.map((h) => h.verseId).toSet()

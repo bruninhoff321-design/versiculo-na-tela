@@ -287,13 +287,16 @@ class AppState extends ChangeNotifier {
   }
 
   Future<void> setPrayerThemes(Iterable<String> ids) async {
-    prayerThemeIds = ids.toSet().toList()..sort();
+    prayerThemeIds = ids.toSet().toList();
     await localStore.writePrayerThemeIds(prayerThemeIds);
     if (settings.prayerRemindersEnabled) {
       unawaited(_prewarmPrayerAudio());
     }
     notifyListeners();
   }
+
+  Set<String> detectPrayerThemes(String freeText) =>
+      MatchVerseForInputUseCase.detectThemes(freeText, _synonyms);
 
   // ---------------- "O que você precisa ouvir?" ----------------
 

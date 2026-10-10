@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:versiculo_na_tela/domain/prayer/prayer_composer.dart';
+import 'package:versiculo_na_tela/domain/models/situation.dart';
 
 void main() {
   const composer = PrayerComposer();
@@ -55,5 +56,34 @@ void main() {
     );
     expect(prayer, startsWith('Senhor Deus, tu conheces o que estou vivendo'));
     expect(prayer.substring(0, 250), contains('Acolhe minha saudade'));
+  });
+
+  test('cada categoria escolhida tem um foco próprio na oração', () {
+    final prayers = <String>{};
+    for (final situation in kSituations) {
+      final prayer = composer.compose(
+        day: DateTime(2026, 10, 10),
+        morning: true,
+        themeIds: situation.themeIds,
+      );
+      expect(prayer, contains('Hoje trago especialmente a ti'),
+          reason: situation.label);
+      prayers.add(prayer);
+    }
+    expect(prayers.length, kSituations.length);
+  });
+
+  test('esperança dirige a oração inteira e o áudio muda com a prioridade', () {
+    final day = DateTime(2026, 10, 10);
+    final prayer = composer
+        .compose(day: day, morning: true, themeIds: const ['esperanca']);
+    expect(prayer, contains('Quando o futuro parecer fechado'));
+    expect(prayer, contains('Volto a colocar esperança diante de ti'));
+    expect(
+      composer.idFor(
+          day: day, morning: true, themeIds: const ['esperanca', 'familia']),
+      isNot(composer.idFor(
+          day: day, morning: true, themeIds: const ['familia', 'esperanca'])),
+    );
   });
 }

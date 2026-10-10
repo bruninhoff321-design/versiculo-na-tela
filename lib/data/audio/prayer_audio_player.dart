@@ -11,6 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import '../../domain/prayer/prayer_composer.dart';
 import '../../domain/prayer/prayer_slot.dart';
 import 'prayer_audio_cache.dart';
+import 'prayer_audio_mixer.dart';
 
 /// Player único: permanece ativo quando a tela de oração é fechada, para que
 /// a notificação de mídia continue oferecendo pausa e reprodução.
@@ -22,6 +23,7 @@ class PrayerAudioPlayer {
   final ValueNotifier<bool> preparing = ValueNotifier(false);
   final FlutterTts _tts = FlutterTts();
   final PrayerAudioCache _cache = const PrayerAudioCache();
+  final PrayerAudioMixer _mixer = const PrayerAudioMixer();
   Future<void> _synthesisQueue = Future<void>.value();
   bool _demoLoaded = false;
   String? _loadedPrayerId;
@@ -52,17 +54,23 @@ class PrayerAudioPlayer {
       await _tts.setLanguage('pt-BR');
       await _tts.setSpeechRate(0.47);
       await _tts.awaitSynthCompletion(true);
+      final raw = File('${file.path}.speech.wav');
       try {
         final result = await _tts
-            .synthesizeToFile(text, file.path, true)
+            .synthesizeToFile(text, raw.path, true)
             .timeout(const Duration(seconds: 45));
-        if (result != 1 || !await file.exists() || await file.length() == 0) {
+        if (result != 1 || !await raw.exists() || await raw.length() == 0) {
           throw StateError(
               'A voz do aparelho não conseguiu preparar esta oração.');
+        }
+        if (!await _mixer.mix(raw, file)) {
+          await raw.rename(file.path);
         }
       } catch (_) {
         if (await file.exists()) await file.delete();
         rethrow;
+      } finally {
+        if (await raw.exists()) await raw.delete();
       }
     });
     _synthesisQueue = task.catchError((Object error) {
@@ -137,7 +145,7 @@ class PrayerAudioPlayer {
   }
 
   Future<void> toggleDemo() async {
-    if (player.playing) {
+    if (_demoLoaded && player.playing) {
       await player.pause();
       return;
     }

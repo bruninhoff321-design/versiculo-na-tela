@@ -19,13 +19,13 @@ class PrayerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const composer = PrayerComposer();
     final title = themeIds.isNotEmpty
-        ? 'Uma oração para você'
+        ? 'Oração: ${composer.labelFor(themeIds.first) ?? 'para você'}'
         : morning
             ? 'Oração da manhã'
             : 'Oração da noite';
     final today = DateTime.now();
-    const composer = PrayerComposer();
     final prayer = composer.compose(
       day: today,
       morning: morning,
@@ -67,7 +67,8 @@ class PrayerScreen extends StatelessWidget {
             const SizedBox(height: 6),
             const Text(
               'Usa a voz em português instalada no seu celular, sem conta nem cobrança. '
-              'A primeira reprodução pode levar alguns segundos para preparar o áudio.',
+              'Toca com música suave ao fundo. A primeira reprodução pode levar '
+              'alguns segundos para preparar o áudio.',
             ),
             const SizedBox(height: 12),
             ValueListenableBuilder<bool>(
@@ -114,18 +115,20 @@ class PrayerScreen extends StatelessWidget {
             const SizedBox(height: 24),
             const Divider(),
             const SizedBox(height: 12),
-            Text('Ouça uma prévia',
+            Text('Prévia da voz Onyx',
                 style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 6),
             const Text(
-              'Exemplo de oração de esperança com voz gerada por IA e música de fundo. '
-              'A oração acima usa a voz gratuita do próprio aparelho.',
+              'Exemplo fixo de esperança com voz Onyx e música de fundo. '
+              'A prévia não muda com o tema. A oração personalizada acima '
+              'usa a voz gratuita do aparelho.',
             ),
             const SizedBox(height: 12),
             StreamBuilder<PlayerState>(
               stream: PrayerAudioPlayer.instance.player.playerStateStream,
               builder: (context, snapshot) {
-                final playing = snapshot.data?.playing == true;
+                final playing = snapshot.data?.playing == true &&
+                    PrayerAudioPlayer.instance.currentPrayerId == null;
                 return FilledButton.icon(
                   onPressed: () async {
                     try {

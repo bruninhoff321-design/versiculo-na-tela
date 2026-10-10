@@ -54,7 +54,11 @@ class _DescubraScreenState extends State<DescubraScreen> {
       ));
       return;
     }
-    final prayerThemes = {...themeIds, ...result.matchedThemes}.toList();
+    // A escolha explícita da pessoa tem prioridade sobre temas inferidos.
+    // O texto livre só define o tema se nenhum cartão foi selecionado.
+    final prayerThemes = themeIds.isNotEmpty
+        ? themeIds.toList()
+        : app.detectPrayerThemes(_textController.text).toList();
     await app.setPrayerThemes(prayerThemes);
     if (!mounted) return;
     setState(() {

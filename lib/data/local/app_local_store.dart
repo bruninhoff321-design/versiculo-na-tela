@@ -92,7 +92,7 @@ class AppLocalStore {
       const [];
 
   Future<void> writePrayerThemeIds(Iterable<String> ids) async {
-    await _settingsBox.put('prayerThemeIds', ids.toSet().toList()..sort());
+    await _settingsBox.put('prayerThemeIds', ids.toSet().toList());
   }
 
   // ---------------- Favorites ----------------
