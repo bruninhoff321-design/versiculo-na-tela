@@ -157,6 +157,8 @@ jobs:
   build-ios:
     name: Build iOS (valida compilação, sem assinatura)
     runs-on: macos-latest
+    # O app é vendido só para Android por enquanto; o iOS não bloqueia.
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
 
