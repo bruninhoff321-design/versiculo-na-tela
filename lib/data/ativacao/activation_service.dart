@@ -21,6 +21,8 @@ class ActivationService {
   bool get required => activationUrl.isNotEmpty;
 
   Future<void> init() async {
+    // Sem servidor configurado o app é liberado: nem abre o armazenamento.
+    if (!required) return;
     _box ??= await Hive.openBox(_boxName);
   }
 
