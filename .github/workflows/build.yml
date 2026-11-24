@@ -1,10 +1,10 @@
-name: Compilar Versículo na Tela
+name: Compilar Bíblia e Oração
 
 # Roda automaticamente a cada push na branch principal, e também pode ser
 # disparado manualmente pela aba "Actions" do GitHub (botão "Run workflow").
 on:
   push:
-    branches: [ main, master, melhorias/mega-oracao ]
+    branches: [ main, master, melhorias/mega-oracao, reforma/biblia-e-oracao ]
   pull_request:
     branches: [ main, master ]
   workflow_dispatch: {}
@@ -83,21 +83,21 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: versiculo-na-tela-android
+          name: biblia-e-oracao-android
           path: build/app/outputs/flutter-apk/app-release.apk
 
       # APK separado para testes no celular sem remover a instalação atual.
       - name: Preparar app de teste lado a lado
         run: |
           sed -i 's/applicationId = "com.versiculonatela.app"/applicationId = "com.versiculonatela.app.teste"/' android/app/build.gradle.kts
-          sed -i 's/android:label="Versículo na Tela"/android:label="Versículo na Tela Teste"/' android/app/src/main/AndroidManifest.xml
+          sed -i 's/android:label="Bíblia e Oração"/android:label="Bíblia e Oração Teste"/' android/app/src/main/AndroidManifest.xml
 
       - name: Compilar APK de teste
         run: flutter build apk --release
 
       - uses: actions/upload-artifact@v4
         with:
-          name: versiculo-na-tela-teste
+          name: biblia-e-oracao-teste
           path: build/app/outputs/flutter-apk/app-release.apk
 
   # ------------------------------------------------------------------

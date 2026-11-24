@@ -22,7 +22,7 @@ Future<void> shareVerseAsImage({
 
   await Share.shareXFiles(
     [XFile(file.path)],
-    text: '“$text”\n$reference\n\nVersículo na Tela',
+    text: '“$text”\n$reference\n\nBíblia e Oração',
   );
 }
 
@@ -88,7 +88,7 @@ Future<Uint8List> _renderVerseImage({
   );
 
   final brandSpan = TextSpan(
-    text: 'Versículo na Tela',
+    text: 'Bíblia e Oração',
     style: TextStyle(
       color: textColor.withOpacity(0.75),
       fontSize: 24,

@@ -372,7 +372,7 @@ class AjustesScreen extends StatelessWidget {
           children: const [
             Align(
               alignment: Alignment.centerLeft,
-              child: Text('Versículo na Tela · Criado por Bruno Brasil.',
+              child: Text('Bíblia e Oração · Criado por Bruno Brasil.',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
             ),
             SizedBox(height: 14),

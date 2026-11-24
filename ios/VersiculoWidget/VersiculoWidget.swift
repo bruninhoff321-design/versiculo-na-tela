@@ -14,7 +14,7 @@ struct VersiculoWidget: Widget {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
             VersiculoWidgetEntryView(entry: entry)
         }
-        .configurationDisplayName("Versículo na Tela")
+        .configurationDisplayName("Bíblia e Oração")
         .description("Mostra um versículo bíblico direto na sua tela.")
         .supportedFamilies([
             .systemSmall, .systemMedium, .systemLarge,   // tela inicial (seção 3)

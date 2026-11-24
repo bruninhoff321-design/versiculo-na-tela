@@ -12,7 +12,7 @@ class VersiculoNaTelaApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Versículo na Tela',
+      title: 'Bíblia e Oração',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),

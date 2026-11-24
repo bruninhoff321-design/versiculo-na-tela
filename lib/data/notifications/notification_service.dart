@@ -79,7 +79,7 @@ class NotificationService {
 
     await _plugin.zonedSchedule(
       _dailyNotificationId,
-      'Versículo na Tela',
+      'Bíblia e Oração',
       'Seu versículo de hoje está esperando por você 📖',
       scheduled,
       const NotificationDetails(

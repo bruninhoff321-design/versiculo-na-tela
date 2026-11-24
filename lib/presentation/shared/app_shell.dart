@@ -52,7 +52,7 @@ class _AppShellState extends State<AppShell> {
   }
 
   static const _titles = [
-    'Versículo na Tela',
+    'Bíblia e Oração',
     'Favoritos',
     'Histórico',
     'Ajustes'

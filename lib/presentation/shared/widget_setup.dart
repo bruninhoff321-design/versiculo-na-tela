@@ -29,7 +29,7 @@ Future<void> addWidgetToHome(BuildContext context) async {
       content: const Text(
         '1. Vá para a tela inicial do celular.\n\n'
         '2. Toque e segure um espaço vazio.\n\n'
-        '3. Toque em “Widgets”, procure “Versículo na Tela” e toque em “Adicionar”.',
+        '3. Toque em “Widgets”, procure “Bíblia e Oração” e toque em “Adicionar”.',
       ),
       actions: [
         FilledButton(

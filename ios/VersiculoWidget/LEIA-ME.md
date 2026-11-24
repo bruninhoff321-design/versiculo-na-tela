@@ -36,7 +36,7 @@ Xcode, não por arquivo de texto. Passo a passo:
    conta Apple Developer paga, feita em developer.apple.com > Certificates,
    Identifiers & Profiles > App Groups.
 8. Rode no simulador/aparelho, depois adicione o widget manualmente
-   (toque e segure a tela inicial > "+" > Versículo na Tela) para testar
+   (toque e segure a tela inicial > "+" > Bíblia e Oração) para testar
    os três tamanhos, e nos Widgets da Lock Screen (toque e segure a tela
    de bloqueio > Personalizar) para testar os accessory widgets.
 

@@ -127,7 +127,7 @@ class PrayerAudioPlayer {
           file.uri,
           tag: MediaItem(
             id: id,
-            album: 'Versículo na Tela',
+            album: 'Bíblia e Oração',
             title: 'Oração do dia',
             artist: 'Voz do aparelho',
           ),
@@ -154,7 +154,7 @@ class PrayerAudioPlayer {
         'assets/prayer_demo.mp3',
         tag: const MediaItem(
           id: 'prayer-demo-hope',
-          album: 'Versículo na Tela',
+          album: 'Bíblia e Oração',
           title: 'Prévia da oração de esperança',
           artist: 'Voz gerada por IA',
         ),

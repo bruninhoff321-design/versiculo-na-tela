@@ -17,7 +17,7 @@
     </queries>
 
     <application
-        android:label="Versículo na Tela"
+        android:label="Bíblia e Oração"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 
@@ -64,7 +64,7 @@
         <receiver
             android:name=".widget.VersiculoWidgetReceiver"
             android:exported="true"
-            android:label="Versículo na Tela">
+            android:label="Bíblia e Oração">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -76,7 +76,7 @@
             <receiver
             android:name=".widget.VersiculoCompactWidgetReceiver"
             android:exported="true"
-            android:label="Versículo na Tela (compacto)">
+            android:label="Bíblia e Oração (compacto)">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
