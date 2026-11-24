@@ -78,8 +78,8 @@ class MaisScreen extends StatelessWidget {
           leading: Icon(Icons.church_rounded, color: gold),
           title: const Text('Minha tradição'),
           subtitle: Text(app.isCatholic
-              ? 'Católica — Bíblia com 73 livros'
-              : 'Evangélica — Bíblia com 66 livros'),
+              ? 'Católica'
+              : 'Evangélica'),
           trailing: const Icon(Icons.swap_horiz_rounded),
           onTap: () => app.setTradition(app.isCatholic ? 'evangelico' : 'catolico'),
         ),

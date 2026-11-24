@@ -33,7 +33,11 @@ class AppState extends ChangeNotifier {
   final MatchVerseForInputUseCase matchVerseForInput;
   final NativeWidgetScheduler scheduler;
 
+  /// Carrega os versículos por tema. Nos testes é trocado por um mapa fixo.
+  final Future<Map<String, List<String>>> Function()? themeVersesLoader;
+
   AppState({
+    this.themeVersesLoader,
     required this.verseRepository,
     required this.taxonomyRepository,
     required this.localStore,
@@ -87,7 +91,7 @@ class AppState extends ChangeNotifier {
     _byId = {for (final v in _allVerses) v.id: v};
     _synonyms = await taxonomyRepository.loadSynonyms();
     bible = BibleIndex.build(_allVerses);
-    themeVerseIds = await _loadThemeVerses();
+    themeVerseIds = await (themeVersesLoader ?? _loadThemeVerses)();
     highlights = localStore.readHighlights();
     chaptersRead = localStore.readChaptersRead();
     lastRead = localStore.readLastRead();

@@ -176,6 +176,7 @@ AppState _app(_Store store, _Widget widget, _Notifications notifications,
       widgetSync: widget,
       notifications: notifications,
       scheduler: scheduler,
+      themeVersesLoader: () async => const {},
     );
 
 void main() {

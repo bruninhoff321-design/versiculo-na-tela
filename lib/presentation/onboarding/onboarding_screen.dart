@@ -56,7 +56,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             const SizedBox(height: 12),
             _ChoiceButton(
               label: 'Católica',
-              detail: 'Bíblia com 73 livros',
+              detail: 'Os 7 livros católicos chegam numa próxima atualização',
               selected: app.tradition == 'catolico',
               onTap: () => app.setTradition('catolico'),
             ),
