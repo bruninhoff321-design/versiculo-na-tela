@@ -84,6 +84,31 @@ jobs:
       - name: Rodar os testes de domínio
         run: flutter test
 
+      # O Maven Central tem recusado os runners do GitHub (erro 429).
+      # Este script faz o Gradle baixar as mesmas bibliotecas do espelho
+      # oficial do Google.
+      - name: Usar espelho do Maven Central
+        run: |
+          mkdir -p ~/.gradle/init.d
+          cat > ~/.gradle/init.d/espelho-maven.gradle << 'GRADLEEOF'
+          def espelho = 'https://maven-central.storage-download.googleapis.com/maven2/'
+          def trocar = { repo ->
+            if (repo instanceof MavenArtifactRepository &&
+                repo.url.toString().startsWith('https://repo.maven.apache.org')) {
+              repo.url = espelho
+            }
+          }
+          beforeSettings { settings ->
+            settings.pluginManagement.repositories.configureEach(trocar)
+            settings.dependencyResolutionManagement.repositories.configureEach(trocar)
+          }
+          allprojects {
+            buildscript.repositories.configureEach(trocar)
+            repositories.configureEach(trocar)
+          }
+          GRADLEEOF
+          cat ~/.gradle/init.d/espelho-maven.gradle
+
       # Chave fixa (secrets ANDROID_KEYSTORE_BASE64 etc.). Sem os secrets,
       # o APK sai com a chave de debug, que muda a cada compilação.
       - name: Preparar chave de assinatura
