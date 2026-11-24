@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'core/theme/app_theme.dart';
+import 'presentation/ativacao/activation_screen.dart';
 import 'presentation/onboarding/onboarding_screen.dart';
 import 'presentation/shared/app_shell.dart';
 import 'presentation/state/app_state.dart';
@@ -31,6 +32,7 @@ class _Root extends StatelessWidget {
     if (app.loading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
+    if (!app.activated) return const ActivationScreen();
     return app.settings.onboarded ? const AppShell() : const OnboardingScreen();
   }
 }

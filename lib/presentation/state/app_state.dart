@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
+import '../../data/ativacao/activation_service.dart';
 import '../../data/local/app_local_store.dart';
 import '../../data/audio/prayer_audio_player.dart';
 import '../../data/notifications/notification_service.dart';
@@ -33,11 +34,15 @@ class AppState extends ChangeNotifier {
   final MatchVerseForInputUseCase matchVerseForInput;
   final NativeWidgetScheduler scheduler;
 
+  /// Liberação do app para quem comprou na Cakto.
+  final ActivationService activation;
+
   /// Carrega os versículos por tema. Nos testes é trocado por um mapa fixo.
   final Future<Map<String, List<String>>> Function()? themeVersesLoader;
 
   AppState({
     this.themeVersesLoader,
+    ActivationService? activation,
     required this.verseRepository,
     required this.taxonomyRepository,
     required this.localStore,
@@ -46,7 +51,8 @@ class AppState extends ChangeNotifier {
     NativeWidgetScheduler? scheduler,
     PickNextVerseUseCase? pickNextVerseUseCase,
     MatchVerseForInputUseCase? matchVerseForInputUseCase,
-  })  : scheduler = scheduler ?? NativeWidgetScheduler(),
+  })  : activation = activation ?? ActivationService(),
+        scheduler = scheduler ?? NativeWidgetScheduler(),
         pickNextVerse = pickNextVerseUseCase ?? PickNextVerseUseCase(),
         matchVerseForInput =
             matchVerseForInputUseCase ?? MatchVerseForInputUseCase();
@@ -97,6 +103,11 @@ class AppState extends ChangeNotifier {
     lastRead = localStore.readLastRead();
     tradition = localStore.readTradition();
     bestStreak = localStore.readBestStreak();
+    try {
+      await activation.init();
+    } catch (error) {
+      debugPrint('Não foi possível ler a ativação: $error');
+    }
     await _registerActivity();
 
     settings = localStore.readSettings();
@@ -374,6 +385,16 @@ class AppState extends ChangeNotifier {
 
   Future<void> markOnboarded() async {
     await updateSettings((s) => s.copyWith(onboarded: true));
+  }
+
+  // ---------------- Ativação (compra na Cakto) ----------------
+
+  bool get activated => activation.isActivated;
+
+  Future<ActivationResult> activate(String email) async {
+    final result = await activation.activate(email);
+    if (result == ActivationResult.ok) notifyListeners();
+    return result;
   }
 
   // ---------------- Bíblia ----------------

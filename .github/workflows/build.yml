@@ -103,7 +103,18 @@ jobs:
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-        run: flutter build apk --release
+        # ACTIVATION_URL e CHECKOUT_URL vêm de Settings > Variables do
+        # repositório. Vazias = app liberado para todos (modo de teste).
+        # Tenta até 3 vezes: o Maven Central às vezes responde 429.
+        run: |
+          for tentativa in 1 2 3; do
+            flutter build apk --release \
+              --dart-define=ACTIVATION_URL=${{ vars.ACTIVATION_URL }} \
+              --dart-define=CHECKOUT_URL=${{ vars.CHECKOUT_URL }} && exit 0
+            echo "Tentativa $tentativa falhou; esperando para tentar de novo..."
+            sleep 60
+          done
+          exit 1
 
       - uses: actions/upload-artifact@v4
         with:
@@ -121,7 +132,14 @@ jobs:
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-        run: flutter build apk --release
+        run: |
+          for tentativa in 1 2 3; do
+            flutter build apk --release \
+              --dart-define=ACTIVATION_URL=${{ vars.ACTIVATION_URL }} \
+              --dart-define=CHECKOUT_URL=${{ vars.CHECKOUT_URL }} && exit 0
+            sleep 60
+          done
+          exit 1
 
       - uses: actions/upload-artifact@v4
         with:
