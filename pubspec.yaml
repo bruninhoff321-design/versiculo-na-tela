@@ -61,4 +61,5 @@ flutter:
     - assets/brand_icon.png
     - assets/verses.json
     - assets/taxonomia_temas.json
+    - assets/temas_versiculos.json
     - assets/prayer_demo.mp3

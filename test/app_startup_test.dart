@@ -77,6 +77,35 @@ class _Store extends AppLocalStore {
   Future<void> appendHistory(HistoryEntry entry) async {
     entries.add(entry);
   }
+
+  List<String> days = [];
+  @override
+  List<String> readActivityDays() => List.of(days);
+  @override
+  Future<void> writeActivityDays(List<String> value) async {
+    days = List.of(value);
+  }
+
+  @override
+  int readBestStreak() => 0;
+  @override
+  Future<void> writeBestStreak(int value) async {}
+  @override
+  Map<String, int> readHighlights() => {};
+  @override
+  Future<void> setHighlight(String verseId, int? colorIndex) async {}
+  @override
+  String? readLastRead() => null;
+  @override
+  Future<void> writeLastRead(String value) async {}
+  @override
+  Set<String> readChaptersRead() => {};
+  @override
+  Future<void> markChapterRead(String key) async {}
+  @override
+  String? readTradition() => null;
+  @override
+  Future<void> writeTradition(String value) async {}
 }
 
 class _Widget extends WidgetSyncService {

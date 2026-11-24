@@ -30,14 +30,21 @@ Future<Uint8List> _renderVerseImage({
   required String text,
   required String reference,
 }) async {
-  const size = Size(1080, 1080);
+  // Formato vertical do status do WhatsApp / Stories.
+  const size = Size(1080, 1920);
   final recorder = ui.PictureRecorder();
   final canvas = Canvas(recorder, Rect.fromLTWH(0, 0, size.width, size.height));
 
   final gradient = ui.Gradient.linear(
     Offset.zero,
-    Offset(size.width, size.height),
-    [const Color(0xFF3A2E55), const Color(0xFFA8763A)],
+    Offset(0, size.height),
+    const [
+      Color(0xFF0B1433),
+      Color(0xFF2A2360),
+      Color(0xFFB8566B),
+      Color(0xFFF6A04D),
+    ],
+    const [0, 0.45, 0.8, 1],
   );
   canvas.drawRect(
     Rect.fromLTWH(0, 0, size.width, size.height),
@@ -50,9 +57,9 @@ Future<Uint8List> _renderVerseImage({
     text: '“$text”',
     style: TextStyle(
       color: textColor,
-      fontSize: 52,
+      fontSize: text.length > 220 ? 54 : 66,
       fontStyle: FontStyle.italic,
-      fontFamily: 'serif',
+      fontFamily: 'Fraunces',
       height: 1.35,
     ),
   );
@@ -70,10 +77,11 @@ Future<Uint8List> _renderVerseImage({
   final refSpan = TextSpan(
     text: reference,
     style: TextStyle(
-      color: textColor,
-      fontSize: 34,
+      color: const Color(0xFFF7D27A),
+      fontSize: 40,
       fontWeight: FontWeight.bold,
-      fontFamily: 'serif',
+      fontFamily: 'Manrope',
+
     ),
   );
   final refLayout = TextPainter(
@@ -90,9 +98,10 @@ Future<Uint8List> _renderVerseImage({
   final brandSpan = TextSpan(
     text: 'Bíblia e Oração',
     style: TextStyle(
-      color: textColor.withOpacity(0.75),
-      fontSize: 24,
-      fontFamily: 'serif',
+      color: textColor.withOpacity(0.85),
+      fontSize: 34,
+      fontWeight: FontWeight.w700,
+      fontFamily: 'Manrope',
     ),
   );
   final brandLayout = TextPainter(
@@ -102,7 +111,7 @@ Future<Uint8List> _renderVerseImage({
   )..layout(maxWidth: size.width - 160);
   brandLayout.paint(
     canvas,
-    Offset((size.width - brandLayout.width) / 2, size.height - 90),
+    Offset((size.width - brandLayout.width) / 2, size.height - 170),
   );
 
   final picture = recorder.endRecording();

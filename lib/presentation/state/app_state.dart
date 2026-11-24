@@ -1,6 +1,9 @@
 import 'dart:async' show unawaited;
+import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 import '../../data/local/app_local_store.dart';
 import '../../data/audio/prayer_audio_player.dart';
@@ -8,6 +11,7 @@ import '../../data/notifications/notification_service.dart';
 import '../../data/widget_bridge/native_scheduler.dart';
 import '../../data/widget_bridge/lock_wallpaper_service.dart';
 import '../../data/widget_bridge/widget_sync_service.dart';
+import '../../domain/bible/bible_book.dart';
 import '../../domain/models/app_settings.dart';
 import '../../domain/models/history_entry.dart';
 import '../../domain/models/verse.dart';
@@ -58,10 +62,38 @@ class AppState extends ChangeNotifier {
   List<String> prayerThemeIds = const [];
   bool lockWallpaperEnabled = false;
 
+  // ---------------- Bíblia, ofensiva e tradição ----------------
+  late BibleIndex bible;
+  Map<String, int> highlights = {};
+  Set<String> chaptersRead = {};
+  String? lastRead;
+  String? tradition; // "evangelico" | "catolico"
+  int streak = 0;
+  int bestStreak = 0;
+  bool activeToday = false;
+  Map<String, List<String>> themeVerseIds = {};
+
+  bool get isCatholic => tradition == 'catolico';
+
+  /// Livros que não aparecem para quem escolheu a tradição evangélica.
+  Set<String> get hiddenBooks =>
+      isCatholic ? const {} : BibleIndex.deuterocanonicalAbbrs;
+
+  List<BibleBook> get visibleBooks =>
+      bible.books.where((b) => !hiddenBooks.contains(b.abbr)).toList();
+
   Future<void> bootstrap() async {
     _allVerses = await verseRepository.loadAll();
     _byId = {for (final v in _allVerses) v.id: v};
     _synonyms = await taxonomyRepository.loadSynonyms();
+    bible = BibleIndex.build(_allVerses);
+    themeVerseIds = await _loadThemeVerses();
+    highlights = localStore.readHighlights();
+    chaptersRead = localStore.readChaptersRead();
+    lastRead = localStore.readLastRead();
+    tradition = localStore.readTradition();
+    bestStreak = localStore.readBestStreak();
+    await _registerActivity();
 
     settings = localStore.readSettings();
     history = localStore.readHistory();
@@ -338,6 +370,155 @@ class AppState extends ChangeNotifier {
 
   Future<void> markOnboarded() async {
     await updateSettings((s) => s.copyWith(onboarded: true));
+  }
+
+  // ---------------- Bíblia ----------------
+
+  Future<Map<String, List<String>>> _loadThemeVerses() async {
+    try {
+      final raw = await rootBundle.loadString('assets/temas_versiculos.json');
+      final temas = (jsonDecode(raw) as Map<String, dynamic>)['temas']
+          as Map<String, dynamic>;
+      return {
+        for (final e in temas.entries)
+          e.key: (e.value as List).whereType<String>().toList(),
+      };
+    } catch (_) {
+      return {};
+    }
+  }
+
+  Future<void> setHighlight(String verseId, int? colorIndex) async {
+    await localStore.setHighlight(verseId, colorIndex);
+    highlights = localStore.readHighlights();
+    notifyListeners();
+  }
+
+  Future<void> openChapter(String abbr, int chapter) async {
+    lastRead = BibleIndex.keyFor(abbr, chapter);
+    await localStore.writeLastRead(lastRead!);
+    notifyListeners();
+  }
+
+  Future<void> markChapterRead(String abbr, int chapter) async {
+    final key = BibleIndex.keyFor(abbr, chapter);
+    if (chaptersRead.contains(key)) return;
+    await localStore.markChapterRead(key);
+    chaptersRead = localStore.readChaptersRead();
+    await _registerActivity();
+    notifyListeners();
+  }
+
+  List<Verse> searchBible(String query) =>
+      bible.search(query, hiddenBooks: hiddenBooks);
+
+  Future<void> setTradition(String value) async {
+    tradition = value;
+    _feedPool = null;
+    await localStore.writeTradition(value);
+    notifyListeners();
+  }
+
+  /// Versículos conhecidos de um tema ("Como você está?").
+  List<Verse> versesForTheme(String themeId) => [
+        for (final id in themeVerseIds[themeId] ?? const <String>[])
+          if (_byId[id] != null) _byId[id]!,
+      ];
+
+  List<Verse>? _feedPool;
+
+  /// Versículos curtos e fortes para o feed: os conhecidos de cada tema e
+  /// versículos curtos dos livros mais devocionais.
+  List<Verse> get feedPool {
+    if (_feedPool != null) return _feedPool!;
+    const devotional = {
+      'sal', 'pro', 'isa', 'mat', 'mar', 'luc', 'joa', 'rom', '1co', '2co',
+      'gal', 'efe', 'fil', 'col', '1te', '2te', '1ti', '2ti', 'heb', 'tia',
+      '1pe', '1jo', 'jos', 'deu', 'lam', 'jer', 'sab', 'eclo',
+    };
+    final known = <String>{for (final l in themeVerseIds.values) ...l};
+    final pool = <Verse>[];
+    for (final v in _allVerses) {
+      if (hiddenBooks.contains(v.bookAbbr)) continue;
+      final short = v.text.length >= 50 && v.text.length <= 190;
+      if (known.contains(v.id) ||
+          (short && devotional.contains(v.bookAbbr) && v.verseNumber > 0)) {
+        pool.add(v);
+      }
+    }
+    return _feedPool = pool;
+  }
+
+  /// Sorteia versículos para o feed, com os conhecidos aparecendo mais.
+  List<Verse> nextFeedBatch(int count, {int seed = 0}) {
+    final pool = feedPool;
+    if (pool.isEmpty) return const [];
+    final known = <String>{for (final l in themeVerseIds.values) ...l};
+    final rnd = Random(DateTime.now().microsecondsSinceEpoch + seed);
+    final out = <Verse>[];
+    for (var i = 0; i < count; i++) {
+      if (known.isNotEmpty && rnd.nextInt(3) == 0) {
+        final list = themeVerseIds.values.elementAt(
+            rnd.nextInt(themeVerseIds.length));
+        if (list.isNotEmpty) {
+          final v = _byId[list[rnd.nextInt(list.length)]];
+          if (v != null) {
+            out.add(v);
+            continue;
+          }
+        }
+      }
+      out.add(pool[rnd.nextInt(pool.length)]);
+    }
+    return out;
+  }
+
+  /// Versículo do dia: o mesmo para todo mundo no mesmo dia.
+  Verse? get verseOfTheDay {
+    final known = <String>[for (final l in themeVerseIds.values) ...l];
+    if (known.isEmpty) return currentVerse;
+    final now = DateTime.now();
+    final dayNumber =
+        DateTime(now.year, now.month, now.day).millisecondsSinceEpoch ~/
+            Duration.millisecondsPerDay;
+    return _byId[known[dayNumber % known.length]] ?? currentVerse;
+  }
+
+  // ---------------- Ofensiva ----------------
+
+  static String _dayKey(DateTime d) =>
+      '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+
+  /// Conta o dia de hoje e recalcula a ofensiva (dias seguidos).
+  Future<void> registerActivity() async {
+    await _registerActivity();
+    notifyListeners();
+  }
+
+  Future<void> _registerActivity() async {
+    try {
+      final days = localStore.readActivityDays();
+      final today = _dayKey(DateTime.now());
+      if (!days.contains(today)) {
+        days.add(today);
+        await localStore.writeActivityDays(days);
+      }
+      final set = days.toSet();
+      var count = 0;
+      var cursor = DateTime.now();
+      while (set.contains(_dayKey(cursor))) {
+        count++;
+        cursor = cursor.subtract(const Duration(days: 1));
+      }
+      streak = count;
+      activeToday = true;
+      if (streak > bestStreak) {
+        bestStreak = streak;
+        await localStore.writeBestStreak(bestStreak);
+      }
+    } catch (error) {
+      debugPrint('Não foi possível atualizar a ofensiva: $error');
+    }
   }
 
   // ---------------- Internos ----------------

@@ -16,11 +16,13 @@ class AppLocalStore {
   static const _favoritesBoxName = 'favorites';
   static const _historyBoxName = 'history';
   static const _notesBoxName = 'notes';
+  static const _highlightsBoxName = 'highlights';
 
   late Box _settingsBox;
   late Box _favoritesBox;
   late Box _historyBox;
   late Box _notesBox;
+  late Box _highlightsBox;
 
   static const int maxHistoryEntries = 500;
 
@@ -30,6 +32,72 @@ class AppLocalStore {
     _favoritesBox = await Hive.openBox(_favoritesBoxName);
     _historyBox = await Hive.openBox(_historyBoxName);
     _notesBox = await Hive.openBox(_notesBoxName);
+    _highlightsBox = await Hive.openBox(_highlightsBoxName);
+  }
+
+  // ---------------- Marca-texto ----------------
+
+  /// versículo -> índice da cor do marca-texto.
+  Map<String, int> readHighlights() => {
+        for (final key in _highlightsBox.keys.cast<String>())
+          key: _highlightsBox.get(key) as int,
+      };
+
+  Future<void> setHighlight(String verseId, int? colorIndex) async {
+    if (colorIndex == null) {
+      await _highlightsBox.delete(verseId);
+    } else {
+      await _highlightsBox.put(verseId, colorIndex);
+    }
+  }
+
+  // ---------------- Ofensiva (dias seguidos) ----------------
+
+  /// Dias em que a pessoa abriu e usou o app, no formato AAAA-MM-DD.
+  List<String> readActivityDays() =>
+      (_settingsBox.get('activityDays') as List?)
+          ?.whereType<String>()
+          .toList() ??
+      <String>[];
+
+  Future<void> writeActivityDays(List<String> days) async {
+    // Guardamos só o último ano: é o bastante para a ofensiva e o calendário.
+    final trimmed = days.length > 400 ? days.sublist(days.length - 400) : days;
+    await _settingsBox.put('activityDays', trimmed);
+  }
+
+  int readBestStreak() => (_settingsBox.get('bestStreak') as int?) ?? 0;
+
+  Future<void> writeBestStreak(int value) async {
+    await _settingsBox.put('bestStreak', value);
+  }
+
+  // ---------------- Leitura da Bíblia ----------------
+
+  /// Último capítulo aberto, no formato "livro.capítulo" (ex: "sal.23").
+  String? readLastRead() => _settingsBox.get('lastRead') as String?;
+
+  Future<void> writeLastRead(String value) async {
+    await _settingsBox.put('lastRead', value);
+  }
+
+  Set<String> readChaptersRead() =>
+      ((_settingsBox.get('chaptersRead') as List?)?.whereType<String>() ??
+              const <String>[])
+          .toSet();
+
+  Future<void> markChapterRead(String key) async {
+    final set = readChaptersRead()..add(key);
+    await _settingsBox.put('chaptersRead', set.toList());
+  }
+
+  // ---------------- Tradição ----------------
+
+  /// "evangelico" ou "catolico". Nulo enquanto a pessoa não escolheu.
+  String? readTradition() => _settingsBox.get('tradition') as String?;
+
+  Future<void> writeTradition(String value) async {
+    await _settingsBox.put('tradition', value);
   }
 
   // ---------------- Settings ----------------
