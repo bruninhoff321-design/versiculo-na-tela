@@ -27,16 +27,26 @@ android {
         versionName = flutter.versionName
     }
 
+    // Chave fixa de assinatura. O GitHub Actions grava o arquivo a partir
+    // dos "secrets" do repositório. Sem ela, usamos a chave de debug — mas
+    // aí cada compilação sai com uma assinatura diferente e o celular não
+    // aceita instalar a atualização por cima da versão anterior.
+    val releaseKeystore = System.getenv("ANDROID_KEYSTORE_PATH")
+    signingConfigs {
+        if (releaseKeystore != null && file(releaseKeystore).exists()) {
+            create("release") {
+                storeFile = file(releaseKeystore)
+                storePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("ANDROID_KEY_ALIAS")
+                keyPassword = System.getenv("ANDROID_KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // Assina o build de release com a chave de DEBUG por enquanto.
-            // Isso é o que permite `flutter build apk --release` gerar um
-            // .apk instalável sem configurar nada extra — ótimo para testar
-            // no seu próprio aparelho. ANTES de publicar na Play Store,
-            // troque isto por uma signing config de verdade (keystore
-            // própria) — a Play Store não aceita um app assinado com a
-            // chave de debug.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.findByName("release")
+                ?: signingConfigs.getByName("debug")
         }
     }
 }

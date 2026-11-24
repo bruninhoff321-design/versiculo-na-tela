@@ -84,7 +84,25 @@ jobs:
       - name: Rodar os testes de domínio
         run: flutter test
 
+      # Chave fixa (secrets ANDROID_KEYSTORE_BASE64 etc.). Sem os secrets,
+      # o APK sai com a chave de debug, que muda a cada compilação.
+      - name: Preparar chave de assinatura
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.jks"
+            echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/release.jks" >> "$GITHUB_ENV"
+            echo "Chave de assinatura fixa configurada."
+          else
+            echo "::warning::Sem chave fixa: atualizações não vão instalar por cima."
+          fi
+
       - name: Compilar o APK de release
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: flutter build apk --release
 
       - uses: actions/upload-artifact@v4
@@ -99,6 +117,10 @@ jobs:
           sed -i 's/android:label="Bíblia e Oração"/android:label="Bíblia e Oração Teste"/' android/app/src/main/AndroidManifest.xml
 
       - name: Compilar APK de teste
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: flutter build apk --release
 
       - uses: actions/upload-artifact@v4
