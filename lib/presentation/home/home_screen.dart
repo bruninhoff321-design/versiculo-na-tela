@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/audio/speech_service.dart';
+import '../../domain/models/app_settings.dart';
 import '../../domain/models/situation.dart';
 import '../biblia/chapter_reader_screen.dart';
 import '../oracao/prayer_screen.dart';

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/audio/speech_service.dart';
+import '../../domain/models/app_settings.dart';
 import '../../domain/bible/bible_book.dart';
 import '../shared/verse_actions.dart';
 import '../state/app_state.dart';
